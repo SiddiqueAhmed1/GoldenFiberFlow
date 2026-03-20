@@ -3,10 +3,11 @@ const authMiddleware = async (req, res, next) => {
   try {
     const token =
       req?.cookies?.accessToken || req?.headers?.authorization?.split(" ")[1];
+    req?.cookies?.accessToken || req?.headers?.authorization?.split(" ")[1];
 
     if (!token) {
       res.status(500).json({
-        message: "Token expired",
+        message: "Provide token",
         success: false,
         error: true,
       });

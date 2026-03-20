@@ -16,6 +16,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    refresh_token: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["Active", "InActive"],
