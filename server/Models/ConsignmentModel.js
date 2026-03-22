@@ -33,10 +33,6 @@ const consignmentSchema = mongoose.Schema(
 
     items: [
       {
-        name: {
-          type: String,
-          required: true,
-        },
         description: {
           type: String,
         },

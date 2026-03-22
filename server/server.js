@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import colors from "colors";
 import { mongoDb } from "./Config/mongoDb.js";
 import userRouter from "./Routing/userRouter.js";
+import consignmentRouter from "./Routing/consignmentRouter.js";
 import cookieParser from "cookie-parser";
 
 // config env
@@ -19,6 +20,7 @@ app.use(cookieParser());
 
 // use router
 app.use("/api/v1", userRouter);
+app.use("/api/v1", consignmentRouter);
 
 // listen server
 app.listen(port, () => {
