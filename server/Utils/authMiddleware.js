@@ -30,4 +30,26 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
+// check admin
+export const adminAuthMiddleware = (req, res, next) => {
+  try {
+    const user = req.user;
+    if (user.role !== "Admin") {
+      return res.status(500).json({
+        message: "Access restricted",
+        success: true,
+        error: false,
+      });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: true,
+      error: false,
+    });
+  }
+};
+
 export default authMiddleware;
