@@ -1,1 +1,44 @@
 @import "tailwindcss";
+
+h1 {
+  font-size: 31px;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+}
+
+--primary-color {
+  color: goldenrod;
+}
+
+.h-700 {
+  height: 700px;
+}
+
+.w-550 {
+  width: 550px;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
+
+input {
+  height: 52px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgb(192, 192, 192);
+  border-radius: 10px;
+  font-size: 18px;
+  outline: none;
+  font-family: "Inter", sans-serif;
+}
+
+input:focus {
+  outline: 2px solid rgb(235, 183, 53);
+}
+
+label {
+  font-size: 17px;
+  font-weight: 500;
+  color: rgb(32, 32, 32);
+}
