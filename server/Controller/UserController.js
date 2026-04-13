@@ -63,10 +63,9 @@ export const registerUser = async (req, res) => {
 
 // user login
 export const userLogin = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    if (!email || !password) {
+    const { email, password: userPassword } = req.body;
+    if (!email || !userPassword) {
       return res.status(500).json({
         message: "All fields are required",
       });
@@ -83,7 +82,7 @@ export const userLogin = async (req, res) => {
     }
 
     // compare password with db
-    const passCheck = await bcrypt.compare(password, userExist.password);
+    const passCheck = await bcrypt.compare(userPassword, userExist.password);
     if (!passCheck) {
       return res.status(500).json({
         message: "Password is wrong",
@@ -104,11 +103,13 @@ export const userLogin = async (req, res) => {
     res.cookie("refreshToken", refreshToken, cookieOptions);
 
     // send success response
+    const { refresh_token, password, ...userWithoutPassword } =
+      userExist.toObject();
     res.status(200).json({
       message: "Login successfully done",
       success: true,
       error: false,
-      data: userExist,
+      data: userWithoutPassword,
     });
   } catch (error) {
     res.status(500).json({

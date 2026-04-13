@@ -1,8 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../public/gftcl.png";
 import { useState } from "react";
+import { login } from "../../lib/auth";
+import toast from "react-hot-toast";
 
 export const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -19,9 +22,25 @@ export const Login = () => {
   };
 
   // handle form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.email || !formData.password) {
+      return toast.error("all fields are required");
+    }
+
+    const data = await login(formData.email, formData.password);
+
+    if (data) {
+      localStorage.setItem("user", JSON.stringify(data.data));
+      navigate("/dashboard");
+    }
+    setFormData({
+      email: "",
+      password: "",
+    });
   };
+
   return (
     <>
       <section className="flex items-center justify-center h-screen bg-blue-50">
@@ -43,7 +62,7 @@ export const Login = () => {
 
           {/* login form */}
           <div className="my-4 lg:my-6">
-            <form onClick={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-1">
                 <label htmlFor="emailId">Email</label>
                 <input
@@ -51,7 +70,6 @@ export const Login = () => {
                   id="emailId"
                   type="text"
                   name="email"
-                  required
                   value={formData.email}
                   onChange={handleInputValue}
                   placeholder="admin@example.com"
@@ -63,8 +81,7 @@ export const Login = () => {
                 <input
                   className="focus-within:outline-amber-500 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
                   id="password"
-                  type="password"
-                  required
+                  type="text"
                   name="password"
                   value={formData.password}
                   onChange={handleInputValue}
@@ -84,7 +101,10 @@ export const Login = () => {
                 </p>
               </div>
               <div className="flex flex-col lg:mt-2">
-                <button className="bg-amber-500 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-amber-600 transition-all">
+                <button
+                  type="submit"
+                  className="bg-amber-500 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-amber-600 transition-all"
+                >
                   Sign In
                 </button>
               </div>

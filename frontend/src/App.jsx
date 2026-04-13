@@ -1,19 +1,15 @@
-import { ToastContainer } from "react-toastify";
 import "@fontsource/inter";
 import "@fontsource/poppins";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import { Outlet } from "react-router-dom";
+import Header from "./Components/Header";
 
 const App = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate("/login");
-  }, []);
-
   return (
     <>
-      <ToastContainer />
+      <Header />
+      <Outlet />
+      <Toaster />
     </>
   );
 };

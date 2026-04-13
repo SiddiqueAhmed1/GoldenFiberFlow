@@ -5,6 +5,7 @@ import { mongoDb } from "./Config/mongoDb.js";
 import userRouter from "./Routing/userRouter.js";
 import consignmentRouter from "./Routing/consignmentRouter.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 // config env
 dotenv.config();
@@ -12,6 +13,15 @@ dotenv.config();
 // init app
 const app = express();
 const port = process.env.PORT || 6060;
+
+// use cors
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: "GET,POST,PUT,DELETE",
+    credentials: true,
+  }),
+);
 
 //config middleware
 app.use(express.json());

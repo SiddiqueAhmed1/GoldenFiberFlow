@@ -15,9 +15,11 @@ export const Register = () => {
               src={logo}
               alt="GFTCL"
             />
-            <h1 className="text-lg lg:text-2xl font-semibold">Welcome Back</h1>
+            <h1 className="text-lg lg:text-2xl font-semibold">
+              Create an Account
+            </h1>
             <p className="text-center lg:w-full w-40 text-sm lg:text-lg text-neutral-600 font-medium">
-              Enter your credentials to access your account
+              Enter your information to get started
             </p>
           </div>
 
