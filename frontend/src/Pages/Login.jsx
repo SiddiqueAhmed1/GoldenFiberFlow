@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../hooks/useAuth";
 
 export const Login = () => {
-  const { setUser } = useAuth();
+  const { setUser, setLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -27,20 +27,24 @@ export const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
-      return toast.error("all fields are required");
+    try {
+      if (!formData.email || !formData.password) {
+        return toast.error("all fields are required");
+      }
+      setLoading(true);
+      const data = await login(formData.email, formData.password);
+      setLoading(false);
+      if (data) {
+        setUser(data);
+        navigate("/dashboard");
+      }
+      setFormData({
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      toast.error(error || error.message);
     }
-
-    const data = await login(formData.email, formData.password);
-
-    if (data) {
-      setUser(data);
-      navigate("/dashboard");
-    }
-    setFormData({
-      email: "",
-      password: "",
-    });
   };
 
   return (

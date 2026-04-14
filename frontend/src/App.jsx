@@ -1,15 +1,16 @@
-import "@fontsource/inter";
-import "@fontsource/poppins";
-import { useAuth } from "./hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import router from "./Routing/Index";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "./Context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { user } = useAuth();
-
-  return user ? (
-    <Navigate to="/dashboard" replace />
-  ) : (
-    <Navigate to="/login" replace />
+  return (
+    <>
+      <AuthProvider>
+        <RouterProvider router={router} />
+        <Toaster />
+      </AuthProvider>
+    </>
   );
 };
 

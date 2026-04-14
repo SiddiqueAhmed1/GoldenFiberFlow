@@ -6,6 +6,7 @@ import { MainLayout } from "../Layout/MainLayout";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Admin from "../Pages/Admin";
+import IndexRedirect from "./IndexRedirect";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     // with credentials private route
     children: [
+      {
+        path: "/",
+        element: <IndexRedirect />,
+      },
       {
         element: <ProtectedRoutes />,
         children: [
