@@ -1,10 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import logo from "../../public/gftcl.png";
+import logo from "../assets/gftcl.png";
 import { useState } from "react";
-import { login } from "../../lib/auth";
+import { login } from "../Services/authService";
 import toast from "react-hot-toast";
+import { useAuth } from "../hooks/useAuth";
 
 export const Login = () => {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -32,7 +34,7 @@ export const Login = () => {
     const data = await login(formData.email, formData.password);
 
     if (data) {
-      localStorage.setItem("user", JSON.stringify(data.data));
+      setUser(data);
       navigate("/dashboard");
     }
     setFormData({

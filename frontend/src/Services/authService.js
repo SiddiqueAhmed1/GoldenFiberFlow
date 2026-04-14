@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import api from "../utils/api";
+import api from "../Api/api";
 // login user
 export const login = async (email, password) => {
   try {
@@ -15,6 +15,8 @@ export const login = async (email, password) => {
     if (!res.data) {
       return toast.error("data not found");
     }
+    localStorage.setItem("user", JSON.stringify(res.data.data));
+    localStorage.setItem("accessToken", res.data.accessToken);
     toast.success("Login Succesfull");
     return res.data;
   } catch (error) {

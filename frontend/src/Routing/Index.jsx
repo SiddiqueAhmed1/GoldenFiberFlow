@@ -1,18 +1,38 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Login } from "../Pages/Login";
-import App from "../App";
 import { Register } from "../Pages/Register";
 import { Dashboard } from "../Pages/Dashboard";
+import { MainLayout } from "../Layout/MainLayout";
+import ProtectedRoutes from "./ProtectedRoutes";
+import PublicRoutes from "./PublicRoutes";
+import Admin from "../Pages/Admin";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <MainLayout />,
+    // with credentials private route
     children: [
       {
-        path: "/dashboard",
-        element: <Dashboard />,
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "/admin",
+            element: <Admin />,
+          },
+        ],
       },
+    ],
+  },
+
+  // without credentials public route
+  {
+    element: <PublicRoutes />,
+    children: [
       {
         path: "/login",
         element: <Login />,

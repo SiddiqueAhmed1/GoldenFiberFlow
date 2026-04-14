@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import logo from "../../public/gftcl.png";
+import logo from "../assets/gftcl.png";
 
 export const Register = () => {
   return (

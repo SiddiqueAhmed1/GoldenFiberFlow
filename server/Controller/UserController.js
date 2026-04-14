@@ -109,6 +109,7 @@ export const userLogin = async (req, res) => {
       message: "Login successfully done",
       success: true,
       error: false,
+      accessToken,
       data: userWithoutPassword,
     });
   } catch (error) {
