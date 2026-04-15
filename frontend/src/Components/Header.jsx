@@ -1,6 +1,7 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { FaBars, FaRegTimesCircle } from "react-icons/fa";
+import { Box, LogOut } from "lucide-react";
+import { FaBars, FaRegTimesCircle, FaUser } from "react-icons/fa";
 import logo from "../assets/gftcl.png";
 import { useState } from "react";
 
@@ -10,8 +11,8 @@ const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   const navItems = [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Admin", path: "/admin" },
+    { name: "Dashboard", path: "/dashboard", icon: <Box /> },
+    { name: "Admin", path: "/admin", icon: <FaUser /> },
   ];
 
   const handleLogOut = () => {
@@ -32,10 +33,10 @@ const Header = () => {
             {navItems.map((item) => {
               return (
                 <Link
-                  className={`text-lg text-neutral-700 p-3 ${location.pathname === item.path ? "bg-amber-600 text-white rounded-md " : ""}`}
+                  className={`text-lg text-neutral-700 p-3 flex items-center gap-2 ${location.pathname === item.path ? "bg-blue-600 text-white rounded-md " : "hover:bg-gray-200 rounded-md transition-all"}`}
                   to={item.path}
                 >
-                  {item.name}
+                  {item.icon} {item.name}
                 </Link>
               );
             })}
@@ -43,10 +44,10 @@ const Header = () => {
 
           <div>
             <button
-              className="bg-amber-500 px-3 py-3 text-neutral-100 rounded-md"
+              className="border-gray-500 flex gap-2 cursor-pointer hover:bg-neutral-50  border px-3 py-3 text-black font-semibold rounded-md"
               onClick={handleLogOut}
             >
-              Logout
+              <LogOut size={22} /> Logout
             </button>
           </div>
         </div>

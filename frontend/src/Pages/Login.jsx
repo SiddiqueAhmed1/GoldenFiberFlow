@@ -72,7 +72,7 @@ export const Login = () => {
               <div className="flex flex-col gap-1">
                 <label htmlFor="emailId">Email</label>
                 <input
-                  className="focus-within:outline-amber-500 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
+                  className="focus-within:outline-blue-600 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
                   id="emailId"
                   type="text"
                   name="email"
@@ -85,7 +85,7 @@ export const Login = () => {
               <div className="flex flex-col gap-1">
                 <label htmlFor="password">Password</label>
                 <input
-                  className="focus-within:outline-amber-500 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
+                  className="focus-within:outline-blue-600 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
                   id="password"
                   type="text"
                   name="password"
@@ -95,21 +95,21 @@ export const Login = () => {
                 />
               </div>
               {/* demo credentials */}
-              <div className="border border-amber-300 bg-amber-50 px-2 py-1 lg:px-4 lg:py-3 lg:mt-2 rounded-lg ">
-                <h2 className="text-amber-800 text-sm lg:text-lg">
+              <div className="border border-blue-300 bg-blue-50 px-2 py-1 lg:px-4 lg:py-3 lg:mt-2 rounded-lg ">
+                <h2 className="text-blue-800 text-sm lg:text-lg">
                   Demo credentials:
                 </h2>
-                <p className="text-amber-700 text-xs lg:text-sm">
+                <p className="text-blue-700 text-xs lg:text-sm">
                   Email: admin@example.com
                 </p>
-                <p className="text-amber-700 text-xs lg:text-sm">
+                <p className="text-blue-700 text-xs lg:text-sm">
                   Password: admin123
                 </p>
               </div>
               <div className="flex flex-col lg:mt-2">
                 <button
                   type="submit"
-                  className="bg-amber-500 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-amber-600 transition-all"
+                  className="bg-blue-600 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-blue-500 transition-all"
                 >
                   Sign In
                 </button>
@@ -122,7 +122,7 @@ export const Login = () => {
             <p className="lg:text-sm text-xs">
               Don't have account?{" "}
               <NavLink
-                className="text-amber-500 font-semibold hover:underline"
+                className="text-blue-500 font-semibold hover:underline"
                 to={"/register"}
               >
                 Register here

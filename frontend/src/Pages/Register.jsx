@@ -55,8 +55,11 @@ export const Register = () => {
               </div>
 
               <div className="flex flex-col lg:mt-2">
-                <button className="bg-amber-500 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-amber-600 transition-all">
-                  Sign In
+                <button
+                  type="submit"
+                  className="bg-blue-600 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-blue-500 transition-all"
+                >
+                  Register
                 </button>
               </div>
             </form>
@@ -67,7 +70,7 @@ export const Register = () => {
             <p className="lg:text-sm text-xs">
               Already have account?{" "}
               <NavLink
-                className="text-amber-500 font-semibold hover:underline"
+                className="text-blue-500 font-semibold hover:underline"
                 to={"/login"}
               >
                 Login here
