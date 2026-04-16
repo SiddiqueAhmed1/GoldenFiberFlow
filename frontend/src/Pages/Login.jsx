@@ -9,8 +9,8 @@ export const Login = () => {
   const { setUser, setLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "siddique@gmail.com",
+    password: "123456",
   });
 
   // handle input
@@ -72,7 +72,7 @@ export const Login = () => {
               <div className="flex flex-col gap-1">
                 <label htmlFor="emailId">Email</label>
                 <input
-                  className="focus-within:outline-blue-600 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
+                  className="focus-within:outline-blue-500 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
                   id="emailId"
                   type="text"
                   name="email"
@@ -85,7 +85,7 @@ export const Login = () => {
               <div className="flex flex-col gap-1">
                 <label htmlFor="password">Password</label>
                 <input
-                  className="focus-within:outline-blue-600 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
+                  className="focus-within:outline-blue-500 focus-within:outline-2 h-11 lg:h-[52px] w-full rounded-lg border outline-0 border-neutral-300 px-3 lg:text-lg text-sm"
                   id="password"
                   type="text"
                   name="password"
