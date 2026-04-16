@@ -20,7 +20,7 @@ const Header = () => {
   return (
     <>
       <header className="bg-white w-full ">
-        <div className="shadow">
+        <div className=" w-full border-b border-neutral-300">
           <div className=" flex max-w-360 justify-between items-center p-4 mx-auto">
             {/* header for desktop */}
             <Link to={"/dashboard"} className="flex gap-2 items-center">
@@ -81,17 +81,37 @@ const Header = () => {
           </div>
         </div>
         {mobileMenu && (
-          <div className="flex gap-5">
+          <div className="flex flex-col md:hidden mt-3 border-b border-neutral-300 backdrop">
             {navItems.map((item) => {
               return (
                 <Link
-                  className={`text-lg block text-neutral-700 p-3 ${location.pathname === item.path ? "bg-amber-600 text-white rounded-md " : ""}`}
+                  onClick={() => setMobileMenu((prev) => !prev)}
+                  className={`text-sm block text-neutral-700 p-3 mx-5 ${location.pathname === item.path ? "bg-blue-600 text-white rounded-md " : ""}`}
                   to={item.path}
                 >
                   {item.name}
                 </Link>
               );
             })}
+
+            <Link
+              onClick={() => setMobileMenu((prev) => !prev)}
+              className={`text-sm block mx-5 text-neutral-700 p-3 ${location.pathname === "/admin" ? "bg-blue-600 text-white rounded-md " : ""}`}
+              to={"/admin"}
+            >
+              Admin
+            </Link>
+            <div className="flex justify-between items-center mx-7 py-3 mt-3 border-t border-neutral-300">
+              <div>
+                <h1 className="text-sm text-neutral-900 font-semibold">
+                  {user?.name}
+                </h1>
+                <p className="text-sm text-neutral-500">{user?.role}</p>
+              </div>
+              <span>
+                <LogOut onClick={handleLogOut} size={20} />
+              </span>
+            </div>
           </div>
         )}
       </header>
