@@ -35,12 +35,19 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
     }));
   };
 
+  // update item fileds
+  const updateItemField = (index, field, value) => {
+    const newItem = [...formData.item];
+    newItem[index] = { ...newItem[index], [field]: value };
+    setFormData({ ...formData, item: newItem });
+  };
+
   return (
     <>
       {/* backdrop TODO:*/}
       <section className="fixed bg-neutral-800/60 transition top-0 left-0 bottom-0 right-0 flex justify-center items-center ">
         {/* modal FIXME:*/}
-        <div className="bg-white w-full max-w-200 max-h-[83vh] overflow-y-auto rounded-lg mx-4">
+        <div className="bg-white w-full max-w-200 max-h-[79vh] overflow-y-auto rounded-lg mx-4">
           {/* modal header TODO: */}
           <div className="sticky top-0 flex justify-between border-b border-neutral-300 p-6 z-50 bg-white">
             <div>
@@ -71,7 +78,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                   </label>
                   <input
                     name="senderName"
-                    value={formData.sender_details.name}
+                    value={formData?.sender_details?.name}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -217,7 +224,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                 {formData.item.map((item, index) => (
                   <div
                     key={index}
-                    className="border border-neutral-300 rounded-lg p-4"
+                    className="border border-neutral-300 rounded-lg p-4 my-3"
                   >
                     <div className="flex flex-col mb-4">
                       <label
@@ -232,6 +239,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                       <input
                         name="description"
                         value={item.description}
+                        onChange={(e) =>
+                          updateItemField(index, "description", e.target.value)
+                        }
                         className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                         type="text"
                         id="description"
@@ -246,6 +256,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                         <input
                           name="quantity"
                           value={item.quantity}
+                          onChange={(e) =>
+                            updateItemField(index, "quantity", e.target.value)
+                          }
                           className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                           type="text"
                           id="quantity"
@@ -258,6 +271,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                         <input
                           name="weight"
                           value={item.weight}
+                          onChange={(e) =>
+                            updateItemField(index, "weight", e.target.value)
+                          }
                           className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                           type="text"
                           id="weight"
@@ -272,6 +288,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                       <input
                         name="price"
                         value={item.price}
+                        onChange={(e) =>
+                          updateItemField(index, "price", e.target.value)
+                        }
                         className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                         type="text"
                         id="price"
@@ -281,14 +300,13 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                 ))}
               </div>
               <div className="flex flex-col my-4">
-                <label htmlFor="price" className="text-sm! mb-1">
+                <label htmlFor="status" className="text-sm! mb-1">
                   Status *
                 </label>
                 <select
                   name="status"
                   className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
-                  type=""
-                  id="price"
+                  id="status"
                 >
                   <option value="Pending">Pending</option>
                   <option value="In transit">In transit</option>
