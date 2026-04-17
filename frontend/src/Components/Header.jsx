@@ -21,7 +21,7 @@ const Header = () => {
     <>
       <header className="bg-white w-full ">
         <div className=" w-full border-b border-neutral-300">
-          <div className=" flex max-w-360 justify-between items-center p-4 mx-auto">
+          <div className="flex max-w-360 justify-between items-center p-4 mx-auto">
             {/* header for desktop */}
             <Link to={"/dashboard"} className="flex gap-2 items-center">
               <img height={60} width={60} src={logo} alt="GFTCL" />
