@@ -42,6 +42,11 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
     setFormData({ ...formData, item: newItem });
   };
 
+  // consignment form submit
+  const handleSubmit = () => {
+    // e.preventDefault();
+  };
+
   return (
     <>
       {/* backdrop TODO:*/}
@@ -68,7 +73,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
 
           {/* consignment form FIXME:*/}
           <div className="p-6">
-            <form>
+            <form onSubmit={handleSubmit}>
               {/* sender input TODO:*/}
               <div className="flex flex-col gap-3 border-b border-neutral-300 pb-5">
                 <h1 className=" text-[18px] text-black mb-2">Sender Details</h1>
@@ -77,6 +82,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Name *
                   </label>
                   <input
+                    required={true}
+                    required={true}
+                    required={true}
                     name="senderName"
                     value={formData?.sender_details?.name}
                     onChange={(e) =>
@@ -98,6 +106,9 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Address *
                   </label>
                   <input
+                    required={true}
+                    required={true}
+                    required={true}
                     name="senderAddress"
                     value={formData.sender_details.address}
                     onChange={(e) =>
@@ -119,6 +130,8 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Mobile *
                   </label>
                   <input
+                    required={true}
+                    required={true}
                     name="senderMobile"
                     value={formData.sender_details.mobile}
                     onChange={(e) =>
@@ -147,6 +160,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Name *
                   </label>
                   <input
+                    required={true}
                     name="receiverName"
                     value={formData.receiver_details.name}
                     onChange={(e) =>
@@ -168,6 +182,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Address *
                   </label>
                   <input
+                    required={true}
                     name="receiverAddress"
                     value={formData.receiver_details.address}
                     onChange={(e) =>
@@ -189,6 +204,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                     Mobile *
                   </label>
                   <input
+                    required={true}
                     name="receiverMobile"
                     value={formData.receiver_details.mobile}
                     onChange={(e) =>
@@ -224,7 +240,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                 {formData.item.map((item, index) => (
                   <div
                     key={index}
-                    className="border border-neutral-300 rounded-lg p-4 my-3"
+                    className="border border-neutral-300 rounded-lg p-4 mb-3"
                   >
                     <div className="flex flex-col mb-4">
                       <label
@@ -237,6 +253,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                         )}
                       </label>
                       <input
+                        required={true}
                         name="description"
                         value={item.description}
                         onChange={(e) =>
@@ -248,12 +265,13 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                       />
                     </div>
                     {/* quantity & weight */}
-                    <div className="flex justify-between items-center gap-3">
-                      <div className="flex flex-col mb-4 w-full">
+                    <div className="flex justify-between items-center gap-3 ">
+                      <div className="flex flex-col mb-4 w-30 md:w-full ">
                         <label htmlFor="quantity" className="text-sm! mb-1">
                           Quantity *
                         </label>
                         <input
+                          required={true}
                           name="quantity"
                           value={item.quantity}
                           onChange={(e) =>
@@ -264,11 +282,12 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                           id="quantity"
                         />
                       </div>
-                      <div className="flex flex-col mb-4 w-full">
+                      <div className="flex flex-col mb-4 w-30 md:w-full ">
                         <label htmlFor="weight" className="text-sm! mb-1">
-                          Weight *
+                          Weight * kg
                         </label>
                         <input
+                          required={true}
                           name="weight"
                           value={item.weight}
                           onChange={(e) =>
@@ -286,6 +305,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                         Price *
                       </label>
                       <input
+                        required={true}
                         name="price"
                         value={item.price}
                         onChange={(e) =>
@@ -314,17 +334,17 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
                   <option value="Cancelled">Cancelled</option>
                 </select>
               </div>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 mt-7">
                 <button
                   type="button"
                   onClick={() => setIsCreateConModal(false)}
-                  className=" border border-neutral-300 text-sm px-2 md:px-3 py-1 md:py-3 rounded-lg cursor-pointer "
+                  className=" border border-neutral-300 text-xs md:text-sm px-2 md:px-3 py-1 md:py-3 rounded-lg cursor-pointer "
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className=" border bg-blue-600 text-white text-sm px-2 md:px-3 py-1 md:py-3 rounded-lg cursor-pointer hover:bg-blue-700"
+                  className=" border bg-blue-600 text-white text-xs md:text-sm px-3 py-3 rounded-lg cursor-pointer hover:bg-blue-700"
                 >
                   Create Consignment
                 </button>

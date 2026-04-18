@@ -7,6 +7,9 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Admin from "../Pages/Admin";
 import IndexRedirect from "./IndexRedirect";
+import JsPdf from "../Pages/JsPdf";
+import { DashboardLayout } from "../Layout/DashboardLayout";
+import Pdf from "../Pages/Pdf";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +26,17 @@ const router = createBrowserRouter([
         children: [
           {
             path: "dashboard",
-            element: <Dashboard />,
+            element: <DashboardLayout />,
+            children: [
+              {
+                index: true,
+                element: <Dashboard />,
+              },
+              {
+                path: "consignment/:id",
+                element: <Pdf />,
+              },
+            ],
           },
           {
             path: "admin",

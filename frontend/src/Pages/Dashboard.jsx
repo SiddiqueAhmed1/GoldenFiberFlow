@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import ConsignmentModal from "../Components/ConsignmentModal";
+import { Outlet } from "react-router-dom";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
@@ -21,7 +22,7 @@ export const Dashboard = () => {
             <div>
               <button
                 onClick={() => setIsCreateConModal((prev) => !prev)}
-                className="flex items-center md:gap-1 border bg-blue-600 text-white text-sm px-2 md:px-3 py-1 md:py-3 rounded-md cursor-pointer hover:bg-blue-700"
+                className="flex items-center md:gap-1 border bg-blue-600 text-white text-sm md:text-lg px-2 md:px-3 py-1 md:py-3 rounded-md cursor-pointer hover:bg-blue-700"
               >
                 <Plus /> Create Consignment
               </button>
@@ -31,6 +32,8 @@ export const Dashboard = () => {
         {isCreateConModal && (
           <ConsignmentModal setIsCreateConModal={setIsCreateConModal} />
         )}
+
+        <Outlet />
       </section>
     </>
   );
