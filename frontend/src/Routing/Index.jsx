@@ -7,7 +7,6 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 import Admin from "../Pages/Admin";
 import IndexRedirect from "./IndexRedirect";
-import JsPdf from "../Pages/JsPdf";
 import { DashboardLayout } from "../Layout/DashboardLayout";
 import Pdf from "../Pages/Pdf";
 

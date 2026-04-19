@@ -19,7 +19,7 @@ const Header = () => {
   };
   return (
     <>
-      <header className="bg-white w-full ">
+      <header className="bg-white w-full sticky top-0 z-5">
         <div className=" w-full border-b border-b-gray-200 border-neutral-300 shadow-lg">
           <div className="flex max-w-360 justify-between items-center p-4 mx-auto">
             {/* header for desktop */}

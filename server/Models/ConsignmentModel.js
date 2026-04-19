@@ -40,7 +40,7 @@ const consignmentSchema = mongoose.Schema(
           type: Number,
           required: true,
         },
-        unit: {
+        weight: {
           type: String,
           default: "kg",
         },

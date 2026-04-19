@@ -1,14 +1,27 @@
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConsignmentModal from "../Components/ConsignmentModal";
 import ConsignmentTable from "../Components/ConsignmentTable";
+import { getConsignments } from "../Services/consignmentService";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
+  const [consignments, setConsignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadConsignments = async () => {
+      const data = await getConsignments();
+      setConsignments(data);
+      setLoading(false);
+    };
+
+    loadConsignments();
+  }, []);
 
   return (
     <>
-      <section className="bg-neutral-50 min-h-213.25">
+      <section className="bg-neutral-50 max-h-213.25">
         <div className="max-w-360 mx-auto">
           <div className="flex justify-between items-center py-5 md:py-10 mx-3">
             <div className=" flex flex-col gap-1">
@@ -26,7 +39,12 @@ export const Dashboard = () => {
               </button>
             </div>
           </div>
-          <ConsignmentTable setIsCreateConModal={setIsCreateConModal} />
+
+          <ConsignmentTable
+            setIsCreateConModal={setIsCreateConModal}
+            consignments={consignments}
+            loading={loading}
+          />
         </div>
 
         {isCreateConModal && (

@@ -8,8 +8,9 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner";
 
-const ConsignmentTable = ({ setIsCreateConModal }) => {
+const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
   return (
     <>
       <section>
@@ -42,11 +43,11 @@ const ConsignmentTable = ({ setIsCreateConModal }) => {
             </div>
           </div>
           {/* table */}
-          {/* <div className="my-5">
+          <div className="my-5 text-center">
             <table className="table-auto md:table-fixed border border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto">
               <thead className="bg-gray-50 ">
                 <tr className="border border-gray-300 text-sm font-light ">
-                  <th className="p-3 py-4 text-center ">COSNIGNMENT NO</th>
+                  <th className="p-3 py-4 text-center ">CONSIGNMENT NO</th>
                   <th className="p-3 py-4 text-center ">SENDER</th>
                   <th className="p-3 py-4 text-center ">RECEIVER</th>
                   <th className="p-3 py-4 text-center ">ITEMS</th>
@@ -55,45 +56,84 @@ const ConsignmentTable = ({ setIsCreateConModal }) => {
                   <th className="p-3 py-4 text-center ">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="w-full ">
-                <tr className="border border-gray-300 hover:bg-gray-50">
-                  <td className="p-3 py-6 text-center ">CN213</td>
-                  <td className="p-3 py-6 text-center ">Siddique</td>
-                  <td className="p-3 py-6 text-center ">Lamia</td>
-                  <td className="p-3 py-6 text-center ">2 item</td>
-                  <td className="p-3 py-6 text-center ">Pending</td>
-                  <td className="p-3 py-6 text-center ">18/4/2026</td>
-                  <td className="flex justify-center items-center p-3 py-6 gap-5 ">
-                    <button title="Download">
-                      <Download color="#576574" size={20} />
-                    </button>
-                    <button title="Edit">
-                      <Edit color="#576574" size={20} />
-                    </button>
-                    <button title="Delete">
-                      <Trash2 color="#576574" size={20} />
-                    </button>
-                  </td>
-                </tr>
+              <tbody className="w-full text-center">
+                {loading ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <LoadingSpinner />
+                    </td>
+                  </tr>
+                ) : consignments.length > 0 ? (
+                  consignments.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="border border-gray-300 hover:bg-gray-50"
+                    >
+                      <td className="p-3 py-6 text-center">
+                        CN-
+                        {parseInt(item._id.replace(/\D/g, ""))
+                          .toString()
+                          .slice(1, 7)}
+                      </td>
+                      <td className="p-3 py-6 text-center">
+                        {item.sender_details.name}
+                      </td>
+                      <td className="p-3 py-6 text-center">
+                        {item.receiver_details.name}
+                      </td>
+                      <td className="p-3 py-6 text-center">
+                        {item.items.length}
+                      </td>
+                      <td className="p-3 py-6 text-center">{item.status}</td>
+                      <td className="p-3 py-6 text-center">
+                        {item.createdAt.split("T")[0]}
+                      </td>
+                      <td className="flex justify-center items-center p-3 py-6 gap-5">
+                        <button
+                          className="flex flex-col items-center h-6 justify-center"
+                          title="Download"
+                        >
+                          <Download color="#576574" size={20} />
+                        </button>
+                        <button
+                          className="flex flex-col items-center h-6 justify-center"
+                          title="Edit"
+                        >
+                          <Edit color="#576574" size={20} />
+                        </button>
+                        <button
+                          className="flex flex-col items-center h-6 justify-center"
+                          title="Delete"
+                        >
+                          <Trash2 color="#576574" size={20} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="text-center flex items-center justify-center flex-col gap-3 py-6 h-100">
+                        <Box size={80} color="#bdc3c7" />
+                        <h1 className="text-2xl font-semibold text-black">
+                          No consignments found
+                        </h1>
+                        <p className="text-neutral-500 text-lg mb-2">
+                          Get started by creating your first consignment
+                        </p>
+                        <button
+                          onClick={() => setIsCreateConModal((prev) => !prev)}
+                          className="flex items-center gap-1 border bg-blue-600 text-white font-sans text-sm md:text-lg px-3 py-3 rounded-md cursor-pointer hover:bg-blue-700 font-semibold"
+                        >
+                          <Plus /> Create Consignment
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
-          </div> */}
-          {/* no item found section */}
-          {/* <div className="text-center flex items-center justify-center flex-col gap-3 py-6 h-100">
-            <Box size={80} color="#bdc3c7" />
-            <h1 className="text-2xl font-semibold text-black">
-              No consignments found
-            </h1>
-            <p className="text-neutral-500 text-lg mb-2">
-              Get started by creating your first consignment
-            </p>
-            <button
-              onClick={() => setIsCreateConModal((prev) => !prev)}
-              className="flex items-center gap-1 border bg-blue-600 text-white font-sans text-sm md:text-lg px-3 py-3 rounded-md cursor-pointer hover:bg-blue-700 font-semibold"
-            >
-              <Plus /> Create Consignment
-            </button>
-          </div> */}
+          </div>
         </div>
       </section>
     </>
