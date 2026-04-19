@@ -1,12 +1,13 @@
 import {
   Box,
-  Download,
   Edit,
+  Eye,
   Filter,
   LucideDelete,
   Plus,
   Search,
   Trash2,
+  View,
 } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -90,19 +91,19 @@ const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
                       </td>
                       <td className="flex justify-center items-center p-3 py-6 gap-5">
                         <button
-                          className="flex flex-col items-center h-6 justify-center"
-                          title="Download"
+                          className="flex flex-col items-center cursor-pointer h-6 justify-center"
+                          title="View"
                         >
-                          <Download color="#576574" size={20} />
+                          <Eye color="#576574" size={20} />
                         </button>
                         <button
-                          className="flex flex-col items-center h-6 justify-center"
+                          className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="Edit"
                         >
                           <Edit color="#576574" size={20} />
                         </button>
                         <button
-                          className="flex flex-col items-center h-6 justify-center"
+                          className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="Delete"
                         >
                           <Trash2 color="#576574" size={20} />

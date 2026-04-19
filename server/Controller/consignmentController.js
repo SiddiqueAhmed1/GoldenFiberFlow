@@ -33,11 +33,11 @@ export const getConsignment = async (req, res) => {
 
 // create consginment
 export const createConsignment = async (req, res) => {
-  const { sender, receiver, items, status } = req.body;
+  const { sender_details, receiver_details, item, status } = req.body;
   const userId = req.user.id;
 
   try {
-    if (!sender || !receiver || !items || !status) {
+    if (!sender_details || !receiver_details || !item || !status) {
       return res.status(500).json({
         message: "All fields are required",
         success: false,
@@ -48,16 +48,16 @@ export const createConsignment = async (req, res) => {
     // add consignment to db
     const consignment = await ConsignmentModel.create({
       sender_details: {
-        name: sender.name,
-        address: sender.address,
-        mobile: sender.mobile,
+        name: sender_details.name,
+        address: sender_details.address,
+        mobile: sender_details.mobile,
       },
       receiver_details: {
-        name: receiver.name,
-        address: receiver.address,
-        mobile: receiver.mobile,
+        name: receiver_details.name,
+        address: receiver_details.address,
+        mobile: receiver_details.mobile,
       },
-      items,
+      items: item,
       status,
       createdBy: userId,
     });

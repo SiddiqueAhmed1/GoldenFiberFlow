@@ -1,5 +1,6 @@
 import { Plus, Trash, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
+import { createConsignments } from "../Services/consignmentService";
 
 const ConsignmentModal = ({ setIsCreateConModal }) => {
   const [formData, setFormData] = useState({
@@ -43,8 +44,17 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
   };
 
   // consignment form submit
-  const handleSubmit = () => {
-    // e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = await createConsignments(
+      formData.sender_details,
+      formData.receiver_details,
+      formData.item,
+      formData.status,
+    );
+    console.log("data from modal", data);
+    console.log("form data", formData);
   };
 
   return (
@@ -52,7 +62,7 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
       {/* backdrop TODO:*/}
       <section className="fixed bg-neutral-800/60 transition top-0 left-0 bottom-0 right-0 flex justify-center items-center ">
         {/* modal FIXME:*/}
-        <div className="bg-white w-full max-w-200 max-h-[79vh] overflow-y-auto rounded-lg mx-4">
+        <div className="bg-white w-full max-w-200 max-h-[79vh] md:mt-20 overflow-y-auto rounded-lg mx-4">
           {/* modal header TODO: */}
           <div className="sticky top-0 flex justify-between border-b border-neutral-300 p-6 z-50 bg-white">
             <div>
