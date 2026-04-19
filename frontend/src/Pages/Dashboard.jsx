@@ -1,20 +1,18 @@
 import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import ConsignmentModal from "../Components/ConsignmentModal";
-import { Outlet } from "react-router-dom";
+import ConsignmentTable from "../Components/ConsignmentTable";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
 
   return (
     <>
-      <section>
-        <div className="max-w-360 mx-auto ">
-          <div className="flex justify-between items-center my-10 mx-3">
+      <section className="bg-neutral-50 min-h-213.25">
+        <div className="max-w-360 mx-auto">
+          <div className="flex justify-between items-center py-5 md:py-10 mx-3">
             <div className=" flex flex-col gap-1">
-              <h1 className="md:text-4xl text-xl font-extrabold ">
-                Consignments
-              </h1>
+              <h1 className="md:text-4xl text-xl font-bold">Consignments</h1>
               <p className="text-neutral-600 text-sm md:text-lg">
                 Manage and track all your consignment records
               </p>
@@ -28,12 +26,12 @@ export const Dashboard = () => {
               </button>
             </div>
           </div>
+          <ConsignmentTable setIsCreateConModal={setIsCreateConModal} />
         </div>
+
         {isCreateConModal && (
           <ConsignmentModal setIsCreateConModal={setIsCreateConModal} />
         )}
-
-        <Outlet />
       </section>
     </>
   );
