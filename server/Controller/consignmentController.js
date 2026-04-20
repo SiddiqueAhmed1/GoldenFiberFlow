@@ -18,8 +18,8 @@ export const getConsignment = async (req, res) => {
 
     return res.status(200).json({
       message: "Consignment get succesfull",
-      success: false,
-      error: true,
+      success: true,
+      error: false,
       data: consignment,
     });
   } catch (error) {

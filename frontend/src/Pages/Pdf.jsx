@@ -61,7 +61,7 @@ const Pdf = () => {
 
   return (
     <section className="bg-neutral-700 min-h-screen">
-      {/* Buttons */}
+      {/* Buttons FIXME:*/}
       <div className="flex justify-center gap-3 py-4">
         <button
           title="Download PDF"
@@ -83,7 +83,7 @@ const Pdf = () => {
         </button>
       </div>
 
-      {/* A4 Page */}
+      {/* A4 Page TODO:*/}
       <div className="flex justify-center pb-10">
         <div
           ref={boxRef}
@@ -92,47 +92,110 @@ const Pdf = () => {
         >
           <header className="border-b-2 border-neutral-400 pb-3">
             <h2 className="text-xl">Consignment</h2>
-            <h1 className="text-2xl">M/S Kobir Enterprise</h1>
+            <h1 className="text-xl">Pro: M/S Kobir Enterprise</h1>
             <h5 className="text-xl">Md. Jahangir Kabir</h5>
-            <p className="bg-gray-200 rounded py-3 text-xl">
+            <p className="bg-gray-200 rounded py-2 text-lg inline-block px-5">
               General Businessman
             </p>
+            <p>মোকাম : সিমলা বাজার, সরিষাবাড়ী, জামালপুর</p>
             <span className="text-lg">Mobile: 01986949894</span>
           </header>
-          {/* receiver details */}
-          <div className="my-3 flex flex-col gap-2">
-            <div className="flex justify-between">
-              <p className="flex flex-1 ml-5">Consignment no : </p>
-              <p className="w-64">Date: </p>
+          {/* receiver details FIXME:*/}
+          <div className="mt-5 mb-7 flex flex-col gap-5 ">
+            <div className="flex justify-between mx-5">
+              <p className="flex flex-1">Consignment no : </p>
+              <div className="flex items-start gap-2 ">
+                <span className="">Date: </span>
+                <div className="">..........................</div>
+              </div>
             </div>
-            <div className="text-left ml-5 flex flex-col gap-2 ">
-              <div className="flex items-end gap-2">
-                <span className="whitespace-nowrap">Receiver:</span>
-                <div className="flex-1 border-t border-gray-400"></div>
+            <div className="mx-5 flex flex-col gap-5">
+              <div className="flex items-start gap-2 ">
+                <span className="whitespace-nowrap">Receiver :</span>
+                <div className="flex-1 border-t border-gray-800 mt-2"></div>
               </div>
 
-              <div className="flex items-end gap-2">
-                <span className="whitespace-nowrap">Address:</span>
-                <div className="flex-1 border-b border-gray-400"></div>
+              <div className="flex items-start gap-2">
+                <span className="whitespace-nowrap">Address :</span>
+                <div className="flex-1 border-b border-gray-800 mt-2"></div>
               </div>
             </div>
           </div>
+          {/* table TODO: */}
           <table className="border-collapse border border-gray-400 w-full mt-3">
             <thead>
-              <tr>
-                <th className="border border-gray-300 p-3">
-                  Vehicles Description
+              <tr className="w-full">
+                <th rowSpan={2} className="border w-[16%] border-black p-3">
+                  Vehicles Description / Track no.
                 </th>
-                <th className="border border-gray-300 p-3">Driver</th>
+                <th rowSpan={2} className="border w-[12%] border-black p-3">
+                  Driver Signature
+                </th>
+                <th colSpan={2} className="border w-[12%] border-black p-3">
+                  Goods Des & Grade
+                </th>
+                <th colSpan={2} className="border w-[12%] border-black p-3">
+                  Amount
+                </th>
+              </tr>
+              <tr>
+                <th className="border border-black w-[12%] p-3">Description</th>
+                <th className="border border-black w-[12%] p-3">Grade</th>
+                <th className="border border-black w-[12%] p-3">KG</th>
+                <th className="border border-black w-[12%] p-3">Mon </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="border border-gray-300 p-3">Bus</td>
-                <td className="border border-gray-300 p-3">Siddique</td>
+                <td rowSpan={4} className="border border-black p-3">
+                  D.M.T-20 <br />
+                  8672
+                </td>
+                <td rowSpan={4} className="border border-black p-3"></td>
+                <td className="border border-black p-3">Kenaf</td>
+                <td className="border border-black p-3">1 </td>
+                <td className="border border-black p-3">2 </td>
+                <td className="border border-black p-3">3</td>
+              </tr>
+              <tr>
+                <td className="border border-black p-3">White </td>
+                <td className="border border-black p-3">4 </td>
+                <td className="border border-black p-3">5 </td>
+                <td className="border border-black p-3">6 </td>
+              </tr>
+              <tr>
+                <td className="border border-black p-3">Tossa</td>
+                <td className="border border-black p-3">7 </td>
+                <td className="border border-black p-3"> 8</td>
+                <td className="border border-black p-3">9 </td>
+              </tr>
+              <tr>
+                <td className="border border-black p-3">Meshta</td>
+                <td className="border border-black p-3">Cutting </td>
+                <td className="border border-black p-3">120 </td>
+                <td className="border border-black p-3">3 </td>
+              </tr>
+              <tr>
+                <td className=" p-3 border-transparent border border-r-black"></td>
+                <td colSpan={3} className="border border-black p-3">
+                  <strong>Total:</strong> kg/Mon
+                </td>
+
+                <td className="border border-black p-3"></td>
+                <td className="border border-black p-3">254/=</td>
               </tr>
             </tbody>
           </table>
+          {/* table footer FIXME:*/}
+          <div className="flex flex-col mx-5 mt-15 gap-8">
+            <div className="flex flex-col gap-5  text-start">
+              <p>Seal</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p>Recipent :</p>
+              <h1>Sender Signature..............................</h1>
+            </div>
+          </div>
         </div>
       </div>
     </section>

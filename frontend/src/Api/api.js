@@ -21,12 +21,15 @@ api.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
+      localStorage.removeItem("user");
       localStorage.removeItem("accessToken");
+
       window.location.href = "/login";
     }
     if (error.response.status === 500) {
       alert("server error");
     }
+    return Promise.reject(error);
   },
 );
 

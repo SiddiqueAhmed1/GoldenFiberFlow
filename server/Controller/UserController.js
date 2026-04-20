@@ -66,7 +66,7 @@ export const userLogin = async (req, res) => {
   try {
     const { email, password: userPassword } = req.body;
     if (!email || !userPassword) {
-      return res.status(500).json({
+      return res.status(401).json({
         message: "All fields are required",
       });
     }
@@ -74,7 +74,7 @@ export const userLogin = async (req, res) => {
     // check user
     const userExist = await UserModel.findOne({ email });
     if (!userExist) {
-      return res.status(500).json({
+      return res.status(401).json({
         message: "Wrong email",
         success: false,
         error: true,
@@ -84,7 +84,7 @@ export const userLogin = async (req, res) => {
     // compare password with db
     const passCheck = await bcrypt.compare(userPassword, userExist.password);
     if (!passCheck) {
-      return res.status(500).json({
+      return res.status(401).json({
         message: "Password is wrong",
       });
     }
@@ -105,7 +105,7 @@ export const userLogin = async (req, res) => {
     // send success response
     const { refresh_token, password, ...userWithoutPassword } =
       userExist.toObject();
-    res.status(200).json({
+    return res.status(201).json({
       message: "Login successfully done",
       success: true,
       error: false,

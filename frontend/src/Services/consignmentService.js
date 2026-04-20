@@ -5,9 +5,9 @@ import Swal from "sweetalert2";
 export const getConsignments = async () => {
   try {
     const consginment = await api.get("/api/v1/getConsignment");
-    // if (!consginment) {
-    //   throw new Error("Consignment not found");
-    // }
+    if (!consginment) {
+      throw new Error("Consignment not found");
+    }
 
     return consginment.data.data;
   } catch (error) {
