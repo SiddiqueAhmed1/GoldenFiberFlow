@@ -10,8 +10,14 @@ import {
   View,
 } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
+import { NavLink } from "react-router-dom";
 
-const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
+const ConsignmentTable = ({
+  setIsCreateConModal,
+  consignments,
+  loading,
+  handleDeleteConsignment,
+}) => {
   return (
     <>
       <section>
@@ -45,18 +51,24 @@ const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
           </div>
           {/* table */}
           <div className="my-5 text-center">
-            <table className="table-auto md:table-fixed border border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto">
-              <thead className="bg-gray-50 ">
-                <tr className="border border-gray-300 text-sm font-light ">
-                  <th className="p-3 py-4 text-center ">CONSIGNMENT NO</th>
-                  <th className="p-3 py-4 text-center ">SENDER</th>
-                  <th className="p-3 py-4 text-center ">RECEIVER</th>
-                  <th className="p-3 py-4 text-center ">ITEMS</th>
-                  <th className="p-3 py-4 text-center ">STATUS</th>
-                  <th className="p-3 py-4 text-center ">CREATED</th>
-                  <th className="p-3 py-4 text-center ">ACTIONS</th>
-                </tr>
-              </thead>
+            <table
+              className={`table-auto md:table-fixed ${consignments.length > 0 && "border"}  border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto`}
+            >
+              {consignments.length > 0 ? (
+                <thead className="bg-gray-50 ">
+                  <tr className="border border-gray-300 text-sm font-light ">
+                    <th className="p-3 py-4 text-center ">CONSIGNMENT NO</th>
+                    <th className="p-3 py-4 text-center ">SENDER</th>
+                    <th className="p-3 py-4 text-center ">RECEIVER</th>
+                    <th className="p-3 py-4 text-center ">ITEMS</th>
+                    <th className="p-3 py-4 text-center ">STATUS</th>
+                    <th className="p-3 py-4 text-center ">CREATED</th>
+                    <th className="p-3 py-4 text-center ">ACTIONS</th>
+                  </tr>
+                </thead>
+              ) : (
+                ""
+              )}
               <tbody className="w-full text-center">
                 {loading ? (
                   <tr>
@@ -87,14 +99,21 @@ const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
                       </td>
                       <td className="p-3 py-6 text-center">{item.status}</td>
                       <td className="p-3 py-6 text-center">
-                        {item.createdAt.split("T")[0]}
+                        {new Date(item.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
                       </td>
                       <td className="flex justify-center items-center p-3 py-6 gap-5">
                         <button
+                          to
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="View"
                         >
-                          <Eye color="#576574" size={20} />
+                          <NavLink to={`/dashboard/consignment/${item._id}`}>
+                            <Eye color="#576574" size={20} />
+                          </NavLink>
                         </button>
                         <button
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
@@ -103,6 +122,7 @@ const ConsignmentTable = ({ setIsCreateConModal, consignments, loading }) => {
                           <Edit color="#576574" size={20} />
                         </button>
                         <button
+                          onClick={() => handleDeleteConsignment(item._id)}
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="Delete"
                         >

@@ -3,25 +3,52 @@ import React, { useEffect, useState } from "react";
 import ConsignmentModal from "../Components/ConsignmentModal";
 import ConsignmentTable from "../Components/ConsignmentTable";
 import { getConsignments } from "../Services/consignmentService";
+import { deleteConsignment } from "../Services/consignmentService";
+import Swal from "sweetalert2";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
   const [consignments, setConsignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadConsignments = async () => {
-      const data = await getConsignments();
-      setConsignments(data);
-      setLoading(false);
-    };
+  // get consignments
+  const loadConsignments = async () => {
+    const data = await getConsignments();
+    setConsignments(data);
+    setLoading(false);
+  };
 
+  useEffect(() => {
     loadConsignments();
   }, []);
 
+  // consginment delete
+  const handleDeleteConsignment = async (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteConsignment(id);
+        consignments.filter((item) => item._id !== id);
+        loadConsignments();
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+      }
+    });
+  };
+
   return (
     <>
-      <section className="bg-neutral-50 max-h-213.25">
+      <section className="bg-neutral-50 min-h-205">
         <div className="max-w-360 mx-auto">
           <div className="flex justify-between items-center py-5 md:py-10 mx-3">
             <div className=" flex flex-col gap-1">
@@ -41,14 +68,19 @@ export const Dashboard = () => {
           </div>
 
           <ConsignmentTable
+            handleDeleteConsignment={handleDeleteConsignment}
             setIsCreateConModal={setIsCreateConModal}
             consignments={consignments}
             loading={loading}
+            setConsignments={setConsignments}
           />
         </div>
 
         {isCreateConModal && (
-          <ConsignmentModal setIsCreateConModal={setIsCreateConModal} />
+          <ConsignmentModal
+            setIsCreateConModal={setIsCreateConModal}
+            setConsignments={setConsignments}
+          />
         )}
       </section>
     </>

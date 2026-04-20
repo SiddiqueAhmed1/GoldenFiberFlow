@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Box, LogOut } from "lucide-react";
 import { FaBars, FaRegTimesCircle, FaUser } from "react-icons/fa";
-import logo from "../assets/gftcl.png";
+// import logo from "../assets/gftcl.png";
 import { useState } from "react";
 
 const Header = () => {
@@ -23,9 +23,9 @@ const Header = () => {
         <div className=" w-full border-b border-b-gray-200 border-neutral-300 shadow-lg">
           <div className="flex max-w-360 justify-between items-center p-4 mx-auto">
             {/* header for desktop */}
-            <Link to={"/dashboard"} className="flex gap-2 items-center">
+            {/* <Link to={"/dashboard"} className="flex gap-2 items-center">
               <img height={60} width={60} src={logo} alt="GFTCL" />
-            </Link>
+            </Link> */}
 
             {/* desktop navItem */}
             <div className="md:flex gap-5 hidden">

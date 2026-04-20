@@ -1,8 +1,9 @@
 import { Plus, Trash, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
 import { createConsignments } from "../Services/consignmentService";
+import { toast } from "react-hot-toast";
 
-const ConsignmentModal = ({ setIsCreateConModal }) => {
+const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
   const [formData, setFormData] = useState({
     sender_details: {
       name: "",
@@ -53,8 +54,37 @@ const ConsignmentModal = ({ setIsCreateConModal }) => {
       formData.item,
       formData.status,
     );
-    console.log("data from modal", data);
-    console.log("form data", formData);
+
+    if (data) {
+      setConsignments((prev) => [...prev, data]);
+      toast.success("Consignments added succesfull", {
+        duration: 3000,
+      });
+      setIsCreateConModal(false);
+    }
+
+    // reset form after submit
+    setFormData({
+      sender_details: {
+        name: "",
+        address: "",
+        mobile: "",
+      },
+      receiver_details: {
+        name: "",
+        address: "",
+        mobile: "",
+      },
+      item: [
+        {
+          description: "",
+          quantity: "",
+          weight: "",
+          price: "",
+        },
+      ],
+      status: "Pending",
+    });
   };
 
   return (

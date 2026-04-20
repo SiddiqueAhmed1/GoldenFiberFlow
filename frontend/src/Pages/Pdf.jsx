@@ -87,7 +87,7 @@ const Pdf = () => {
       <div className="flex justify-center pb-10">
         <div
           ref={boxRef}
-          style={{ width: "794px", minHeight: "1123px" }}
+          style={{ width: "794px", minHeight: "1115px" }}
           className="bg-white p-6 text-center"
         >
           <header className="border-b-2 border-neutral-400 pb-3">
@@ -99,6 +99,24 @@ const Pdf = () => {
             </p>
             <span className="text-lg">Mobile: 01986949894</span>
           </header>
+          {/* receiver details */}
+          <div className="my-3 flex flex-col gap-2">
+            <div className="flex justify-between">
+              <p className="flex flex-1 ml-5">Consignment no : </p>
+              <p className="w-64">Date: </p>
+            </div>
+            <div className="text-left ml-5 flex flex-col gap-2 ">
+              <div className="flex items-end gap-2">
+                <span className="whitespace-nowrap">Receiver:</span>
+                <div className="flex-1 border-t border-gray-400"></div>
+              </div>
+
+              <div className="flex items-end gap-2">
+                <span className="whitespace-nowrap">Address:</span>
+                <div className="flex-1 border-b border-gray-400"></div>
+              </div>
+            </div>
+          </div>
           <table className="border-collapse border border-gray-400 w-full mt-3">
             <thead>
               <tr>
