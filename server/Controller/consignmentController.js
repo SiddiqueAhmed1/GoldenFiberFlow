@@ -99,3 +99,26 @@ export const deleteConsignment = async (req, res) => {
     });
   }
 };
+
+// get single consignment
+export const singleConsignment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // get consignment form db
+    const consignment = await ConsignmentModel.findById(id);
+
+    return res.status(200).json({
+      message: "Consignment get successfull",
+      success: true,
+      error: false,
+      data: consignment,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error || error.message,
+      success: false,
+      error: true,
+    });
+  }
+};

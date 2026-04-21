@@ -52,3 +52,9 @@ export const deleteConsignment = async (id) => {
     throw new Error(error || error.message);
   }
 };
+
+// get single consignment
+export const getSingleConsignment = async (id) => {
+  const singleConsignment = await api.get(`/api/v1/singleConsignment/${id}`);
+  return singleConsignment.data.data;
+};

@@ -4,6 +4,7 @@ import {
   createConsignment,
   deleteConsignment,
   getConsignment,
+  singleConsignment,
 } from "../Controller/consignmentController.js";
 
 // init router
@@ -12,5 +13,6 @@ const router = express.Router();
 router.post("/createConsignment", authMiddleware, createConsignment);
 router.get("/getConsignment", authMiddleware, getConsignment);
 router.delete("/deleteConsignment/:id", authMiddleware, deleteConsignment);
+router.get("/singleConsignment/:id", authMiddleware, singleConsignment);
 
 export default router;

@@ -59,6 +59,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
       setConsignments((prev) => [...prev, data]);
       toast.success("Consignments added succesfull", {
         duration: 3000,
+        position: " top",
       });
       setIsCreateConModal(false);
     }

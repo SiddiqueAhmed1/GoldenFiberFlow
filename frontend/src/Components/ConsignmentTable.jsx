@@ -11,12 +11,14 @@ import {
 } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
 import { NavLink } from "react-router-dom";
+import { consignmentId } from "../utils/ConsignmentId";
 
 const ConsignmentTable = ({
   setIsCreateConModal,
   consignments,
   loading,
   handleDeleteConsignment,
+  handleViewConsignment,
 }) => {
   return (
     <>
@@ -83,10 +85,7 @@ const ConsignmentTable = ({
                       className="border border-gray-300 hover:bg-gray-50"
                     >
                       <td className="p-3 py-6 text-center">
-                        CN-
-                        {parseInt(item._id.replace(/\D/g, ""))
-                          .toString()
-                          .slice(1, 7)}
+                        {consignmentId(item._id)}
                       </td>
                       <td className="p-3 py-6 text-center">
                         {item.sender_details.name}
@@ -111,7 +110,10 @@ const ConsignmentTable = ({
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="View"
                         >
-                          <NavLink to={`/dashboard/consignment/${item._id}`}>
+                          <NavLink
+                            onClick={() => handleViewConsignment(item._id)}
+                            to={`/dashboard/consignment/${item._id}`}
+                          >
                             <Eye color="#576574" size={20} />
                           </NavLink>
                         </button>

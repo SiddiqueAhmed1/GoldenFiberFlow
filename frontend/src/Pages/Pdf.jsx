@@ -1,13 +1,35 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
 import toast from "react-hot-toast";
 import { Download, Printer } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
+import { useParams } from "react-router-dom";
+import { getSingleConsignment } from "../Services/consignmentService";
+import LoadingSpinner from "../Components/LoadingSpinner";
+import { consignmentId } from "../utils/ConsignmentId";
 
 const Pdf = () => {
   const boxRef = useRef(null);
   const [loader, setLoader] = useState(false);
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [selectedConsignment, setSelectedConsignment] = useState(null);
+  console.log("selectedConsignment", selectedConsignment?.items);
+
+  useEffect(() => {
+    const handleViewConsignment = async () => {
+      try {
+        const data = await getSingleConsignment(id);
+        setSelectedConsignment(data);
+      } catch (error) {
+        throw new Error(error || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    handleViewConsignment();
+  }, [id]);
 
   const handleDownloadPdf = async () => {
     const element = boxRef.current;
@@ -48,20 +70,20 @@ const Pdf = () => {
     contentRef: boxRef,
     documentTitle: "Consignment",
     pageStyle: `
-    @page {
-      margin: 0;
-    }
-    @media print {
-      body {
-        margin: 0;
+      @page { margin: 0; }
+      @media print {
+        body {
+          margin: 0;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
       }
-    }
-  `,
+    `,
   });
 
   return (
     <section className="bg-neutral-700 min-h-screen">
-      {/* Buttons FIXME:*/}
+      {/* Buttons */}
       <div className="flex justify-center gap-3 py-4">
         <button
           title="Download PDF"
@@ -83,119 +105,150 @@ const Pdf = () => {
         </button>
       </div>
 
-      {/* A4 Page TODO:*/}
+      {/* A4 Page */}
       <div className="flex justify-center pb-10">
         <div
           ref={boxRef}
           style={{ width: "794px", minHeight: "1115px" }}
-          className="bg-white p-6 text-center"
+          className="bg-white px-20 pt-16 text-center"
         >
-          <header className="border-b-2 border-neutral-400 pb-3">
-            <h2 className="text-xl">Consignment</h2>
-            <h1 className="text-xl">Pro: M/S Kobir Enterprise</h1>
-            <h5 className="text-xl">Md. Jahangir Kabir</h5>
-            <p className="bg-gray-200 rounded py-2 text-lg inline-block px-5">
-              General Businessman
-            </p>
-            <p>মোকাম : সিমলা বাজার, সরিষাবাড়ী, জামালপুর</p>
-            <span className="text-lg">Mobile: 01986949894</span>
-          </header>
-          {/* receiver details FIXME:*/}
-          <div className="mt-5 mb-7 flex flex-col gap-5 ">
-            <div className="flex justify-between mx-5">
-              <p className="flex flex-1">Consignment no : </p>
-              <div className="flex items-start gap-2 ">
-                <span className="">Date: </span>
-                <div className="">..........................</div>
-              </div>
-            </div>
-            <div className="mx-5 flex flex-col gap-5">
-              <div className="flex items-start gap-2 ">
-                <span className="whitespace-nowrap">Receiver :</span>
-                <div className="flex-1 border-t border-gray-800 mt-2"></div>
+          {loading ? (
+            <LoadingSpinner border="gray" color="gray" />
+          ) : (
+            <>
+              {/* Header */}
+              <header className="border-b-2 border-neutral-400 pb-3">
+                <h2 className="text-xl">Consignment</h2>
+                <h1 className="text-xl">Pro: M/S Kobir Enterprise</h1>
+                <h5 className="text-xl">Md. Jahangir Kabir</h5>
+                <p
+                  className="bg-gray-200 rounded py-2 text-lg inline-block px-5"
+                  style={{
+                    printColorAdjust: "exact",
+                    WebkitPrintColorAdjust: "exact",
+                  }}
+                >
+                  General Businessman
+                </p>
+                <p>মোকাম : সিমলা বাজার, সরিষাবাড়ী, জামালপুর</p>
+                <span className="text-lg">Mobile: 01986949894</span>
+              </header>
+
+              {/* Receiver Details */}
+              <div className="mt-5 mb-7 flex flex-col gap-5">
+                <div className="flex justify-between mx-5">
+                  <p className="flex flex-1">
+                    Consignment no : {consignmentId(selectedConsignment._id)}
+                  </p>
+                  <div className="flex items-start gap-2">
+                    <span>Date: </span>
+                    <div>
+                      {new Date(
+                        selectedConsignment?.createdAt,
+                      ).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div className="mx-5 flex flex-col gap-5">
+                  <div className="flex items-start gap-2">
+                    <span className="whitespace-nowrap">Receiver :</span>
+                    <span className="font-semibold">
+                      {selectedConsignment?.receiver_details?.name}
+                    </span>
+                    <div className="flex-1 border-t border-gray-800 mt-3"></div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="whitespace-nowrap">Address :</span>
+                    <span className="font-semibold">
+                      {selectedConsignment?.receiver_details?.address}
+                    </span>
+                    <div className="flex-1 border-b border-gray-800 mt-3"></div>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-start gap-2">
-                <span className="whitespace-nowrap">Address :</span>
-                <div className="flex-1 border-b border-gray-800 mt-2"></div>
-              </div>
-            </div>
-          </div>
-          {/* table TODO: */}
-          <table className="border-collapse border border-gray-400 w-full mt-3">
-            <thead>
-              <tr className="w-full">
-                <th rowSpan={2} className="border w-[16%] border-black p-3">
-                  Vehicles Description / Track no.
-                </th>
-                <th rowSpan={2} className="border w-[12%] border-black p-3">
-                  Driver Signature
-                </th>
-                <th colSpan={2} className="border w-[12%] border-black p-3">
-                  Goods Des & Grade
-                </th>
-                <th colSpan={2} className="border w-[12%] border-black p-3">
-                  Amount
-                </th>
-              </tr>
-              <tr>
-                <th className="border border-black w-[12%] p-3">Description</th>
-                <th className="border border-black w-[12%] p-3">Grade</th>
-                <th className="border border-black w-[12%] p-3">KG</th>
-                <th className="border border-black w-[12%] p-3">Mon </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td rowSpan={4} className="border border-black p-3">
-                  D.M.T-20 <br />
-                  8672
-                </td>
-                <td rowSpan={4} className="border border-black p-3"></td>
-                <td className="border border-black p-3">Kenaf</td>
-                <td className="border border-black p-3">1 </td>
-                <td className="border border-black p-3">2 </td>
-                <td className="border border-black p-3">3</td>
-              </tr>
-              <tr>
-                <td className="border border-black p-3">White </td>
-                <td className="border border-black p-3">4 </td>
-                <td className="border border-black p-3">5 </td>
-                <td className="border border-black p-3">6 </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-3">Tossa</td>
-                <td className="border border-black p-3">7 </td>
-                <td className="border border-black p-3"> 8</td>
-                <td className="border border-black p-3">9 </td>
-              </tr>
-              <tr>
-                <td className="border border-black p-3">Meshta</td>
-                <td className="border border-black p-3">Cutting </td>
-                <td className="border border-black p-3">120 </td>
-                <td className="border border-black p-3">3 </td>
-              </tr>
-              <tr>
-                <td className=" p-3 border-transparent border border-r-black"></td>
-                <td colSpan={3} className="border border-black p-3">
-                  <strong>Total:</strong> kg/Mon
-                </td>
+              {/* Table */}
+              <table className="border-collapse border border-gray-400 w-full mt-3">
+                <thead>
+                  <tr>
+                    <th rowSpan={2} className="border w-[16%] border-black p-3">
+                      Vehicles Description / Track no.
+                    </th>
+                    <th rowSpan={2} className="border w-[12%] border-black p-3">
+                      Driver Signature
+                    </th>
+                    <th colSpan={2} className="border w-[12%] border-black p-3">
+                      Goods Des & Grade
+                    </th>
+                    <th colSpan={2} className="border w-[12%] border-black p-3">
+                      Amount
+                    </th>
+                  </tr>
+                  <tr>
+                    <th className="border border-black w-[12%] p-3">
+                      Description
+                    </th>
+                    <th className="border border-black w-[12%] p-3">Grade</th>
+                    <th className="border border-black w-[12%] p-3">KG</th>
+                    <th className="border border-black w-[12%] p-3">Mon</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedConsignment?.items?.map((item, index) => (
+                    <tr key={index}>
+                      {index === 0 && (
+                        <>
+                          <td
+                            rowSpan={selectedConsignment.items.length}
+                            className="border border-black p-3"
+                          >
+                            {selectedConsignment?.vehicle_description}
+                          </td>
+                          <td
+                            rowSpan={selectedConsignment.items.length}
+                            className="border border-black p-3"
+                          ></td>
+                        </>
+                      )}
+                      <td className="border border-black p-3">
+                        {item.description}
+                      </td>
+                      <td className="border border-black p-3">{item.grade}</td>
+                      <td className="border border-black p-3">{item.weight}</td>
+                      <td className="border border-black p-3">
+                        {item.weight / 40}
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td className="p-3 border-transparent border border-r-black"></td>
+                    <td colSpan={3} className="border border-black p-3">
+                      <strong>Total:</strong> kg/Mon
+                    </td>
+                    <td className="border border-black p-3"></td>
+                    <td className="border border-black p-3">
+                      {selectedConsignment?.total_amount}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
-                <td className="border border-black p-3"></td>
-                <td className="border border-black p-3">254/=</td>
-              </tr>
-            </tbody>
-          </table>
-          {/* table footer FIXME:*/}
-          <div className="flex flex-col mx-5 mt-15 gap-8">
-            <div className="flex flex-col gap-5  text-start">
-              <p>Seal</p>
-            </div>
-            <div className="flex justify-between items-center">
-              <p>Recipent :</p>
-              <h1>Sender Signature..............................</h1>
-            </div>
-          </div>
+              {/* Footer */}
+              <div className="flex flex-col mx-5 mt-15 gap-8">
+                <div className="flex flex-col gap-5 text-start">
+                  <p>Seal</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p>Recipient :</p>
+                  <h1>Sender Signature..............................</h1>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>

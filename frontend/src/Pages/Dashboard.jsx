@@ -2,7 +2,10 @@ import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ConsignmentModal from "../Components/ConsignmentModal";
 import ConsignmentTable from "../Components/ConsignmentTable";
-import { getConsignments } from "../Services/consignmentService";
+import {
+  getConsignments,
+  getSingleConsignment,
+} from "../Services/consignmentService";
 import { deleteConsignment } from "../Services/consignmentService";
 import Swal from "sweetalert2";
 
@@ -10,6 +13,7 @@ export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
   const [consignments, setConsignments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedConsignment, setSelectedConsignment] = useState(null);
 
   // get consignments
   const loadConsignments = async () => {
@@ -46,6 +50,12 @@ export const Dashboard = () => {
     });
   };
 
+  // handle view consignment
+  const handleViewConsignment = async (id) => {
+    const data = await getSingleConsignment(id);
+    setSelectedConsignment(data);
+  };
+
   return (
     <>
       <section className="bg-neutral-50 min-h-205">
@@ -73,6 +83,7 @@ export const Dashboard = () => {
             consignments={consignments}
             loading={loading}
             setConsignments={setConsignments}
+            handleViewConsignment={handleViewConsignment}
           />
         </div>
 
