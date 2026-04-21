@@ -18,7 +18,6 @@ const ConsignmentTable = ({
   consignments,
   loading,
   handleDeleteConsignment,
-  handleViewConsignment,
 }) => {
   return (
     <>
@@ -110,10 +109,7 @@ const ConsignmentTable = ({
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="View"
                         >
-                          <NavLink
-                            onClick={() => handleViewConsignment(item._id)}
-                            to={`/dashboard/consignment/${item._id}`}
-                          >
+                          <NavLink to={`/dashboard/consignment/${item._id}`}>
                             <Eye color="#576574" size={20} />
                           </NavLink>
                         </button>

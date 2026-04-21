@@ -33,12 +33,24 @@ export const getConsignment = async (req, res) => {
 
 // create consginment
 export const createConsignment = async (req, res) => {
-  const { sender_details, receiver_details, item, status } = req.body;
+  const {
+    sender_details,
+    receiver_details,
+    transportation_details,
+    items,
+    status,
+  } = req.body;
   const userId = req.user.id;
 
   try {
-    if (!sender_details || !receiver_details || !item || !status) {
-      return res.status(500).json({
+    if (
+      !sender_details ||
+      !receiver_details ||
+      !transportation_details ||
+      !items ||
+      !status
+    ) {
+      return res.status(401).json({
         message: "All fields are required",
         success: false,
         error: true,
@@ -57,12 +69,16 @@ export const createConsignment = async (req, res) => {
         address: receiver_details.address,
         mobile: receiver_details.mobile,
       },
-      items: item,
+      transportation_details: {
+        trackDetails: transportation_details.trackDetails,
+        driverName: transportation_details.driverName,
+      },
+      items: items,
       status,
       createdBy: userId,
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: "Consignment create successfull",
       success: true,
       error: false,

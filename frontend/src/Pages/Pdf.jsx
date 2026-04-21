@@ -15,7 +15,7 @@ const Pdf = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [selectedConsignment, setSelectedConsignment] = useState(null);
-  console.log("selectedConsignment", selectedConsignment?.items);
+  console.log("selectedConsignment", selectedConsignment);
 
   useEffect(() => {
     const handleViewConsignment = async () => {
@@ -175,26 +175,44 @@ const Pdf = () => {
               <table className="border-collapse border border-gray-400 w-full mt-3">
                 <thead>
                   <tr>
-                    <th rowSpan={2} className="border w-[16%] border-black p-3">
+                    <th
+                      rowSpan={2}
+                      className="border w-[16%] border-black text-sm p-3"
+                    >
                       Vehicles Description / Track no.
                     </th>
-                    <th rowSpan={2} className="border w-[12%] border-black p-3">
-                      Driver Signature
+                    <th
+                      rowSpan={2}
+                      className="border w-[12%] border-black text-sm p-3"
+                    >
+                      Driver Name
                     </th>
-                    <th colSpan={2} className="border w-[12%] border-black p-3">
-                      Goods Des & Grade
+                    <th
+                      colSpan={2}
+                      className="border w-[12%] border-black text-sm p-3"
+                    >
+                      Goods Description & Grade
                     </th>
-                    <th colSpan={2} className="border w-[12%] border-black p-3">
+                    <th
+                      colSpan={2}
+                      className="border w-[12%] border-black text-sm p-3"
+                    >
                       Amount
                     </th>
                   </tr>
                   <tr>
-                    <th className="border border-black w-[12%] p-3">
+                    <th className="border border-black text-sm w-[12%] p-3">
                       Description
                     </th>
-                    <th className="border border-black w-[12%] p-3">Grade</th>
-                    <th className="border border-black w-[12%] p-3">KG</th>
-                    <th className="border border-black w-[12%] p-3">Mon</th>
+                    <th className="border border-black text-sm w-[12%] p-3">
+                      Grade
+                    </th>
+                    <th className="border border-black text-sm w-[12%] p-3">
+                      KG
+                    </th>
+                    <th className="border border-black text-sm w-[12%] p-3">
+                      Mon
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -204,34 +222,52 @@ const Pdf = () => {
                         <>
                           <td
                             rowSpan={selectedConsignment.items.length}
-                            className="border border-black p-3"
+                            className="border border-black text-sm p-3"
                           >
-                            {selectedConsignment?.vehicle_description}
+                            {
+                              selectedConsignment?.transportation_details
+                                ?.trackDetails
+                            }
                           </td>
                           <td
                             rowSpan={selectedConsignment.items.length}
-                            className="border border-black p-3"
-                          ></td>
+                            className="border border-black text-sm p-3"
+                          >
+                            {
+                              selectedConsignment?.transportation_details
+                                ?.driverName
+                            }
+                          </td>
                         </>
                       )}
-                      <td className="border border-black p-3">
+                      <td className="border border-black text-sm p-3">
                         {item.description}
                       </td>
-                      <td className="border border-black p-3">{item.grade}</td>
-                      <td className="border border-black p-3">{item.weight}</td>
-                      <td className="border border-black p-3">
+                      <td className="border border-black text-sm p-3">
+                        {item.grade}
+                      </td>
+                      <td className="border border-black text-sm p-3">
+                        {item.weight}
+                      </td>
+                      <td className="border border-black text-sm p-3">
                         {item.weight / 40}
                       </td>
                     </tr>
                   ))}
                   <tr>
                     <td className="p-3 border-transparent border border-r-black"></td>
-                    <td colSpan={3} className="border border-black p-3">
+                    <td colSpan={3} className="border border-black text-sm p-3">
                       <strong>Total:</strong> kg/Mon
                     </td>
-                    <td className="border border-black p-3"></td>
-                    <td className="border border-black p-3">
-                      {selectedConsignment?.total_amount}
+                    <td className="border border-black text-sm p-3">
+                      {selectedConsignment?.items?.reduce((acc, current) => {
+                        return Number(acc) + Number(current.weight);
+                      }, 0)}
+                    </td>
+                    <td className="border border-black text-sm p-3">
+                      {selectedConsignment?.items?.reduce((acc, current) => {
+                        return Number(acc) + Number(current.weight) / 40;
+                      }, 0)}
                     </td>
                   </tr>
                 </tbody>

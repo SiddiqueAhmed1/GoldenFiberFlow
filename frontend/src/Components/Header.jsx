@@ -33,7 +33,7 @@ const Header = () => {
                 return (
                   <Link
                     key={index}
-                    className={`text-lg text-neutral-700 p-3 flex items-center gap-2 ${location.pathname === item.path ? "bg-blue-600 text-white rounded-md " : "hover:bg-gray-200 rounded-md transition-all"}`}
+                    className={`text-lg text-neutral-700 p-3 flex items-center gap-2 ${location.pathname.startsWith(item.path) ? "bg-blue-600 text-white rounded-md " : "hover:bg-gray-200 rounded-md transition-all"}`}
                     to={item.path}
                   >
                     {item.icon} {item.name}

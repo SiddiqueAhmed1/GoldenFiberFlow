@@ -30,11 +30,26 @@ const consignmentSchema = mongoose.Schema(
         required: true,
       },
     },
+    transportation_details: {
+      trackDetails: {
+        type: String,
+        required: true,
+      },
+      driverName: {
+        type: String,
+        required: true,
+      },
+    },
 
     items: [
       {
         description: {
           type: String,
+          required: true,
+        },
+        grade: {
+          type: String,
+          required: true,
         },
         quantity: {
           type: Number,

@@ -15,9 +15,14 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
       address: "",
       mobile: "",
     },
+    transportation_details: {
+      trackDetails: "",
+      driverName: "",
+    },
     item: [
       {
         description: "",
+        grade: "",
         quantity: "",
         weight: "",
         price: "",
@@ -263,6 +268,56 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   />
                 </div>
               </div>
+              {/* transportation details FIXME:*/}
+              <div className="flex flex-col gap-3 border-b border-neutral-300 pb-5 mt-5">
+                <h1 className="text-[18px] text-black mb-2">
+                  Transportation Details
+                </h1>
+                <div className="flex flex-col">
+                  <label htmlFor="trackDetails" className="text-sm! mb-1">
+                    Vehicles description / Track no. *
+                  </label>
+                  <input
+                    required={true}
+                    name="trackDetails"
+                    value={formData.transportation_details.trackDetails}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        transportation_details: {
+                          ...prev.transportation_details,
+                          trackDetails: e.target.value,
+                        },
+                      }))
+                    }
+                    className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
+                    type="text"
+                    id="trackDetails"
+                  />
+                </div>
+                <div className="flex flex-col ">
+                  <label htmlFor="driverName" className="text-sm! mb-1">
+                    Driver Name *
+                  </label>
+                  <input
+                    required={true}
+                    name="driverName"
+                    value={formData.transportation_details.driverName}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        transportation_details: {
+                          ...prev.transportation_details,
+                          driverName: e.target.value,
+                        },
+                      }))
+                    }
+                    className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
+                    type="text"
+                    id="driverName"
+                  />
+                </div>
+              </div>
 
               {/* items TODO:*/}
               <div className="flex flex-col gap-3 border-b border-neutral-300 pb-5 mt-6">
@@ -283,27 +338,43 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                     key={index}
                     className="border border-neutral-300 rounded-lg p-4 mb-3"
                   >
-                    <div className="flex flex-col mb-4">
-                      <label
-                        htmlFor="description"
-                        className="text-sm! mb-1 flex justify-between items-center"
-                      >
-                        Description *
-                        {formData.item.length > 1 && (
-                          <Trash2 size={18} color="red" />
-                        )}
-                      </label>
-                      <input
-                        required={true}
-                        name="description"
-                        value={item.description}
-                        onChange={(e) =>
-                          updateItemField(index, "description", e.target.value)
-                        }
-                        className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
-                        type="text"
-                        id="description"
-                      />
+                    <div className="flex justify-between items-center gap-3 ">
+                      <div className="flex flex-col mb-4 w-30 md:w-full ">
+                        <label htmlFor="quantity" className="text-sm! mb-1">
+                          Description *
+                        </label>
+                        <input
+                          required={true}
+                          name="quantity"
+                          value={item.description}
+                          onChange={(e) =>
+                            updateItemField(
+                              index,
+                              "description",
+                              e.target.value,
+                            )
+                          }
+                          className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
+                          type="text"
+                          id="quantity"
+                        />
+                      </div>
+                      <div className="flex flex-col mb-4 w-30 md:w-full ">
+                        <label htmlFor="grade" className="text-sm! mb-1">
+                          Grade *
+                        </label>
+                        <input
+                          required={true}
+                          name="grade"
+                          value={item.grade}
+                          onChange={(e) =>
+                            updateItemField(index, "grade", e.target.value)
+                          }
+                          className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
+                          type="text"
+                          id="grade"
+                        />
+                      </div>
                     </div>
                     {/* quantity & weight */}
                     <div className="flex justify-between items-center gap-3 ">
