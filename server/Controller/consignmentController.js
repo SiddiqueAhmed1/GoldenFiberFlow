@@ -1,7 +1,7 @@
 import ConsignmentModel from "../Models/ConsignmentModel.js";
 import UserModel from "../Models/UserModel.js";
 
-// get all consignment
+// get all consignment TODO:
 export const getConsignment = async (req, res) => {
   try {
     const getUser = await UserModel.findOne({ _id: req.user.id });
@@ -31,7 +31,7 @@ export const getConsignment = async (req, res) => {
   }
 };
 
-// create consginment
+// create consginment FIXME:
 export const createConsignment = async (req, res) => {
   const {
     sender_details,
@@ -92,8 +92,39 @@ export const createConsignment = async (req, res) => {
     });
   }
 };
+// update consginment TODO:
+export const updateConsignment = async (req, res) => {
+  const {
+    sender_details,
+    receiver_details,
+    transportation_details,
+    items,
+    status,
+  } = req.body;
+  try {
+    // add consignment to db
+    const consignment = await ConsignmentModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
 
-// delete consignment
+    return res.status(200).json({
+      message: "Consignment update successfull",
+      success: true,
+      error: false,
+      data: consignment,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: true,
+      error: false,
+    });
+  }
+};
+
+// delete consignment FIXME:
 export const deleteConsignment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -116,7 +147,7 @@ export const deleteConsignment = async (req, res) => {
   }
 };
 
-// get single consignment
+// get single consignment TODO:
 export const singleConsignment = async (req, res) => {
   try {
     const { id } = req.params;

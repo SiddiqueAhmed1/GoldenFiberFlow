@@ -18,7 +18,23 @@ const ConsignmentTable = ({
   consignments,
   loading,
   handleDeleteConsignment,
+  handleEdit,
 }) => {
+  const statusStyle = (status) => {
+    switch (status) {
+      case "Pending":
+        return "bg-yellow-100 text-yellow-700 border border-yellow-400";
+      case "In transit":
+        return "bg-blue-100 text-blue-700 border border-blue-400";
+      case "Delivered":
+        return "bg-green-100 text-green-700 border border-green-400";
+      case "Cancelled":
+        return "bg-red-100 text-red-700 border border-red-400";
+      default:
+        return "bg-gray-100 text-gray-700 border border-gray-400";
+    }
+  };
+
   return (
     <>
       <section>
@@ -95,7 +111,13 @@ const ConsignmentTable = ({
                       <td className="p-3 py-6 text-center">
                         {item.items.length}
                       </td>
-                      <td className="p-3 py-6 text-center">{item.status}</td>
+                      <td className="p-3 py-6 text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyle(item.status)}`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
                       <td className="p-3 py-6 text-center">
                         {new Date(item.createdAt).toLocaleDateString("en-GB", {
                           day: "numeric",
@@ -114,6 +136,7 @@ const ConsignmentTable = ({
                           </NavLink>
                         </button>
                         <button
+                          onClick={() => handleEdit(item)}
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="Edit"
                         >

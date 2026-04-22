@@ -5,6 +5,7 @@ import {
   deleteConsignment,
   getConsignment,
   singleConsignment,
+  updateConsignment,
 } from "../Controller/consignmentController.js";
 
 // init router
@@ -14,5 +15,6 @@ router.post("/createConsignment", authMiddleware, createConsignment);
 router.get("/getConsignment", authMiddleware, getConsignment);
 router.delete("/deleteConsignment/:id", authMiddleware, deleteConsignment);
 router.get("/singleConsignment/:id", authMiddleware, singleConsignment);
+router.patch("/updateConsignment/:id", authMiddleware, updateConsignment);
 
 export default router;

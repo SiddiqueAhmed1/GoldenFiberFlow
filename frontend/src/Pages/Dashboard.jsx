@@ -8,16 +8,25 @@ import Swal from "sweetalert2";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
+  const [isEditConModal, setIsEditConModal] = useState(false);
   const [consignments, setConsignments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedConsignmnet, setSelectedConsignment] = useState(null);
+
+  // get consignments
+  const loadConsignments = async () => {
+    const data = await getConsignments();
+    setConsignments(data);
+    setLoading(false);
+  };
+
+  // handle edit
+  const handleEdit = (consignment) => {
+    setIsEditConModal(true);
+    setSelectedConsignment(consignment);
+  };
 
   useEffect(() => {
-    // get consignments
-    const loadConsignments = async () => {
-      const data = await getConsignments();
-      setConsignments(data);
-      setLoading(false);
-    };
     loadConsignments();
   }, []);
 
@@ -45,6 +54,12 @@ export const Dashboard = () => {
     });
   };
 
+  // hanlde modal close
+  const handleClose = () => {
+    setIsCreateConModal(false);
+    setIsEditConModal(false);
+  };
+
   return (
     <>
       <section className="bg-neutral-50 min-h-205">
@@ -68,17 +83,30 @@ export const Dashboard = () => {
 
           <ConsignmentTable
             handleDeleteConsignment={handleDeleteConsignment}
-            setIsCreateConModal={setIsCreateConModal}
             consignments={consignments}
             loading={loading}
             setConsignments={setConsignments}
+            handleEdit={handleEdit}
           />
         </div>
 
+        {/* consignment create modal */}
         {isCreateConModal && (
           <ConsignmentModal
-            setIsCreateConModal={setIsCreateConModal}
+            handleClose={handleClose}
             setConsignments={setConsignments}
+            mode="create"
+          />
+        )}
+
+        {/* consignment edit modal */}
+        {isEditConModal && (
+          <ConsignmentModal
+            handleClose={handleClose}
+            setIsEditConModal={setIsEditConModal}
+            setConsignments={setConsignments}
+            mode="edit"
+            selectedConsignmnet={selectedConsignmnet}
           />
         )}
       </section>

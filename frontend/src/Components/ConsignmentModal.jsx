@@ -1,9 +1,17 @@
 import { Plus, Trash, Trash2, X } from "lucide-react";
-import React, { useState } from "react";
-import { createConsignments } from "../Services/consignmentService";
+import React, { useEffect, useState } from "react";
+import {
+  createConsignments,
+  updateConsignments,
+} from "../Services/consignmentService";
 import { toast } from "react-hot-toast";
 
-const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
+const ConsignmentModal = ({
+  handleClose,
+  setConsignments,
+  mode,
+  selectedConsignmnet,
+}) => {
   const [formData, setFormData] = useState({
     sender_details: {
       name: "",
@@ -19,7 +27,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
       trackDetails: "",
       driverName: "",
     },
-    item: [
+    items: [
       {
         description: "",
         grade: "",
@@ -30,43 +38,86 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
     ],
     status: "Pending",
   });
+  const [originalData, setOriginalData] = useState(null);
+  console.log("form data", formData);
+  console.log("selectedConsignmnet", selectedConsignmnet);
+
+  useEffect(() => {
+    const initForm = () => {
+      if (mode === "edit" && selectedConsignmnet) {
+        const data = {
+          sender_details: selectedConsignmnet?.sender_details,
+          receiver_details: selectedConsignmnet?.receiver_details,
+          transportation_details: selectedConsignmnet?.transportation_details,
+          items: selectedConsignmnet?.items,
+          status: selectedConsignmnet?.status,
+        };
+        setFormData(data);
+        setOriginalData(data);
+      }
+    };
+    initForm();
+  }, [mode, selectedConsignmnet]);
 
   // add item
   const addItemBox = () => {
     setFormData((prev) => ({
       ...prev,
-      item: [
-        ...prev.item,
-        { description: "", quantity: "", weight: "", price: "" },
+      items: [
+        ...prev.items,
+        { description: "", grade: "", quantity: "", weight: "", price: "" },
       ],
     }));
   };
 
   // update item fileds
   const updateItemField = (index, field, value) => {
-    const newItem = [...formData.item];
+    const newItem = [...formData.items];
     newItem[index] = { ...newItem[index], [field]: value };
-    setFormData({ ...formData, item: newItem });
+    setFormData({ ...formData, items: newItem });
   };
 
   // consignment form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = await createConsignments(
-      formData.sender_details,
-      formData.receiver_details,
-      formData.item,
-      formData.status,
-    );
+    if (mode === "create") {
+      const data = await createConsignments(
+        formData.sender_details,
+        formData.receiver_details,
+        formData.transportation_details,
+        formData.items,
+        formData.status,
+      );
 
-    if (data) {
-      setConsignments((prev) => [...prev, data]);
-      toast.success("Consignments added succesfull", {
-        duration: 3000,
-        position: " top",
-      });
-      setIsCreateConModal(false);
+      if (data) {
+        setConsignments((prev) => [...prev, data]);
+        toast.success("Consignments added succesfull", {
+          duration: 3000,
+          position: "top-right",
+        });
+        handleClose();
+      }
+    } else if (mode === "edit" && selectedConsignmnet) {
+      if (JSON.stringify(originalData) === JSON.stringify(formData)) {
+        return toast.error("Nothing to update", {
+          duration: 1500,
+        });
+      }
+
+      const data = await updateConsignments(selectedConsignmnet._id, formData);
+
+      if (data) {
+        setConsignments((prev) =>
+          prev.map((item) =>
+            item._id === selectedConsignmnet._id ? data : item,
+          ),
+        );
+        toast.success("Consignments updated succesfull", {
+          duration: 1500,
+        });
+        handleClose();
+      }
     }
 
     // reset form after submit
@@ -81,9 +132,10 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
         address: "",
         mobile: "",
       },
-      item: [
+      items: [
         {
           description: "",
+          grade: "",
           quantity: "",
           weight: "",
           price: "",
@@ -109,10 +161,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                 Fill in the details to create a new consignment
               </p>
             </div>
-            <button
-              className="cursor-pointer"
-              onClick={() => setIsCreateConModal(false)}
-            >
+            <button className="cursor-pointer" onClick={() => handleClose()}>
               <X />
             </button>
           </div>
@@ -128,8 +177,6 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                     Name *
                   </label>
                   <input
-                    required={true}
-                    required={true}
                     required={true}
                     name="senderName"
                     value={formData?.sender_details?.name}
@@ -153,10 +200,8 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   </label>
                   <input
                     required={true}
-                    required={true}
-                    required={true}
                     name="senderAddress"
-                    value={formData.sender_details.address}
+                    value={formData?.sender_details?.address}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -177,9 +222,8 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   </label>
                   <input
                     required={true}
-                    required={true}
                     name="senderMobile"
-                    value={formData.sender_details.mobile}
+                    value={formData?.sender_details?.mobile}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -280,7 +324,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   <input
                     required={true}
                     name="trackDetails"
-                    value={formData.transportation_details.trackDetails}
+                    value={formData?.transportation_details?.trackDetails}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -302,7 +346,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   <input
                     required={true}
                     name="driverName"
-                    value={formData.transportation_details.driverName}
+                    value={formData?.transportation_details?.driverName}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -333,7 +377,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   </button>
                 </div>
                 {/* item box TODO:*/}
-                {formData.item.map((item, index) => (
+                {formData.items.map((item, index) => (
                   <div
                     key={index}
                     className="border border-neutral-300 rounded-lg p-4 mb-3"
@@ -346,7 +390,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                         <input
                           required={true}
                           name="quantity"
-                          value={item.description}
+                          value={item?.description}
                           onChange={(e) =>
                             updateItemField(
                               index,
@@ -366,7 +410,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                         <input
                           required={true}
                           name="grade"
-                          value={item.grade}
+                          value={item?.grade}
                           onChange={(e) =>
                             updateItemField(index, "grade", e.target.value)
                           }
@@ -385,7 +429,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                         <input
                           required={true}
                           name="quantity"
-                          value={item.quantity}
+                          value={item?.quantity}
                           onChange={(e) =>
                             updateItemField(index, "quantity", e.target.value)
                           }
@@ -401,7 +445,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                         <input
                           required={true}
                           name="weight"
-                          value={item.weight}
+                          value={item?.weight}
                           onChange={(e) =>
                             updateItemField(index, "weight", e.target.value)
                           }
@@ -419,7 +463,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                       <input
                         required={true}
                         name="price"
-                        value={item.price}
+                        value={item?.price}
                         onChange={(e) =>
                           updateItemField(index, "price", e.target.value)
                         }
@@ -436,6 +480,13 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   Status *
                 </label>
                 <select
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      status: e.target.value,
+                    }))
+                  }
                   name="status"
                   className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                   id="status"
@@ -449,7 +500,7 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
               <div className="flex justify-end gap-3 mt-7">
                 <button
                   type="button"
-                  onClick={() => setIsCreateConModal(false)}
+                  onClick={() => handleClose()}
                   className=" border border-neutral-300 text-xs md:text-sm px-2 md:px-3 py-1 md:py-3 rounded-lg cursor-pointer "
                 >
                   Cancel
@@ -458,7 +509,9 @@ const ConsignmentModal = ({ setIsCreateConModal, setConsignments }) => {
                   type="submit"
                   className=" border bg-blue-600 text-white text-xs md:text-sm px-3 py-3 rounded-lg cursor-pointer hover:bg-blue-700"
                 >
-                  Create Consignment
+                  {mode === "edit"
+                    ? "Update Consignment"
+                    : "Create Consignment"}
                 </button>
               </div>
             </form>

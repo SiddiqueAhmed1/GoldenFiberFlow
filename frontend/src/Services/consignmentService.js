@@ -1,7 +1,7 @@
 import api from "../Api/api";
 import Swal from "sweetalert2";
 
-// get all consignments
+// get all consignments FIXME:
 export const getConsignments = async () => {
   try {
     const consginment = await api.get("/api/v1/getConsignment");
@@ -15,23 +15,24 @@ export const getConsignments = async () => {
   }
 };
 
-// create consignments
+// create consignments TODO:
 export const createConsignments = async (
   sender_details,
   receiver_details,
-  item,
+  transportation_details,
+  items,
   status,
 ) => {
   try {
     const inputData = {
       sender_details,
+      transportation_details,
       receiver_details,
-      item,
+      items,
       status,
     };
 
     const res = await api.post("/api/v1/createConsignment", inputData);
-    console.log("create cons", res?.data);
 
     return res?.data?.data;
   } catch (error) {
@@ -40,7 +41,19 @@ export const createConsignments = async (
   }
 };
 
-// consignment delte
+// update consignments FIXME:
+export const updateConsignments = async (id, formData) => {
+  try {
+    const res = await api.patch(`/api/v1/updateConsignment/${id}`, formData);
+
+    return res?.data?.data;
+  } catch (error) {
+    console.log("error from cons", error || error.message);
+    throw new Error(error);
+  }
+};
+
+// consignment delte TODO:
 export const deleteConsignment = async (id) => {
   try {
     const deletedItem = await api.delete(`/api/v1/deleteConsignment/${id}`);
@@ -53,7 +66,7 @@ export const deleteConsignment = async (id) => {
   }
 };
 
-// get single consignment
+// get single consignment FIXME:
 export const getSingleConsignment = async (id) => {
   const singleConsignment = await api.get(`/api/v1/singleConsignment/${id}`);
   return singleConsignment.data.data;
