@@ -15,7 +15,6 @@ const Pdf = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [selectedConsignment, setSelectedConsignment] = useState(null);
-  console.log("selectedConsignment", selectedConsignment);
 
   useEffect(() => {
     const handleViewConsignment = async () => {
@@ -59,8 +58,7 @@ const Pdf = () => {
         position: "bottom-right",
       });
     } catch (error) {
-      console.log(error);
-      toast.error("Failed to download PDF", { position: "bottom-right" });
+      return toast.error(error || error.message, { position: "bottom-right" });
     } finally {
       setLoader(false);
     }
@@ -159,14 +157,14 @@ const Pdf = () => {
                     <span className="font-semibold">
                       {selectedConsignment?.receiver_details?.name}
                     </span>
-                    <div className="flex-1 border-t border-gray-800 mt-3"></div>
+                    <div className="flex-1 border-t border-gray-800"></div>
                   </div>
                   <div className="flex items-start gap-2">
                     <span className="whitespace-nowrap">Address :</span>
                     <span className="font-semibold">
                       {selectedConsignment?.receiver_details?.address}
                     </span>
-                    <div className="flex-1 border-b border-gray-800 mt-3"></div>
+                    <div className="flex-1 border-b border-gray-800 "></div>
                   </div>
                 </div>
               </div>
@@ -274,7 +272,7 @@ const Pdf = () => {
               </table>
 
               {/* Footer */}
-              <div className="flex flex-col mx-5 mt-15 gap-8">
+              <div className="flex flex-col mx-5 mt-16 gap-8">
                 <div className="flex flex-col gap-5 text-start">
                   <p>Seal</p>
                 </div>

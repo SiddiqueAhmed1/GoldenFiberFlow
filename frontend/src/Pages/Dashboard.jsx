@@ -5,6 +5,7 @@ import ConsignmentTable from "../Components/ConsignmentTable";
 import { getConsignments } from "../Services/consignmentService";
 import { deleteConsignment } from "../Services/consignmentService";
 import Swal from "sweetalert2";
+import { consignmentId } from "../utils/ConsignmentId";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);
@@ -12,6 +13,9 @@ export const Dashboard = () => {
   const [consignments, setConsignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedConsignmnet, setSelectedConsignment] = useState(null);
+  const [filteredConsignment, setFilteredConsignment] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   // get consignments
   const loadConsignments = async () => {
@@ -20,15 +24,44 @@ export const Dashboard = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    loadConsignments();
+  }, []);
+
+  useEffect(() => {
+    filterConsignment();
+  }, [searchQuery, consignments, statusFilter]);
+
+  // filter consignment
+  const filterConsignment = () => {
+    let filtered = [...consignments];
+
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (item) =>
+          item.sender_details.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          item.receiver_details.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          consignmentId(item._id)
+            .toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+      );
+    }
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((item) => item.status === statusFilter);
+    }
+    setFilteredConsignment(filtered);
+  };
+
   // handle edit
   const handleEdit = (consignment) => {
     setIsEditConModal(true);
     setSelectedConsignment(consignment);
   };
-
-  useEffect(() => {
-    loadConsignments();
-  }, []);
 
   // consginment delete
   const handleDeleteConsignment = async (id) => {
@@ -82,11 +115,17 @@ export const Dashboard = () => {
           </div>
 
           <ConsignmentTable
+            setIsCreateConModal={setIsCreateConModal}
             handleDeleteConsignment={handleDeleteConsignment}
             consignments={consignments}
             loading={loading}
             setConsignments={setConsignments}
             handleEdit={handleEdit}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filteredConsignment={filteredConsignment}
+            setStatusFilter={setStatusFilter}
+            statusFilter={statusFilter}
           />
         </div>
 

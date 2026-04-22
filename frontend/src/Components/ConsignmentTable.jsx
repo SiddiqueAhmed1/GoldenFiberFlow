@@ -12,6 +12,7 @@ import {
 import LoadingSpinner from "./LoadingSpinner";
 import { NavLink } from "react-router-dom";
 import { consignmentId } from "../utils/ConsignmentId";
+import { useAuth } from "../hooks/useAuth";
 
 const ConsignmentTable = ({
   setIsCreateConModal,
@@ -19,7 +20,13 @@ const ConsignmentTable = ({
   loading,
   handleDeleteConsignment,
   handleEdit,
+  searchQuery,
+  setSearchQuery,
+  filteredConsignment,
+  setStatusFilter,
+  statusFilter,
 }) => {
+  const { user } = useAuth();
   const statusStyle = (status) => {
     switch (status) {
       case "Pending":
@@ -44,9 +51,11 @@ const ConsignmentTable = ({
             <div className="flex flex-1 items-center">
               <Search size={20} color="gray" className="absolute ml-3" />
               <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by consignment number, sender or receiver"
                 required={true}
-                name="search"
+                name="searchQuery"
                 className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-3 px-10 border-neutral-300 border w-full"
                 type="text"
               />
@@ -56,6 +65,8 @@ const ConsignmentTable = ({
               <Filter size={20} color="gray" className="absolute ml-3" />
               <select
                 name="status"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
                 className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-3 px-10 border-neutral-300 border appearance-none w-full"
               >
                 <option value="all">All Status</option>
@@ -71,7 +82,7 @@ const ConsignmentTable = ({
             <table
               className={`table-auto md:table-fixed ${consignments.length > 0 && "border"}  border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto`}
             >
-              {consignments.length > 0 ? (
+              {filteredConsignment.length > 0 ? (
                 <thead className="bg-gray-50 ">
                   <tr className="border border-gray-300 text-sm font-light ">
                     <th className="p-3 py-4 text-center ">CONSIGNMENT NO</th>
@@ -79,6 +90,9 @@ const ConsignmentTable = ({
                     <th className="p-3 py-4 text-center ">RECEIVER</th>
                     <th className="p-3 py-4 text-center ">ITEMS</th>
                     <th className="p-3 py-4 text-center ">STATUS</th>
+                    {user.role === "Admin" && (
+                      <th className="p-3 py-4 text-center ">CREATED_BY</th>
+                    )}
                     <th className="p-3 py-4 text-center ">CREATED</th>
                     <th className="p-3 py-4 text-center ">ACTIONS</th>
                   </tr>
@@ -93,32 +107,42 @@ const ConsignmentTable = ({
                       <LoadingSpinner />
                     </td>
                   </tr>
-                ) : consignments.length > 0 ? (
-                  consignments.map((item) => (
+                ) : filteredConsignment.length > 0 ? (
+                  filteredConsignment.map((item) => (
                     <tr
                       key={item._id}
                       className="border border-gray-300 hover:bg-gray-50"
                     >
-                      <td className="p-3 py-6 text-center">
+                      <td className="p-3 py-6 text-center text-sm">
                         {consignmentId(item._id)}
                       </td>
-                      <td className="p-3 py-6 text-center">
+                      <td className="p-3 py-6 text-center text-sm">
                         {item.sender_details.name}
                       </td>
-                      <td className="p-3 py-6 text-center">
+                      <td className="p-3 py-6 text-center text-sm">
                         {item.receiver_details.name}
                       </td>
-                      <td className="p-3 py-6 text-center">
+                      <td className="p-3 py-6 text-center text-sm">
                         {item.items.length}
                       </td>
-                      <td className="p-3 py-6 text-center">
+                      <td className="p-3 py-6 text-center text-sm">
                         <span
                           className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyle(item.status)}`}
                         >
                           {item.status}
                         </span>
                       </td>
-                      <td className="p-3 py-6 text-center">
+                      {user.role === "Admin" && (
+                        <td className="p-3 py-6 text-center text-sm">
+                          <button title={item?.createdBy?.name}>
+                            {" "}
+                            {item?.createdBy?.name.length < 8
+                              ? item?.createdBy?.name
+                              : item?.createdBy?.name.slice(0, 8) + "..."}
+                          </button>
+                        </td>
+                      )}
+                      <td className="p-3 py-6 text-center text-sm">
                         {new Date(item.createdAt).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",
@@ -127,7 +151,6 @@ const ConsignmentTable = ({
                       </td>
                       <td className="flex justify-center items-center p-3 py-6 gap-5">
                         <button
-                          to
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="View"
                         >
@@ -161,14 +184,18 @@ const ConsignmentTable = ({
                           No consignments found
                         </h1>
                         <p className="text-neutral-500 text-lg mb-2">
-                          Get started by creating your first consignment
+                          {filteredConsignment.length === 0
+                            ? "Try adjusting your search or filter"
+                            : "Get started by creating your first consignment"}
                         </p>
-                        <button
-                          onClick={() => setIsCreateConModal((prev) => !prev)}
-                          className="flex items-center gap-1 border bg-blue-600 text-white font-sans text-sm md:text-lg px-3 py-3 rounded-md cursor-pointer hover:bg-blue-700 font-semibold"
-                        >
-                          <Plus /> Create Consignment
-                        </button>
+                        {!consignments.length > 0 && (
+                          <button
+                            onClick={() => setIsCreateConModal((prev) => !prev)}
+                            className="flex items-center gap-1 border bg-blue-600 text-white font-sans text-sm md:text-lg px-3 py-3 rounded-md cursor-pointer hover:bg-blue-700 font-semibold"
+                          >
+                            <Plus /> Create Consignment
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

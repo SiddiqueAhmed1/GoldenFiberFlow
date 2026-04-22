@@ -13,7 +13,9 @@ export const getConsignment = async (req, res) => {
         "name email",
       );
     } else {
-      consignment = await ConsignmentModel.find({ createdBy: req.user.id });
+      consignment = await ConsignmentModel.find({
+        createdBy: req.user.id,
+      }).populate("createdBy", "name email");
     }
 
     return res.status(200).json({
@@ -94,13 +96,6 @@ export const createConsignment = async (req, res) => {
 };
 // update consginment TODO:
 export const updateConsignment = async (req, res) => {
-  const {
-    sender_details,
-    receiver_details,
-    transportation_details,
-    items,
-    status,
-  } = req.body;
   try {
     // add consignment to db
     const consignment = await ConsignmentModel.findByIdAndUpdate(

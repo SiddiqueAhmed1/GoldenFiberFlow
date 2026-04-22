@@ -39,8 +39,6 @@ const ConsignmentModal = ({
     status: "Pending",
   });
   const [originalData, setOriginalData] = useState(null);
-  console.log("form data", formData);
-  console.log("selectedConsignmnet", selectedConsignmnet);
 
   useEffect(() => {
     const initForm = () => {
@@ -155,10 +153,12 @@ const ConsignmentModal = ({
           <div className="sticky top-0 flex justify-between border-b border-neutral-300 p-6 z-50 bg-white">
             <div>
               <h1 className="text-sm md:text-xl font-extrabold mb-1">
-                Create Consignment
+                {mode === "edit" ? "Update Consignment" : "Create Consignment"}
               </h1>
               <p className="md:text-sm text-xs">
-                Fill in the details to create a new consignment
+                {mode === "edit"
+                  ? "Change one of field to update"
+                  : "Fill in the details to create a new consignment"}
               </p>
             </div>
             <button className="cursor-pointer" onClick={() => handleClose()}>
@@ -434,7 +434,7 @@ const ConsignmentModal = ({
                             updateItemField(index, "quantity", e.target.value)
                           }
                           className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
-                          type="text"
+                          type="number"
                           id="quantity"
                         />
                       </div>
@@ -450,7 +450,7 @@ const ConsignmentModal = ({
                             updateItemField(index, "weight", e.target.value)
                           }
                           className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
-                          type="text"
+                          type="number"
                           id="weight"
                         />
                       </div>
@@ -468,7 +468,7 @@ const ConsignmentModal = ({
                           updateItemField(index, "price", e.target.value)
                         }
                         className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
-                        type="text"
+                        type="number"
                         id="price"
                       />
                     </div>
