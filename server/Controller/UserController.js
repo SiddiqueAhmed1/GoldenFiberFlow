@@ -4,12 +4,12 @@ import bcrypt from "bcrypt";
 import generateAccessToken from "../Utils/generateAccessToken.js";
 import generateRefreshToken from "../Utils/generateRefreshToken.js";
 
-// resgister user
-export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+// create user
+export const createUser = async (req, res) => {
+  const { name, email, password, role } = req.body;
 
   // form data check
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !role) {
     return res.status(400).json({ message: "All fields are requrired" });
   }
 
@@ -46,6 +46,7 @@ export const registerUser = async (req, res) => {
     name,
     email,
     password: hashPass,
+    role,
   };
 
   // create user
@@ -61,102 +62,20 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// user login
-export const userLogin = async (req, res) => {
+// get all user
+export const getUser = async (req, res) => {
   try {
-    const { email, password: userPassword } = req.body;
-    if (!email || !userPassword) {
-      return res.status(401).json({
-        message: "All fields are required",
-      });
-    }
+    const data = await UserModel.find();
 
-    // check user
-    const userExist = await UserModel.findOne({ email });
-    if (!userExist) {
-      return res.status(401).json({
-        message: "Wrong email",
-        success: false,
-        error: true,
-      });
-    }
-
-    // compare password with db
-    const passCheck = await bcrypt.compare(userPassword, userExist.password);
-    if (!passCheck) {
-      return res.status(401).json({
-        message: "Password is wrong",
-      });
-    }
-
-    // generate token
-    const accessToken = await generateAccessToken(userExist._id);
-    const refreshToken = await generateRefreshToken(userExist._id);
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    };
-
-    res.cookie("accessToken", accessToken, cookieOptions);
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-
-    // send success response
-    const { refresh_token, password, ...userWithoutPassword } =
-      userExist.toObject();
-    return res.status(201).json({
-      message: "Login successfully done",
+    return res.status(200).json({
+      message: "User get succesfull",
       success: true,
       error: false,
-      accessToken,
-      data: userWithoutPassword,
+      data,
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message || error,
-      success: false,
-      error: true,
-    });
-  }
-};
-
-// logout
-export const userLogout = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    if (!userId) {
-      return res.status(500).json({
-        message: "UserId missing",
-        success: false,
-        error: true,
-      });
-    }
-
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-    };
-
-    res.clearCookie("accessToken", cookieOptions);
-    res.clearCookie("refreshToken", cookieOptions);
-
-    // update refresh Token
-    const removeRefreshToken = await UserModel.findByIdAndUpdate(userId, {
-      refresh_token: "",
-    });
-
-    res.status(200).json({
-      message: "User logged out succesfull",
-      success: true,
-      error: false,
-      data: removeRefreshToken,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: error.message || error,
+    return res.status(500).json({
+      message: error || error.message,
       success: false,
       error: true,
     });

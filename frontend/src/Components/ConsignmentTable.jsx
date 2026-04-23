@@ -78,23 +78,39 @@ const ConsignmentTable = ({
             </div>
           </div>
           {/* table */}
-          <div className="my-5 text-center">
+          <div className="my-5 text-center overflow-x-auto">
             <table
               className={`table-auto md:table-fixed ${consignments.length > 0 && "border"}  border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto`}
             >
               {filteredConsignment.length > 0 ? (
                 <thead className="bg-gray-50 ">
                   <tr className="border border-gray-300 text-sm font-light ">
-                    <th className="p-3 py-4 text-center ">CONSIGNMENT NO</th>
-                    <th className="p-3 py-4 text-center ">SENDER</th>
-                    <th className="p-3 py-4 text-center ">RECEIVER</th>
-                    <th className="p-3 py-4 text-center ">ITEMS</th>
-                    <th className="p-3 py-4 text-center ">STATUS</th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      CONSIGNMENT NO
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      SENDER
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      RECEIVER
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      ITEMS
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      STATUS
+                    </th>
                     {user.role === "Admin" && (
-                      <th className="p-3 py-4 text-center ">CREATED_BY</th>
+                      <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                        CREATED_BY
+                      </th>
                     )}
-                    <th className="p-3 py-4 text-center ">CREATED</th>
-                    <th className="p-3 py-4 text-center ">ACTIONS</th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      CREATED
+                    </th>
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      ACTIONS
+                    </th>
                   </tr>
                 </thead>
               ) : (
@@ -113,27 +129,27 @@ const ConsignmentTable = ({
                       key={item._id}
                       className="border border-gray-300 hover:bg-gray-50"
                     >
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {consignmentId(item._id)}
                       </td>
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {item.sender_details.name}
                       </td>
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {item.receiver_details.name}
                       </td>
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {item.items.length}
                       </td>
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyle(item.status)}`}
+                          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusStyle(item.status)}`}
                         >
                           {item.status}
                         </span>
                       </td>
                       {user.role === "Admin" && (
-                        <td className="p-3 py-6 text-center text-sm">
+                        <td className="p-3 py-6 text-center text-xs md:text-sm">
                           <button title={item?.createdBy?.name}>
                             {" "}
                             {item?.createdBy?.name?.length < 8
@@ -142,7 +158,7 @@ const ConsignmentTable = ({
                           </button>
                         </td>
                       )}
-                      <td className="p-3 py-6 text-center text-sm">
+                      <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {new Date(item.createdAt).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",

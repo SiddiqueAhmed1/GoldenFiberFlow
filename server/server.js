@@ -4,6 +4,7 @@ import colors from "colors";
 import { mongoDb } from "./Config/mongoDb.js";
 import userRouter from "./Routing/userRouter.js";
 import consignmentRouter from "./Routing/consignmentRouter.js";
+import authRouter from "./Routing/authRouter.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -31,6 +32,7 @@ app.use(cookieParser());
 // use router
 app.use("/api/v1", userRouter);
 app.use("/api/v1", consignmentRouter);
+app.use("/api/v1", authRouter);
 
 // listen server
 app.listen(port, () => {

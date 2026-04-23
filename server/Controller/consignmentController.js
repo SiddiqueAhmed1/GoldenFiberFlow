@@ -60,7 +60,7 @@ export const createConsignment = async (req, res) => {
     }
 
     // add consignment to db
-    const consignment = await ConsignmentModel.create({
+    const consignment = new ConsignmentModel({
       sender_details: {
         name: sender_details.name,
         address: sender_details.address,
@@ -80,16 +80,14 @@ export const createConsignment = async (req, res) => {
       createdBy: userId,
     });
 
-    const populated = await findById(consignment_id).populate(
-      "createdBy",
-      "name email",
-    );
+    await consignment.save();
+    await consignment.populate("createdBy", "name email");
 
     return res.status(201).json({
       message: "Consignment create successfull",
       success: true,
       error: false,
-      data: populated,
+      data: consignment,
     });
   } catch (error) {
     return res.status(500).json({
