@@ -80,11 +80,16 @@ export const createConsignment = async (req, res) => {
       createdBy: userId,
     });
 
+    const populated = await findById(consignment_id).populate(
+      "createdBy",
+      "name email",
+    );
+
     return res.status(201).json({
       message: "Consignment create successfull",
       success: true,
       error: false,
-      data: consignment,
+      data: populated,
     });
   } catch (error) {
     return res.status(500).json({
@@ -102,7 +107,7 @@ export const updateConsignment = async (req, res) => {
       req.params.id,
       req.body,
       { new: true },
-    );
+    ).populate("createdBy", "name email");
 
     return res.status(200).json({
       message: "Consignment update successfull",

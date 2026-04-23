@@ -56,8 +56,8 @@ const consignmentSchema = mongoose.Schema(
           required: true,
         },
         weight: {
-          type: String,
-          default: "kg",
+          type: Number,
+          required: true,
         },
         price: {
           type: Number,

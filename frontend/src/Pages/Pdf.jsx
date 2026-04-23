@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
 import toast from "react-hot-toast";
-import { Download, Printer } from "lucide-react";
+import { ArrowLeft, Backpack, Download, Printer } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import { getSingleConsignment } from "../Services/consignmentService";
@@ -38,7 +38,7 @@ const Pdf = () => {
       setLoader(true);
       const canvas = await toPng(element, {
         quality: 1.0,
-        pixelRatio: 3,
+        pixelRatio: 1,
         skipFonts: false,
       });
 
@@ -53,7 +53,7 @@ const Pdf = () => {
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
       pdf.addImage(canvas, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("consignment.pdf");
+      pdf.save(`${consignmentId(selectedConsignment._id)}.pdf`);
       toast.success("PDF downloaded successfully", {
         position: "bottom-right",
       });
@@ -82,25 +82,36 @@ const Pdf = () => {
   return (
     <section className="bg-neutral-700 min-h-screen">
       {/* Buttons */}
-      <div className="flex justify-center gap-3 py-4">
-        <button
-          title="Download PDF"
-          onClick={handleDownloadPdf}
-          className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
-        >
-          {loader ? (
-            <span className="text-sm">Downloading...</span>
-          ) : (
-            <Download size={18} />
-          )}
-        </button>
-        <button
-          title="Print"
-          onClick={handlePrint}
-          className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
-        >
-          <Printer size={18} />
-        </button>
+      <div className="flex justify-between gap-3 py-4 w-200 mx-auto">
+        <div>
+          <button
+            onClick={() => window.history.back()}
+            title="Back"
+            className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <ArrowLeft />
+          </button>
+        </div>
+        <div className="flex gap-3">
+          <button
+            title="Download PDF"
+            onClick={handleDownloadPdf}
+            className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            {loader ? (
+              <span className="text-sm">Downloading...</span>
+            ) : (
+              <Download size={18} />
+            )}
+          </button>
+          <button
+            title="Print"
+            onClick={handlePrint}
+            className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
+          >
+            <Printer size={18} />
+          </button>
+        </div>
       </div>
 
       {/* A4 Page */}

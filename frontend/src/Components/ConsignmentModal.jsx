@@ -1,4 +1,4 @@
-import { Plus, Trash, Trash2, X } from "lucide-react";
+import { EyeClosedIcon, Plus, Trash, Trash2, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import {
   createConsignments,
@@ -100,6 +100,10 @@ const ConsignmentModal = ({
       if (JSON.stringify(originalData) === JSON.stringify(formData)) {
         return toast.error("Nothing to update", {
           duration: 1500,
+          style: {
+            backgroundColor: "black",
+            color: "white",
+          },
         });
       }
 
@@ -129,6 +133,10 @@ const ConsignmentModal = ({
         name: "",
         address: "",
         mobile: "",
+      },
+      transportation_details: {
+        trackDetails: "",
+        driverName: "",
       },
       items: [
         {

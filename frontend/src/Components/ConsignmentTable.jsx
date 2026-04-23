@@ -136,9 +136,9 @@ const ConsignmentTable = ({
                         <td className="p-3 py-6 text-center text-sm">
                           <button title={item?.createdBy?.name}>
                             {" "}
-                            {item?.createdBy?.name.length < 8
+                            {item?.createdBy?.name?.length < 8
                               ? item?.createdBy?.name
-                              : item?.createdBy?.name.slice(0, 8) + "..."}
+                              : item?.createdBy?.name?.slice(0, 8) + "..."}
                           </button>
                         </td>
                       )}
