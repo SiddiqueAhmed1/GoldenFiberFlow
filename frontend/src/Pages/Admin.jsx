@@ -1,24 +1,41 @@
-import { Plus, Shield, Trash2, UserIcon } from "lucide-react";
+import { Plus, Shield, Trash2, User2, UserIcon, Users2 } from "lucide-react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { getUser } from "../Services/userService";
+import UserModal from "../Components/UserModal";
 
 const Admin = () => {
-  const users = [
-    {
-      id: "1",
-      email: "admin@example.com",
-      password: "admin123",
-      name: "Admin User",
-      role: "admin",
-      createdAt: "2026-04-23T09:58:04.223Z",
-    },
-    {
-      id: "1776938644025",
-      email: "test@gmail.com",
-      password: "123456",
-      name: "test",
-      role: "user",
-      createdAt: "2026-04-23T10:04:04.025Z",
-    },
-  ];
+  const [users, setUsers] = useState([]);
+  const [isOpenUserModal, setIsOpenUserModal] = useState(false);
+
+  // get users
+  useEffect(() => {
+    const loadUser = async () => {
+      const data = await getUser();
+      if (data) {
+        setUsers(data);
+      }
+    };
+    loadUser();
+  }, []);
+
+  //   {
+  //     id: "1",
+  //     email: "admin@example.com",
+  //     password: "admin123",
+  //     name: "Admin User",
+  //     role: "admin",
+  //     createdAt: "2026-04-23T09:58:04.223Z",
+  //   },
+  //   {
+  //     id: "1776938644025",
+  //     email: "test@gmail.com",
+  //     password: "123456",
+  //     name: "test",
+  //     role: "user",
+  //     createdAt: "2026-04-23T10:04:04.025Z",
+  //   },
+  // ];
   return (
     <>
       <section className="bg-neutral-100 min-h-screen">
@@ -32,7 +49,10 @@ const Admin = () => {
               </p>
             </div>
             <div>
-              <button className="flex items-center md:gap-1 border bg-blue-600 text-white text-sm md:text-lg px-2 md:px-3 py-1 md:py-3 rounded-md cursor-pointer hover:bg-blue-700">
+              <button
+                onClick={() => setIsOpenUserModal(true)}
+                className="flex items-center md:gap-1 border bg-blue-600 text-white text-sm md:text-lg px-2 md:px-3 py-1 md:py-3 rounded-md cursor-pointer hover:bg-blue-700"
+              >
                 <Plus /> Create User
               </button>
             </div>
@@ -80,7 +100,7 @@ const Admin = () => {
                     <th className="px-6 py-3 text-left text-xs md:text-sm normal-case md:uppercase tracking-wider">
                       Created At
                     </th>
-                    <th className="px-6 py-3 text-right text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                    <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -97,12 +117,12 @@ const Admin = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border ${
-                            user.role === "admin"
+                            user.role === "Admin"
                               ? "bg-blue-100 text-blue-800 border-blue-200"
                               : "bg-gray-100 text-gray-800 border-gray-200"
                           }`}
                         >
-                          {user.role === "admin" ? (
+                          {user.role === "Admin" ? (
                             <Shield className="w-3 h-3" />
                           ) : (
                             <UserIcon className="w-3 h-3" />
@@ -113,7 +133,7 @@ const Admin = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs md:text-sm">
+                      <td className="px-6 py-4 whitespace-nowrap text-center text-xs md:text-sm">
                         <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -125,6 +145,10 @@ const Admin = () => {
             </div>
           </div>
         </div>
+
+        {isOpenUserModal && (
+          <UserModal setIsOpenUserModal={setIsOpenUserModal} />
+        )}
       </section>
     </>
   );
