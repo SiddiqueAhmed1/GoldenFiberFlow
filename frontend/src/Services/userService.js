@@ -12,3 +12,17 @@ export const getUser = async () => {
     throw new Error(error || error.message);
   }
 };
+
+// create user
+export const createUser = async (formData) => {
+  const user = await api.post("/api/v1/user", formData);
+  return user.data.data;
+};
+
+// delete user
+export const deleteUser = async (id) => {
+  const deleteItem = await api.delete(`/api/v1/user/${id}`);
+  console.log("deleteItem.data", deleteItem.data);
+
+  return deleteItem.data.data;
+};

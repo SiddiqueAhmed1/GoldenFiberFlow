@@ -3,6 +3,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import generateAccessToken from "../Utils/generateAccessToken.js";
 import generateRefreshToken from "../Utils/generateRefreshToken.js";
+import ConsignmentModel from "../Models/ConsignmentModel.js";
 
 // create user
 export const createUser = async (req, res) => {
@@ -86,28 +87,41 @@ export const getUser = async (req, res) => {
 export const userdelete = async (req, res) => {
   const { id } = req.params;
 
-  if (!id) {
-    return res.status(400).json({
-      message: "User id not found",
+  try {
+    if (!id) {
+      return res.status(400).json({
+        message: "User id not found",
+        success: false,
+        error: true,
+      });
+    }
+
+    //delete consignment
+    const deletedItem = await ConsignmentModel.deleteMany({
+      createdBy: id,
+    });
+
+    // check user in db and delete
+    const deletedUser = await UserModel.findOneAndDelete({ _id: id });
+    if (!deletedUser) {
+      return res.status(400).json({
+        message: "User not deleted",
+        success: false,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: "User deleted successfull",
+      success: true,
+      error: false,
+      data: deletedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
       success: false,
       error: true,
     });
   }
-
-  // check user in db and delete
-  const deletedUser = await UserModel.findByIdAndDelete(id);
-  if (!deletedUser) {
-    return res.status(400).json({
-      message: "User not deleted",
-      success: false,
-      error: true,
-    });
-  }
-
-  return res.status(200).json({
-    message: "User deleted successfull",
-    success: true,
-    error: false,
-    deletedUser,
-  });
 };

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import ConsignmentModel from "./ConsignmentModel.js";
 
 const userSchema = mongoose.Schema(
   {
@@ -33,5 +34,11 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true },
 );
+
+// userSchema.pre("findOneAndDelete", async function (next) {
+//   const userId = this.getQuery()["_id"];
+//   await ConsignmentModel.deleteMany({ createdBy: userId });
+//   next();
+// });
 
 export default mongoose.model("User", userSchema);
