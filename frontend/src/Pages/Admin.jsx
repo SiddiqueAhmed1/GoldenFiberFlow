@@ -84,7 +84,7 @@ const Admin = () => {
           <div className="grid gap-8 md:grid-cols-3 mx-5 md:mx-0">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-4xl font-bold text-gray-900">1</p>
+              <p className="text-4xl font-bold text-gray-900">{users.length}</p>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <p className="text-sm text-gray-600 mb-1">Administrators</p>

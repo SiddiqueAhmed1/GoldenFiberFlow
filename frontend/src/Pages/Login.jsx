@@ -9,7 +9,7 @@ export const Login = () => {
   const { setUser, setLoading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: "siddique@gmail.com",
+    email: "admin@example.com",
     password: "123456",
   });
 
@@ -103,7 +103,7 @@ export const Login = () => {
                   Email: admin@example.com
                 </p>
                 <p className="text-blue-700 text-xs lg:text-sm">
-                  Password: admin123
+                  Password: 123456
                 </p>
               </div>
               <div className="flex flex-col lg:mt-2">

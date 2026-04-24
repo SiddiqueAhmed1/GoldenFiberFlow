@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Router } from "react-router-dom";
 import logo from "../assets/gftcl.png";
 
 export const Register = () => {
