@@ -58,7 +58,7 @@ const Pdf = () => {
         position: "bottom-right",
       });
     } catch (error) {
-      return toast.error(error || error.message, { position: "bottom-right" });
+      return toast.error(error?.message, { position: "bottom-right" });
     } finally {
       setLoader(false);
     }
