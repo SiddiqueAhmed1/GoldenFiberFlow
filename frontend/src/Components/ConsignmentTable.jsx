@@ -27,7 +27,7 @@ const ConsignmentTable = ({
   statusFilter,
 }) => {
   const { user } = useAuth();
-  const statusStyle = (status) => {
+  const statusStyle = (status = "Pending") => {
     switch (status) {
       case "Pending":
         return "bg-yellow-100 text-yellow-700 border border-yellow-400";
@@ -100,7 +100,7 @@ const ConsignmentTable = ({
                     <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
                       STATUS
                     </th>
-                    {user.role === "Admin" && (
+                    {user?.role === "Admin" && (
                       <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
                         CREATED_BY
                       </th>
@@ -148,7 +148,7 @@ const ConsignmentTable = ({
                           {item?.status}
                         </span>
                       </td>
-                      {user.role === "Admin" && (
+                      {user?.role === "Admin" && (
                         <td className="p-3 py-6 text-center text-xs md:text-sm">
                           <button title={item?.createdBy?.name}>
                             {" "}

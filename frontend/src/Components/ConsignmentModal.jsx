@@ -81,11 +81,11 @@ const ConsignmentModal = ({
 
     if (mode === "create") {
       const data = await createConsignments(
-        formData.sender_details,
-        formData.receiver_details,
-        formData.transportation_details,
-        formData.items,
-        formData.status,
+        formData?.sender_details,
+        formData?.receiver_details,
+        formData?.transportation_details,
+        formData?.items,
+        formData?.status,
       );
 
       if (data) {
