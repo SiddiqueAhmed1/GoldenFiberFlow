@@ -9,7 +9,7 @@ export const getUser = async () => {
     }
     return users.data.data;
   } catch (error) {
-    throw new Error(error || error.message);
+    throw new Error(error?.message);
   }
 };
 

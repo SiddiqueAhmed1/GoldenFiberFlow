@@ -11,7 +11,7 @@ export const getConsignments = async () => {
 
     return consginment.data.data;
   } catch (error) {
-    throw new Error(error || error.message);
+    throw new Error(error?.message);
   }
 };
 
@@ -36,8 +36,8 @@ export const createConsignments = async (
 
     return res?.data?.data;
   } catch (error) {
-    console.log("error from cons", error || error.message);
-    throw new Error(error);
+    console.log("error from cons", error?.message);
+    throw new Error(error.message);
   }
 };
 
@@ -48,8 +48,8 @@ export const updateConsignments = async (id, formData) => {
 
     return res?.data?.data;
   } catch (error) {
-    console.log("error from cons", error || error.message);
-    throw new Error(error);
+    console.log("error from cons", error?.message);
+    throw new Error(error?.message);
   }
 };
 
@@ -62,7 +62,7 @@ export const deleteConsignment = async (id) => {
     }
     return deletedItem.data;
   } catch (error) {
-    throw new Error(error || error.message);
+    throw new Error(error?.message);
   }
 };
 
