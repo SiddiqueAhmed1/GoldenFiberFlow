@@ -28,10 +28,6 @@ export const Dashboard = () => {
     loadConsignments();
   }, []);
 
-  useEffect(() => {
-    filterConsignment();
-  }, [searchQuery, consignments, statusFilter]);
-
   // filter consignment
   const filterConsignment = () => {
     let filtered = [...consignments];
@@ -56,6 +52,10 @@ export const Dashboard = () => {
     }
     setFilteredConsignment(filtered);
   };
+
+  useEffect(() => {
+    filterConsignment();
+  }, [searchQuery, consignments, statusFilter]);
 
   // handle edit
   const handleEdit = (consignment) => {
