@@ -11,7 +11,9 @@ export const getConsignments = async () => {
 
     return consginment.data.data;
   } catch (error) {
-    throw new Error(error?.message);
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
@@ -36,8 +38,9 @@ export const createConsignments = async (
 
     return res?.data?.data;
   } catch (error) {
-    console.log("error from cons", error?.message);
-    throw new Error(error.message);
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
@@ -48,8 +51,9 @@ export const updateConsignments = async (id, formData) => {
 
     return res?.data?.data;
   } catch (error) {
-    console.log("error from cons", error?.message);
-    throw new Error(error?.message);
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
@@ -62,12 +66,20 @@ export const deleteConsignment = async (id) => {
     }
     return deletedItem.data;
   } catch (error) {
-    throw new Error(error?.message);
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
 // get single consignment FIXME:
 export const getSingleConsignment = async (id) => {
-  const singleConsignment = await api.get(`/api/v1/singleConsignment/${id}`);
-  return singleConsignment.data.data;
+  try {
+    const singleConsignment = await api.get(`/api/v1/singleConsignment/${id}`);
+    return singleConsignment.data.data;
+  } catch (error) {
+    const errorMessage =
+      error.response?.data?.message || "Something went wrong";
+    throw new Error(errorMessage);
+  }
 };

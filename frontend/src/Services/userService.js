@@ -9,20 +9,29 @@ export const getUser = async () => {
     }
     return users.data.data;
   } catch (error) {
-    throw new Error(error?.message);
+    const errorMessage = error.response.data.message || "Something went wrong";
+    throw new Error(errorMessage);
   }
 };
 
 // create user
 export const createUser = async (formData) => {
-  const user = await api.post("/api/v1/user", formData);
-  return user.data.data;
+  try {
+    const user = await api.post("/api/v1/user", formData);
+    return user.data.data;
+  } catch (error) {
+    const errorMessage = error.response.data.message || "Something went wrong";
+    throw new Error(errorMessage);
+  }
 };
 
 // delete user
 export const deleteUser = async (id) => {
-  const deleteItem = await api.delete(`/api/v1/user/${id}`);
-  console.log("deleteItem.data", deleteItem.data);
-
-  return deleteItem.data.data;
+  try {
+    const deleteItem = await api.delete(`/api/v1/user/${id}`);
+    return deleteItem.data.data;
+  } catch (error) {
+    const errorMessage = error.response.data.message || "Something went wrong";
+    throw new Error(errorMessage);
+  }
 };

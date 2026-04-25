@@ -77,78 +77,85 @@ const ConsignmentModal = ({
 
   // consignment form submit
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    if (mode === "create") {
-      const data = await createConsignments(
-        formData?.sender_details,
-        formData?.receiver_details,
-        formData?.transportation_details,
-        formData?.items,
-        formData?.status,
-      );
-
-      if (data) {
-        setConsignments((prev) => [...prev, data]);
-        toast.success("Consignments added succesfull", {
-          duration: 3000,
-          position: "top-right",
-        });
-        handleClose();
-      }
-    } else if (mode === "edit" && selectedConsignmnet) {
-      if (JSON.stringify(originalData) === JSON.stringify(formData)) {
-        return toast.error("Nothing to update", {
-          duration: 1500,
-          style: {
-            backgroundColor: "black",
-            color: "white",
-          },
-        });
-      }
-
-      const data = await updateConsignments(selectedConsignmnet._id, formData);
-
-      if (data) {
-        setConsignments((prev) =>
-          prev.map((item) =>
-            item._id === selectedConsignmnet._id ? data : item,
-          ),
+      if (mode === "create") {
+        const data = await createConsignments(
+          formData?.sender_details,
+          formData?.receiver_details,
+          formData?.transportation_details,
+          formData?.items,
+          formData?.status,
         );
-        toast.success("Consignments updated succesfull", {
-          duration: 1500,
-        });
-        handleClose();
-      }
-    }
 
-    // reset form after submit
-    setFormData({
-      sender_details: {
-        name: "",
-        address: "",
-        mobile: "",
-      },
-      receiver_details: {
-        name: "",
-        address: "",
-        mobile: "",
-      },
-      transportation_details: {
-        trackDetails: "",
-        driverName: "",
-      },
-      items: [
-        {
-          description: "",
-          grade: "",
-          quantity: "",
-          weight: "",
-          price: "",
+        if (data) {
+          setConsignments((prev) => [...prev, data]);
+          toast.success("Consignments added succesfull", {
+            duration: 3000,
+            position: "top-right",
+          });
+          handleClose();
+        }
+      } else if (mode === "edit" && selectedConsignmnet) {
+        if (JSON.stringify(originalData) === JSON.stringify(formData)) {
+          return toast.error("Nothing to update", {
+            duration: 1500,
+            style: {
+              backgroundColor: "black",
+              color: "white",
+            },
+          });
+        }
+
+        const data = await updateConsignments(
+          selectedConsignmnet._id,
+          formData,
+        );
+
+        if (data) {
+          setConsignments((prev) =>
+            prev.map((item) =>
+              item._id === selectedConsignmnet._id ? data : item,
+            ),
+          );
+          toast.success("Consignments updated succesfull", {
+            duration: 1500,
+          });
+          handleClose();
+        }
+      }
+
+      // reset form after submit
+      setFormData({
+        sender_details: {
+          name: "",
+          address: "",
+          mobile: "",
         },
-      ],
-      status: "Pending",
-    });
+        receiver_details: {
+          name: "",
+          address: "",
+          mobile: "",
+        },
+        transportation_details: {
+          trackDetails: "",
+          driverName: "",
+        },
+        items: [
+          {
+            description: "",
+            grade: "",
+            quantity: "",
+            weight: "",
+            price: "",
+          },
+        ],
+        status: "Pending",
+      });
+    } catch (error) {
+      toast.error(error?.message);
+    }
   };
 
   return (

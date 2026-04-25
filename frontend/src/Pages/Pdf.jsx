@@ -22,7 +22,7 @@ const Pdf = () => {
         const data = await getSingleConsignment(id);
         setSelectedConsignment(data);
       } catch (error) {
-        throw new Error(error || error.message);
+        toast.error(error?.message);
       } finally {
         setLoading(false);
       }

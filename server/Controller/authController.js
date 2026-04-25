@@ -114,7 +114,7 @@ export const userLogin = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: error.message || error,
+      message: error.message,
       success: false,
       error: true,
     });

@@ -161,7 +161,7 @@ export const singleConsignment = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: error || error.message,
+      message: error.message,
       success: false,
       error: true,
     });
