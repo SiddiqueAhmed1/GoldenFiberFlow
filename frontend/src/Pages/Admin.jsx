@@ -84,7 +84,9 @@ const Admin = () => {
           <div className="grid gap-8 md:grid-cols-3 mx-5 md:mx-0">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-4xl font-bold text-gray-900">{users.length}</p>
+              <p className="text-4xl font-bold text-gray-900">
+                {users?.length}
+              </p>
             </div>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <p className="text-sm text-gray-600 mb-1">Administrators</p>
@@ -131,39 +133,39 @@ const Admin = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
+                    {users?.map((user) => (
+                      <tr key={user?.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
-                          {user.name}
+                          {user?.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
-                          {user.email}
+                          {user?.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border ${
-                              user.role === "Admin"
+                              user?.role === "Admin"
                                 ? "bg-blue-100 text-blue-800 border-blue-200"
                                 : "bg-gray-100 text-gray-800 border-gray-200"
                             }`}
                           >
-                            {user.role === "Admin" ? (
+                            {user?.role === "Admin" ? (
                               <Shield className="w-3 h-3" />
                             ) : (
                               <UserIcon className="w-3 h-3" />
                             )}
-                            {user.role}
+                            {user?.role}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
-                          {new Date(user.createdAt).toLocaleDateString()}
+                          {new Date(user?.createdAt).toLocaleDateString()}
                         </td>
                         <td
-                          onClick={() => handleDelete(user._id)}
+                          onClick={() => handleDelete(user?._id)}
                           className="px-6 py-4 whitespace-nowrap text-center text-xs md:text-sm"
                         >
                           <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                            {user.role !== "Admin" && (
+                            {user?.role !== "Admin" && (
                               <Trash2 className="w-4 h-4" />
                             )}
                           </button>

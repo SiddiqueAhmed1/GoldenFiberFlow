@@ -126,26 +126,26 @@ const ConsignmentTable = ({
                 ) : filteredConsignment.length > 0 ? (
                   filteredConsignment.map((item) => (
                     <tr
-                      key={item._id}
+                      key={item?._id}
                       className="border border-gray-300 hover:bg-gray-50"
                     >
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {consignmentId(item._id)}
+                        {consignmentId(item?._id)}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {item.sender_details.name}
+                        {item?.sender_details.name}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {item.receiver_details.name}
+                        {item?.receiver_details.name}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {item.items.length}
+                        {item?.items?.length}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusStyle(item.status)}`}
+                          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusStyle(item?.status)}`}
                         >
-                          {item.status}
+                          {item?.status}
                         </span>
                       </td>
                       {user.role === "Admin" && (
@@ -159,7 +159,7 @@ const ConsignmentTable = ({
                         </td>
                       )}
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {new Date(item.createdAt).toLocaleDateString("en-GB", {
+                        {new Date(item?.createdAt).toLocaleDateString("en-GB", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -170,7 +170,7 @@ const ConsignmentTable = ({
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="View"
                         >
-                          <NavLink to={`/dashboard/consignment/${item._id}`}>
+                          <NavLink to={`/dashboard/consignment/${item?._id}`}>
                             <Eye color="#576574" size={20} />
                           </NavLink>
                         </button>
@@ -182,7 +182,7 @@ const ConsignmentTable = ({
                           <Edit color="#576574" size={20} />
                         </button>
                         <button
-                          onClick={() => handleDeleteConsignment(item._id)}
+                          onClick={() => handleDeleteConsignment(item?._id)}
                           className="flex flex-col items-center cursor-pointer h-6 justify-center"
                           title="Delete"
                         >
@@ -200,11 +200,11 @@ const ConsignmentTable = ({
                           No consignments found
                         </h1>
                         <p className="text-neutral-500 text-lg mb-2">
-                          {filteredConsignment.length === 0
+                          {filteredConsignment?.length === 0
                             ? "Try adjusting your search or filter"
                             : "Get started by creating your first consignment"}
                         </p>
-                        {!consignments.length > 0 && (
+                        {!consignments?.length > 0 && (
                           <button
                             onClick={() => setIsCreateConModal((prev) => !prev)}
                             className="flex items-center gap-1 border bg-blue-600 text-white font-sans text-sm md:text-lg px-3 py-3 rounded-md cursor-pointer hover:bg-blue-700 font-semibold"
