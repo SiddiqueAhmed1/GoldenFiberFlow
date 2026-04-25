@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
 import { NavLink } from "react-router-dom";
-import { consignmentId } from "../utils/ConsignmentId";
-import { useAuth } from "../hooks/useAuth";
+import { consignmentId } from "../utils/consignmentId";
+import { useAuth } from "../Hooks/useAuth";
 
 const ConsignmentTable = ({
   setIsCreateConModal,
