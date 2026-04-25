@@ -33,7 +33,7 @@ export const Login = () => {
       }
       setLoading(true);
       const data = await login(formData.email, formData.password);
-      setLoading(false);
+
       if (data) {
         setUser(data);
         navigate("/dashboard");
@@ -43,7 +43,9 @@ export const Login = () => {
         password: "",
       });
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.message);
+    } finally {
+      setLoading(false);
     }
   };
 

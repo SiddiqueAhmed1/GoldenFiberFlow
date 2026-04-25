@@ -20,7 +20,7 @@ const Admin = () => {
         setUsers(data);
       }
     } catch (error) {
-      return toast.error(error.message);
+      return toast.error(error?.message);
     } finally {
       setLoader(false);
     }
@@ -53,7 +53,7 @@ const Admin = () => {
         setUsers((prev) => prev.filter((user) => user._id !== id));
         Swal.fire("Deleted!", "Your file has been deleted.", "success");
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error?.message);
       }
     }
   };
