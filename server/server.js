@@ -18,7 +18,7 @@ const port = process.env.PORT || 6060;
 // use cors
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["https://golden-fiber-flow.vercel.app", "http://localhost:5173"],
     methods: "GET,POST,PUT,PATCH,DELETE",
     credentials: true,
   }),
