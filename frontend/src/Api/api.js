@@ -1,6 +1,8 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
+console.log("API URL:", import.meta.env.VITE_API_URL);
+
 // create cusome axios
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
