@@ -3,7 +3,7 @@ import logo from "../assets/gftcl.png";
 import { useState } from "react";
 import { login } from "../Services/authService";
 import toast from "react-hot-toast";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../Hooks/useAuth";
 
 export const Login = () => {
   const { setUser, setLoading } = useAuth();

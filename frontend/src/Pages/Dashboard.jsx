@@ -5,7 +5,7 @@ import ConsignmentTable from "../Components/ConsignmentTable";
 import { getConsignments } from "../Services/consignmentService";
 import { deleteConsignment } from "../Services/consignmentService";
 import Swal from "sweetalert2";
-import { consignmentId } from "../utils/ConsignmentId";
+import { consignmentId } from "../utils/consignmentId";
 
 export const Dashboard = () => {
   const [isCreateConModal, setIsCreateConModal] = useState(false);

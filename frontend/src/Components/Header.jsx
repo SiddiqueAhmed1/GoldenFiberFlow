@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../Hooks/useAuth";
 import { Box, LogOut } from "lucide-react";
 import { FaBars, FaRegTimesCircle, FaUser } from "react-icons/fa";
 import logo from "../assets/gftcl.png";

@@ -7,7 +7,7 @@ import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import { getSingleConsignment } from "../Services/consignmentService";
 import LoadingSpinner from "../Components/LoadingSpinner";
-import { consignmentId } from "../utils/ConsignmentId";
+import { consignmentId } from "../utils/consignmentId";
 
 const Pdf = () => {
   const boxRef = useRef(null);
