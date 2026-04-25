@@ -30,7 +30,7 @@ const UserModal = ({ closeModal, setUsers, setLoader, loadUser }) => {
       loadUser();
       closeModal();
     } catch (error) {
-      return toast.error(error || error.message);
+      return toast.error(error.message);
     } finally {
       setLoader(false);
       setFormData({

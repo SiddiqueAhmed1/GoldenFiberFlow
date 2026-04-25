@@ -43,7 +43,7 @@ export const Login = () => {
         password: "",
       });
     } catch (error) {
-      toast.error(error || error.message);
+      toast.error(error.message);
     }
   };
 

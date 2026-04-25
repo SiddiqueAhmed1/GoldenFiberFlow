@@ -20,7 +20,7 @@ const Admin = () => {
         setUsers(data);
       }
     } catch (error) {
-      return toast.error(error || error.message);
+      return toast.error(error.message);
     } finally {
       setLoader(false);
     }
