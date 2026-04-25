@@ -82,7 +82,7 @@ const ConsignmentTable = ({
             <table
               className={`table-auto md:table-fixed ${consignments.length > 0 && "border"}  border-collapse border-gray-300 w-full text-center p-4 overflow-x-auto`}
             >
-              {filteredConsignment.length > 0 ? (
+              {filteredConsignment?.length > 0 ? (
                 <thead className="bg-gray-50 ">
                   <tr className="border border-gray-300 text-sm font-light ">
                     <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
@@ -123,8 +123,8 @@ const ConsignmentTable = ({
                       <LoadingSpinner />
                     </td>
                   </tr>
-                ) : filteredConsignment.length > 0 ? (
-                  filteredConsignment.map((item) => (
+                ) : filteredConsignment?.length > 0 ? (
+                  filteredConsignment?.map((item) => (
                     <tr
                       key={item?._id}
                       className="border border-gray-300 hover:bg-gray-50"
@@ -133,10 +133,10 @@ const ConsignmentTable = ({
                         {consignmentId(item?._id)}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {item?.sender_details.name}
+                        {item?.sender_details?.name}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
-                        {item?.receiver_details.name}
+                        {item?.receiver_details?.name}
                       </td>
                       <td className="p-3 py-6 text-center text-xs md:text-sm">
                         {item?.items?.length}
