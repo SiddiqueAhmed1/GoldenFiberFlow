@@ -488,14 +488,14 @@ const ConsignmentModal = ({
                   Status *
                 </label>
                 <select
-                  value={formData.status}
+                  name="status"
+                  value={formData?.status}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
                       status: e.target.value,
                     }))
                   }
-                  name="status"
                   className="outline-0 focus-within:outline-2 focus-within:outline-blue-500 rounded-md py-2 px-2 border-neutral-300 border"
                   id="status"
                 >

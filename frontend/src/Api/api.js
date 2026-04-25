@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // create cusome axios
 const api = axios.create({
@@ -25,6 +26,9 @@ api.interceptors.response.use(
       localStorage.removeItem("accessToken");
 
       window.location.href = "/login";
+    }
+    if (!error.response) {
+      toast.error("Network error — backend unreachable");
     }
     if (error.response.status === 500) {
       alert("server error");
