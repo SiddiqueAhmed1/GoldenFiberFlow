@@ -160,15 +160,16 @@ const Admin = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
                           {new Date(user?.createdAt).toLocaleDateString()}
                         </td>
-                        <td
-                          onClick={() => handleDelete(user?._id)}
-                          className="px-6 py-4 whitespace-nowrap text-center text-xs md:text-sm"
-                        >
-                          <button className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
-                            {user?.role !== "Admin" && (
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-xs md:text-sm">
+                          {user?.role !== "Admin" && (
+                            <button
+                              title="Delete"
+                              onClick={() => handleDelete(user?._id)}
+                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                            >
                               <Trash2 className="w-4 h-4" />
-                            )}
-                          </button>
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
