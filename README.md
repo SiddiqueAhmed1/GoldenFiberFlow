@@ -46,7 +46,7 @@
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com
+   git clone https://github.com/SiddiqueAhmed1/GoldenFiberFlow.git
    ```
 
 2. **Backend Setup:**
@@ -54,8 +54,8 @@
    cd server
    npm install
    # Create a .env file and add:
-   # MONGO_URI=your_mongodb_uri
-   # JWT_SECRET=your_secret_key
+   # MONGODB_URL=your_mongodb_uri
+   # SECRET_KEY=your_secret_key
    # PORT=5050
    npm start
    ```
@@ -63,6 +63,8 @@
 3. **Frontend Setup:**
    ```bash
    cd frontend
+   # Create a .env file and add:
+   # VITE_API_URL=http://localhost:5050
    npm install
    npm run dev
    ```
