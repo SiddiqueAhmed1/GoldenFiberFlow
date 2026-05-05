@@ -419,9 +419,29 @@ const ConsignmentModal = ({
                         />
                       </div>
                       <div className="flex flex-col mb-4 w-30 md:w-full ">
-                        <label htmlFor="grade" className="text-sm! mb-1">
-                          Grade *
-                        </label>
+                        {/* Delete button — item length > 1  */}
+                        <div className="flex justify-between items-center mr-1">
+                          <label htmlFor="grade" className="text-sm! mb-1">
+                            Grade *
+                          </label>
+                          {formData.items.length > 1 && (
+                            <div className="flex justify-between ">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newItems = formData.items.filter(
+                                    (_, i) => i !== index,
+                                  );
+                                  setFormData({ ...formData, items: newItems });
+                                }}
+                                className="text-red-500 hover:text-red-700 cursor-pointer mb-1"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
                         <input
                           required={true}
                           name="grade"
