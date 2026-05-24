@@ -5,6 +5,7 @@ import { mongoDb } from "./Config/mongoDb.js";
 import userRouter from "./Routing/userRouter.js";
 import consignmentRouter from "./Routing/consignmentRouter.js";
 import authRouter from "./Routing/authRouter.js";
+import supplierRouter from "./Routing/supplierRouter.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use("/api/v1", userRouter);
 app.use("/api/v1", consignmentRouter);
 app.use("/api/v1", authRouter);
+app.use("/api/v1", supplierRouter);
 
 // listen server
 app.listen(port, () => {
