@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Building2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import SupplierModal from "../Components/SupplierModal";
 import { getSuppliers, deleteSupplier } from "../Services/supplierService";
@@ -10,6 +10,20 @@ const statusStyle = (s) =>
   s === "Active"
     ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
     : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400";
+
+const EmptyState = ({ search }) => (
+  <div className="flex flex-col items-center justify-center py-20 gap-3 text-neutral-400 dark:text-neutral-500">
+    <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-700/50 flex items-center justify-center">
+      <Building2 size={32} strokeWidth={1.2} />
+    </div>
+    <p className="text-base font-semibold text-neutral-600 dark:text-neutral-300">
+      {search ? "No suppliers match your search" : "No suppliers yet"}
+    </p>
+    <p className="text-sm">
+      {!search && "Click 'Add Supplier' to get started"}
+    </p>
+  </div>
+);
 
 const Suppliers = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -84,7 +98,6 @@ const Suppliers = () => {
               <Plus size={16} /> Add Supplier
             </button>
           </div>
-
           <div className="mb-4">
             <input
               type="text"
@@ -94,23 +107,13 @@ const Suppliers = () => {
               className="w-full md:w-96 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 outline-none focus:ring-2 focus:ring-amber-400 transition"
             />
           </div>
-
           <div className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 overflow-hidden shadow-sm">
             {loading ? (
               <div className="flex justify-center py-20">
                 <LoadingSpinner />
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-20 text-neutral-400 dark:text-neutral-500">
-                <p className="text-lg font-medium">
-                  {search
-                    ? "No suppliers match your search"
-                    : "No suppliers yet"}
-                </p>
-                <p className="text-sm mt-1">
-                  {!search && "Click 'Add Supplier' to get started"}
-                </p>
-              </div>
+              <EmptyState search={search} />
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -180,14 +183,12 @@ const Suppliers = () => {
                             <button
                               onClick={() => handleEdit(s)}
                               className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 cursor-pointer transition"
-                              title="Edit"
                             >
                               <Pencil size={15} />
                             </button>
                             <button
                               onClick={() => handleDelete(s._id)}
                               className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 cursor-pointer transition"
-                              title="Delete"
                             >
                               <Trash2 size={15} />
                             </button>

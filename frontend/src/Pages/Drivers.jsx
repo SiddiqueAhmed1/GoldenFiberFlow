@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import DriverModal from "../Components/DriverModal";
 import { getDrivers, deleteDriver } from "../Services/driverService";
@@ -103,8 +103,11 @@ const Drivers = () => {
                 <LoadingSpinner />
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-20 text-neutral-400 dark:text-neutral-500">
-                <p className="text-lg font-medium">
+              <div className="flex flex-col items-center justify-center py-20 gap-3 text-neutral-400 dark:text-neutral-500">
+                <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-700/50 flex items-center justify-center">
+                  <Truck size={32} strokeWidth={1.2} />
+                </div>
+                <p className="text-base font-semibold text-neutral-600 dark:text-neutral-300">
                   {search ? "No drivers match your search" : "No drivers yet"}
                 </p>
                 <p className="text-sm mt-1">

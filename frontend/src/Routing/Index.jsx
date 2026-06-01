@@ -10,6 +10,7 @@ import IndexRedirect from "./IndexRedirect";
 import { DashboardLayout } from "../Layout/DashboardLayout";
 import Pdf from "../Pages/Pdf";
 import Suppliers from "../Pages/Suppliers";
+import Products from "../Pages/Products";
 import Drivers from "../Pages/Drivers";
 import Vehicles from "../Pages/Vehicles";
 import Warehouses from "../Pages/Warehouses";
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
               { path: "consignments", element: <Dashboard /> },
               { path: "consignment/:id", element: <Pdf /> },
               { path: "suppliers", element: <Suppliers /> },
+              { path: "products", element: <Products /> },
               { path: "drivers", element: <Drivers /> },
               { path: "vehicles", element: <Vehicles /> },
               { path: "warehouses", element: <Warehouses /> },

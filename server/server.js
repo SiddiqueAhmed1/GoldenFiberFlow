@@ -11,6 +11,7 @@ import cors from "cors";
 import driverRouter from "./Routing/driverRouter.js";
 import vehicleRouter from "./Routing/vehicleRouter.js";
 import warehouseRouter from "./Routing/warehouseRouter.js";
+import productRouter from "./Routing/productRouter.js";
 
 // config env
 dotenv.config();
@@ -41,6 +42,7 @@ app.use("/api/v1", supplierRouter);
 app.use("/api/v1", driverRouter);
 app.use("/api/v1", vehicleRouter);
 app.use("/api/v1", warehouseRouter);
+app.use("/api/v1", productRouter);
 
 // listen server
 app.listen(port, () => {
