@@ -1,6 +1,5 @@
-import { Plus, Shield, Trash2, User2, UserIcon, Users2 } from "lucide-react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { Plus, Shield, Trash2, UserIcon, Users } from "lucide-react";
+import { useState, useEffect } from "react";
 import { deleteUser, getUser } from "../Services/userService";
 import UserModal from "../Components/UserModal";
 import LoadingSpinner from "../Components/LoadingSpinner";
@@ -12,15 +11,12 @@ const Admin = () => {
   const [isOpenUserModal, setIsOpenUserModal] = useState(false);
   const [loader, setLoader] = useState(true);
 
-  // get users
   const loadUser = async () => {
     try {
       const data = await getUser();
-      if (data) {
-        setUsers(data);
-      }
+      if (data) setUsers(data);
     } catch (error) {
-      return toast.error(error?.message);
+      toast.error(error?.message);
     } finally {
       setLoader(false);
     }
@@ -30,10 +26,7 @@ const Admin = () => {
     loadUser();
   }, []);
 
-  //handle close modal
-  const closeModal = () => {
-    setIsOpenUserModal(false);
-  };
+  const closeModal = () => setIsOpenUserModal(false);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -41,133 +34,164 @@ const Admin = () => {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#f59e0b",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     });
-
     if (result.isConfirmed) {
       try {
-        const deletedItem = await deleteUser(id);
-        if (!deletedItem) return toast.error("User not deleted");
-        setUsers((prev) => prev.filter((user) => user._id !== id));
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        await deleteUser(id);
+        setUsers((prev) => prev.filter((u) => u._id !== id));
+        Swal.fire("Deleted!", "User has been deleted.", "success");
       } catch (error) {
         toast.error(error?.message);
       }
     }
   };
 
+  const admins = users.filter((u) => u.role === "Admin").length;
+  const regular = users.filter((u) => u.role !== "Admin").length;
+
   return (
     <>
-      <section className="bg-neutral-100 min-h-screen">
-        <div className="max-w-360 mx-auto">
-          {/* admin head */}
-          <div className="flex justify-between items-center py-5 md:py-10 mx-3">
-            <div className=" flex flex-col gap-1">
-              <h1 className="md:text-4xl text-xl font-bold">Admin Panel</h1>
-              <p className="text-neutral-600 text-sm md:text-lg">
+      <section className="p-5 md:p-8 min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto">
+          {/* header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-white">
+                Admin Panel
+              </h1>
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-1">
                 Manage users and system settings
               </p>
             </div>
-            <div>
-              <button
-                onClick={() => setIsOpenUserModal(true)}
-                className="flex items-center md:gap-1 border bg-blue-600 text-white text-sm md:text-lg px-2 md:px-3 py-1 md:py-3 rounded-md cursor-pointer hover:bg-blue-700"
-              >
-                <Plus /> Create User
-              </button>
-            </div>
+            <button
+              onClick={() => setIsOpenUserModal(true)}
+              className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2.5 rounded-xl font-medium cursor-pointer transition shadow-sm"
+            >
+              <Plus size={16} /> Create User
+            </button>
           </div>
 
           {/* stats */}
-          <div className="grid gap-8 md:grid-cols-3 mx-5 md:mx-0">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">Total Users</p>
-              <p className="text-4xl font-bold text-gray-900">
-                {users?.length}
-              </p>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">Administrators</p>
-              <p className="text-4xl font-bold text-gray-900">1</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <p className="text-sm text-gray-600 mb-1">Regular Users</p>
-              <p className="text-4xl font-bold text-gray-900">1</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {[
+              {
+                label: "Total Users",
+                value: users.length,
+                icon: Users,
+                color: "bg-gradient-to-br from-amber-400 to-yellow-600",
+              },
+              {
+                label: "Administrators",
+                value: admins,
+                icon: Shield,
+                color: "bg-gradient-to-br from-blue-500 to-blue-700",
+              },
+              {
+                label: "Regular Users",
+                value: regular,
+                icon: UserIcon,
+                color: "bg-gradient-to-br from-emerald-400 to-green-600",
+              },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 p-5 flex items-center gap-4 shadow-sm"
+              >
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center ${s.color}`}
+                >
+                  <s.icon size={20} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    {s.label}
+                  </p>
+                  <p className="text-2xl font-bold text-neutral-800 dark:text-white">
+                    {s.value}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* users table card*/}
-          <div className="bg-white rounded-lg shadow-sm border mt-6 border-gray-200 p-6 mx-5 md:mx-0">
-            <h1 className="text-xl font-medium text-gray-900">
-              User Management
-            </h1>
-            <p className="  text-sm text-gray-600 mt-1   ">
-              View and manage all system users
-            </p>
+          {/* users table */}
+          <div className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 shadow-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700/50">
+              <h2 className="text-base font-bold text-neutral-800 dark:text-white">
+                User Management
+              </h2>
+              <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+                View and manage all system users
+              </p>
+            </div>
 
-            {/* users table */}
             {loader ? (
-              <LoadingSpinner />
+              <div className="flex justify-center py-16">
+                <LoadingSpinner />
+              </div>
             ) : (
-              <div className="overflow-x-auto mt-5">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr className="border border-gray-300 text-xs md:text-sm font-light ">
-                      <th className="px-6 py-3 text-left text-xs md:text-sm normal-case md:uppercase tracking-wider">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-neutral-50 dark:bg-neutral-700/40 border-b border-neutral-200 dark:border-neutral-700 text-left">
+                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Email
                       </th>
-                      <th className="px-6 py-3 text-left text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Role
                       </th>
-                      <th className="px-6 py-3 text-left text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Created At
                       </th>
-                      <th className="px-6 py-3 text-center text-xs md:text-sm normal-case md:uppercase tracking-wider">
+                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400 text-center">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {users?.map((user) => (
-                      <tr key={user?.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm font-medium text-gray-900">
-                          {user?.name}
+                  <tbody>
+                    {users.map((user) => (
+                      <tr
+                        key={user._id}
+                        className="border-t border-neutral-100 dark:border-neutral-700/40 hover:bg-neutral-50 dark:hover:bg-neutral-700/20 transition"
+                      >
+                        <td className="px-5 py-3.5 font-medium text-neutral-800 dark:text-neutral-100">
+                          {user.name}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
-                          {user?.email}
+                        <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
+                          {user.email}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-5 py-3.5">
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded border ${
-                              user?.role === "Admin"
-                                ? "bg-blue-100 text-blue-800 border-blue-200"
-                                : "bg-gray-100 text-gray-800 border-gray-200"
-                            }`}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${user.role === "Admin" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300"}`}
                           >
-                            {user?.role === "Admin" ? (
-                              <Shield className="w-3 h-3" />
+                            {user.role === "Admin" ? (
+                              <Shield size={11} />
                             ) : (
-                              <UserIcon className="w-3 h-3" />
-                            )}
-                            {user?.role}
+                              <UserIcon size={11} />
+                            )}{" "}
+                            {user.role}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-xs md:text-sm text-gray-900">
-                          {new Date(user?.createdAt).toLocaleDateString()}
+                        <td className="px-5 py-3.5 text-neutral-500 dark:text-neutral-400">
+                          {new Date(user.createdAt).toLocaleDateString(
+                            "en-GB",
+                            { day: "2-digit", month: "short", year: "numeric" },
+                          )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center text-xs md:text-sm">
-                          {user?.role !== "Admin" && (
+                        <td className="px-5 py-3.5 text-center">
+                          {user.role !== "Admin" && (
                             <button
+                              onClick={() => handleDelete(user._id)}
+                              className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-neutral-400 hover:text-red-500 cursor-pointer transition"
                               title="Delete"
-                              onClick={() => handleDelete(user?._id)}
-                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 size={15} />
                             </button>
                           )}
                         </td>
@@ -179,18 +203,17 @@ const Admin = () => {
             )}
           </div>
         </div>
-
-        {isOpenUserModal && (
-          <UserModal
-            closeModal={closeModal}
-            setUsers={setUsers}
-            setLoader={setLoader}
-            loadUser={loadUser}
-          />
-        )}
       </section>
+
+      {isOpenUserModal && (
+        <UserModal
+          closeModal={closeModal}
+          setUsers={setUsers}
+          setLoader={setLoader}
+          loadUser={loadUser}
+        />
+      )}
     </>
   );
 };
-
 export default Admin;

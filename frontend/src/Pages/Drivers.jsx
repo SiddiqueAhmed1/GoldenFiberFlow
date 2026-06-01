@@ -1,18 +1,21 @@
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import SupplierModal from "../Components/SupplierModal";
-import { getSuppliers, deleteSupplier } from "../Services/supplierService";
+import DriverModal from "../Components/DriverModal";
+import { getDrivers, deleteDriver } from "../Services/driverService";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
 
-const statusStyle = (s) =>
-  s === "Active"
-    ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-    : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400";
+const statusStyle = (s) => {
+  if (s === "Available")
+    return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400";
+  if (s === "On Trip")
+    return "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400";
+  return "bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400";
+};
 
-const Suppliers = () => {
-  const [suppliers, setSuppliers] = useState([]);
+const Drivers = () => {
+  const [drivers, setDrivers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -21,24 +24,23 @@ const Suppliers = () => {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    getSuppliers()
-      .then(setSuppliers)
+    getDrivers()
+      .then(setDrivers)
       .catch((e) => toast.error(e.message))
       .finally(() => setLoading(false));
   }, []);
   useEffect(() => {
     setFiltered(
-      suppliers.filter(
-        (s) =>
-          s.name.toLowerCase().includes(search.toLowerCase()) ||
-          s.contactPerson.toLowerCase().includes(search.toLowerCase()) ||
-          s.email.toLowerCase().includes(search.toLowerCase()),
+      drivers.filter(
+        (d) =>
+          d.name.toLowerCase().includes(search.toLowerCase()) ||
+          d.licenseNumber.toLowerCase().includes(search.toLowerCase()),
       ),
     );
-  }, [search, suppliers]);
+  }, [search, drivers]);
 
-  const handleEdit = (s) => {
-    setSelected(s);
+  const handleEdit = (d) => {
+    setSelected(d);
     setIsEdit(true);
   };
   const handleDelete = (id) => {
@@ -52,8 +54,8 @@ const Suppliers = () => {
       confirmButtonText: "Yes, delete!",
     }).then(async (r) => {
       if (r.isConfirmed) {
-        await deleteSupplier(id);
-        setSuppliers((p) => p.filter((s) => s._id !== id));
+        await deleteDriver(id);
+        setDrivers((p) => p.filter((d) => d._id !== id));
         Swal.fire("Deleted!", "", "success");
       }
     });
@@ -71,27 +73,27 @@ const Suppliers = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-white">
-                Suppliers
+                Drivers
               </h1>
               <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-1">
-                Manage all supplier records
+                Manage all driver records
               </p>
             </div>
             <button
               onClick={() => setIsCreate(true)}
               className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2.5 rounded-xl font-medium cursor-pointer transition shadow-sm"
             >
-              <Plus size={16} /> Add Supplier
+              <Plus size={16} /> Add Driver
             </button>
           </div>
 
           <div className="mb-4">
             <input
               type="text"
-              placeholder="Search by name, contact person or email..."
+              placeholder="Search by name or license number..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full md:w-96 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 outline-none focus:ring-2 focus:ring-amber-400 transition"
+              className="w-full md:w-80 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-sm text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 outline-none focus:ring-2 focus:ring-amber-400 transition"
             />
           </div>
 
@@ -103,12 +105,10 @@ const Suppliers = () => {
             ) : filtered.length === 0 ? (
               <div className="text-center py-20 text-neutral-400 dark:text-neutral-500">
                 <p className="text-lg font-medium">
-                  {search
-                    ? "No suppliers match your search"
-                    : "No suppliers yet"}
+                  {search ? "No drivers match your search" : "No drivers yet"}
                 </p>
                 <p className="text-sm mt-1">
-                  {!search && "Click 'Add Supplier' to get started"}
+                  {!search && "Click 'Add Driver' to get started"}
                 </p>
               </div>
             ) : (
@@ -120,19 +120,16 @@ const Suppliers = () => {
                         #
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Company
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Contact Person
+                        Name
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Mobile
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Email
+                        License No
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Payment Terms
+                        Expiry
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Status
@@ -143,49 +140,53 @@ const Suppliers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((s, i) => (
+                    {filtered.map((d, i) => (
                       <tr
-                        key={s._id}
+                        key={d._id}
                         className="border-t border-neutral-100 dark:border-neutral-700/40 hover:bg-neutral-50 dark:hover:bg-neutral-700/20 transition"
                       >
                         <td className="px-5 py-3.5 text-neutral-400 dark:text-neutral-500">
                           {i + 1}
                         </td>
                         <td className="px-5 py-3.5 font-medium text-neutral-800 dark:text-neutral-100">
-                          {s.name}
+                          {d.name}
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          {s.contactPerson}
+                          {d.mobile}
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          {s.mobile}
+                          {d.licenseNumber}
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          {s.email}
-                        </td>
-                        <td className="px-5 py-3.5">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
-                            {s.paymentTerms}
-                          </span>
+                          {d.licenseExpiry
+                            ? new Date(d.licenseExpiry).toLocaleDateString(
+                                "en-GB",
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )
+                            : "—"}
                         </td>
                         <td className="px-5 py-3.5">
                           <span
-                            className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle(s.status)}`}
+                            className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle(d.status)}`}
                           >
-                            {s.status}
+                            {d.status}
                           </span>
                         </td>
                         <td className="px-5 py-3.5">
                           <div className="flex justify-center gap-2">
                             <button
-                              onClick={() => handleEdit(s)}
+                              onClick={() => handleEdit(d)}
                               className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 cursor-pointer transition"
                               title="Edit"
                             >
                               <Pencil size={15} />
                             </button>
                             <button
-                              onClick={() => handleDelete(s._id)}
+                              onClick={() => handleDelete(d._id)}
                               className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 cursor-pointer transition"
                               title="Delete"
                             >
@@ -200,29 +201,29 @@ const Suppliers = () => {
               </div>
             )}
           </div>
-          {!loading && suppliers.length > 0 && (
+          {!loading && drivers.length > 0 && (
             <p className="mt-3 text-xs text-neutral-400 dark:text-neutral-500">
-              Showing {filtered.length} of {suppliers.length} suppliers
+              Showing {filtered.length} of {drivers.length} drivers
             </p>
           )}
         </div>
       </section>
       {isCreate && (
-        <SupplierModal
+        <DriverModal
           handleClose={handleClose}
-          setSuppliers={setSuppliers}
+          setDrivers={setDrivers}
           mode="create"
         />
       )}
       {isEdit && selected && (
-        <SupplierModal
+        <DriverModal
           handleClose={handleClose}
-          setSuppliers={setSuppliers}
+          setDrivers={setDrivers}
           mode="edit"
-          selectedSupplier={selected}
+          selected={selected}
         />
       )}
     </>
   );
 };
-export default Suppliers;
+export default Drivers;

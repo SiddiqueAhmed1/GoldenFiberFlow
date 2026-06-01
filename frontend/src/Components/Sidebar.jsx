@@ -40,7 +40,7 @@ const navGroups = [
   {
     label: "Admin",
     adminOnly: true,
-    items: [{ name: "Users", path: "/admin", icon: Users }],
+    items: [{ name: "Users", path: "/dashboard/admin", icon: Users }],
   },
 ];
 
@@ -76,7 +76,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     <div className="flex flex-col h-full">
       {/* ── Logo bar ── */}
       <div
-        className={`flex items-center border-b border-neutral-200 dark:border-neutral-700/60 transition-all duration-300 ${collapsed ? "justify-center spx-0 py-4" : "justify-between px-4 py-4"}`}
+        className={`flex items-center border-b border-neutral-200 dark:border-neutral-700/60 transition-all duration-300 ${collapsed ? "justify-center px-0 py-4" : "justify-between px-4 py-4"}`}
       >
         {/* Logo always visible — scales cleanly when collapsed */}
         <Link
@@ -87,18 +87,18 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
             <img
               src={logo}
               alt="GFTCL"
-              className="w-7 h-7 obje ct-contain rounded-lg"
+              className="w-7 h-7 object-contain rounded-lg"
             />
           </div>
           <div
             className={`min-w-0 overflow-hidden transition-all duration-300 ${collapsed ? "w-0 opacity-0" : "w-auto opacity-100"}`}
           >
             <p className="text-sm font-bold text-neutral-800 dark:text-white truncate leading-tight whitespace-nowrap">
-              GoldenFiberFlow
+              GoldenFiber
             </p>
-            {/* <p className="text-[11px] text-amber-500 dark:text-amber-400 font-semibold truncate leading-tight whitespace-nowrap">
+            <p className="text-[11px] text-amber-500 dark:text-amber-400 font-semibold truncate leading-tight whitespace-nowrap">
               Flow
-            </p> */}
+            </p>
           </div>
         </Link>
 

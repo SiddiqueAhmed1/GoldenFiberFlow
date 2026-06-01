@@ -8,6 +8,9 @@ import authRouter from "./Routing/authRouter.js";
 import supplierRouter from "./Routing/supplierRouter.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import driverRouter from "./Routing/driverRouter.js";
+import vehicleRouter from "./Routing/vehicleRouter.js";
+import warehouseRouter from "./Routing/warehouseRouter.js";
 
 // config env
 dotenv.config();
@@ -35,6 +38,9 @@ app.use("/api/v1", userRouter);
 app.use("/api/v1", consignmentRouter);
 app.use("/api/v1", authRouter);
 app.use("/api/v1", supplierRouter);
+app.use("/api/v1", driverRouter);
+app.use("/api/v1", vehicleRouter);
+app.use("/api/v1", warehouseRouter);
 
 // listen server
 app.listen(port, () => {

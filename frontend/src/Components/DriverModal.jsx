@@ -1,45 +1,38 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createSupplier, updateSupplier } from "../Services/supplierService";
+import { createDriver, updateDriver } from "../Services/driverService";
 import { toast } from "react-hot-toast";
 
 const empty = {
   name: "",
-  contactPerson: "",
   mobile: "",
-  email: "",
+  licenseNumber: "",
+  licenseExpiry: "",
   address: "",
-  paymentTerms: "Cash",
-  status: "Active",
+  status: "Available",
 };
 const inp =
   "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 transition";
 
-const SupplierModal = ({
-  handleClose,
-  setSuppliers,
-  mode,
-  selectedSupplier,
-}) => {
+const DriverModal = ({ handleClose, setDrivers, mode, selected }) => {
   const [form, setForm] = useState(empty);
   const [original, setOriginal] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (mode === "edit" && selectedSupplier) {
+    if (mode === "edit" && selected) {
       const d = {
-        name: selectedSupplier.name,
-        contactPerson: selectedSupplier.contactPerson,
-        mobile: selectedSupplier.mobile,
-        email: selectedSupplier.email,
-        address: selectedSupplier.address,
-        paymentTerms: selectedSupplier.paymentTerms,
-        status: selectedSupplier.status,
+        name: selected.name,
+        mobile: selected.mobile,
+        licenseNumber: selected.licenseNumber,
+        licenseExpiry: selected.licenseExpiry?.slice(0, 10),
+        address: selected.address,
+        status: selected.status,
       };
       setForm(d);
       setOriginal(d);
     }
-  }, [mode, selectedSupplier]);
+  }, [mode, selected]);
 
   const onChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -49,18 +42,16 @@ const SupplierModal = ({
     setLoading(true);
     try {
       if (mode === "create") {
-        const data = await createSupplier(form);
-        setSuppliers((p) => [...p, data]);
-        toast.success("Supplier created successfully");
+        const data = await createDriver(form);
+        setDrivers((p) => [...p, data]);
+        toast.success("Driver created successfully");
         handleClose();
       } else {
         if (JSON.stringify(original) === JSON.stringify(form))
           return toast.error("Nothing to update");
-        const data = await updateSupplier(selectedSupplier._id, form);
-        setSuppliers((p) =>
-          p.map((s) => (s._id === selectedSupplier._id ? data : s)),
-        );
-        toast.success("Supplier updated successfully");
+        const data = await updateDriver(selected._id, form);
+        setDrivers((p) => p.map((d) => (d._id === selected._id ? data : d)));
+        toast.success("Driver updated successfully");
         handleClose();
       }
     } catch (err) {
@@ -76,12 +67,12 @@ const SupplierModal = ({
         <div className="sticky top-0 flex justify-between items-start border-b border-neutral-200 dark:border-neutral-700 p-5 bg-white dark:bg-neutral-800 z-10">
           <div>
             <h1 className="text-lg font-bold text-neutral-800 dark:text-white">
-              {mode === "edit" ? "Update Supplier" : "Add Supplier"}
+              {mode === "edit" ? "Update Driver" : "Add Driver"}
             </h1>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
               {mode === "edit"
                 ? "Change one field to update"
-                : "Fill in the details to add a new supplier"}
+                : "Fill in the details to add a new driver"}
             </p>
           </div>
           <button
@@ -95,11 +86,11 @@ const SupplierModal = ({
           <form onSubmit={onSubmit} className="space-y-5">
             <div className="space-y-3">
               <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Company Info
+                Personal Info
               </h2>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Company Name *
+                  Full Name *
                 </label>
                 <input
                   required
@@ -107,20 +98,21 @@ const SupplierModal = ({
                   value={form.name}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. Dhaka Textile Ltd."
+                  placeholder="e.g. Rahim Uddin"
                 />
               </div>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Contact Person *
+                  Mobile *
                 </label>
                 <input
                   required
-                  name="contactPerson"
-                  value={form.contactPerson}
+                  name="mobile"
+                  value={form.mobile}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. Mr. Karim"
+                  type="number"
+                  placeholder="e.g. 01712345678"
                 />
               </div>
               <div>
@@ -133,80 +125,56 @@ const SupplierModal = ({
                   value={form.address}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. 45 Mirpur Road, Dhaka"
+                  placeholder="e.g. Mirpur, Dhaka"
                 />
               </div>
             </div>
             <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
               <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Contact Info
+                License Info
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Mobile *
+                    License No *
                   </label>
                   <input
                     required
-                    name="mobile"
-                    value={form.mobile}
+                    name="licenseNumber"
+                    value={form.licenseNumber}
                     onChange={onChange}
                     className={inp}
-                    type="number"
-                    placeholder="01712345678"
+                    placeholder="e.g. DL-1234"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Email *
+                    Expiry Date *
                   </label>
                   <input
                     required
-                    name="email"
-                    value={form.email}
+                    name="licenseExpiry"
+                    value={form.licenseExpiry}
                     onChange={onChange}
                     className={inp}
-                    type="email"
-                    placeholder="supplier@company.com"
+                    type="date"
                   />
                 </div>
               </div>
-            </div>
-            <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
-              <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Terms & Status
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Payment Terms *
-                  </label>
-                  <select
-                    name="paymentTerms"
-                    value={form.paymentTerms}
-                    onChange={onChange}
-                    className={inp}
-                  >
-                    <option value="Cash">Cash</option>
-                    <option value="Credit 15 days">Credit 15 days</option>
-                    <option value="Credit 30 days">Credit 30 days</option>
-                    <option value="Credit 60 days">Credit 60 days</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Status *
-                  </label>
-                  <select
-                    name="status"
-                    value={form.status}
-                    onChange={onChange}
-                    className={inp}
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
+              <div>
+                <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
+                  Status *
+                </label>
+                <select
+                  name="status"
+                  value={form.status}
+                  onChange={onChange}
+                  className={inp}
+                >
+                  <option value="Available">Available</option>
+                  <option value="On Trip">On Trip</option>
+                  <option value="Off Duty">Off Duty</option>
+                </select>
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -225,8 +193,8 @@ const SupplierModal = ({
                 {loading
                   ? "Saving..."
                   : mode === "edit"
-                    ? "Update Supplier"
-                    : "Add Supplier"}
+                    ? "Update Driver"
+                    : "Add Driver"}
               </button>
             </div>
           </form>
@@ -235,4 +203,4 @@ const SupplierModal = ({
     </section>
   );
 };
-export default SupplierModal;
+export default DriverModal;

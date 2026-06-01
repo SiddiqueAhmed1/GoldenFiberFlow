@@ -1,45 +1,38 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createSupplier, updateSupplier } from "../Services/supplierService";
+import { createWarehouse, updateWarehouse } from "../Services/warehouseService";
 import { toast } from "react-hot-toast";
 
 const empty = {
   name: "",
-  contactPerson: "",
+  location: "",
+  capacity: "",
+  manager: "",
   mobile: "",
-  email: "",
-  address: "",
-  paymentTerms: "Cash",
   status: "Active",
 };
 const inp =
   "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500 transition";
 
-const SupplierModal = ({
-  handleClose,
-  setSuppliers,
-  mode,
-  selectedSupplier,
-}) => {
+const WarehouseModal = ({ handleClose, setWarehouses, mode, selected }) => {
   const [form, setForm] = useState(empty);
   const [original, setOriginal] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (mode === "edit" && selectedSupplier) {
+    if (mode === "edit" && selected) {
       const d = {
-        name: selectedSupplier.name,
-        contactPerson: selectedSupplier.contactPerson,
-        mobile: selectedSupplier.mobile,
-        email: selectedSupplier.email,
-        address: selectedSupplier.address,
-        paymentTerms: selectedSupplier.paymentTerms,
-        status: selectedSupplier.status,
+        name: selected.name,
+        location: selected.location,
+        capacity: selected.capacity,
+        manager: selected.manager,
+        mobile: selected.mobile,
+        status: selected.status,
       };
       setForm(d);
       setOriginal(d);
     }
-  }, [mode, selectedSupplier]);
+  }, [mode, selected]);
 
   const onChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -49,18 +42,16 @@ const SupplierModal = ({
     setLoading(true);
     try {
       if (mode === "create") {
-        const data = await createSupplier(form);
-        setSuppliers((p) => [...p, data]);
-        toast.success("Supplier created successfully");
+        const data = await createWarehouse(form);
+        setWarehouses((p) => [...p, data]);
+        toast.success("Warehouse created successfully");
         handleClose();
       } else {
         if (JSON.stringify(original) === JSON.stringify(form))
           return toast.error("Nothing to update");
-        const data = await updateSupplier(selectedSupplier._id, form);
-        setSuppliers((p) =>
-          p.map((s) => (s._id === selectedSupplier._id ? data : s)),
-        );
-        toast.success("Supplier updated successfully");
+        const data = await updateWarehouse(selected._id, form);
+        setWarehouses((p) => p.map((w) => (w._id === selected._id ? data : w)));
+        toast.success("Warehouse updated successfully");
         handleClose();
       }
     } catch (err) {
@@ -76,12 +67,12 @@ const SupplierModal = ({
         <div className="sticky top-0 flex justify-between items-start border-b border-neutral-200 dark:border-neutral-700 p-5 bg-white dark:bg-neutral-800 z-10">
           <div>
             <h1 className="text-lg font-bold text-neutral-800 dark:text-white">
-              {mode === "edit" ? "Update Supplier" : "Add Supplier"}
+              {mode === "edit" ? "Update Warehouse" : "Add Warehouse"}
             </h1>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
               {mode === "edit"
                 ? "Change one field to update"
-                : "Fill in the details to add a new supplier"}
+                : "Fill in the warehouse details"}
             </p>
           </div>
           <button
@@ -92,14 +83,14 @@ const SupplierModal = ({
           </button>
         </div>
         <div className="p-5">
-          <form onSubmit={onSubmit} className="space-y-5">
+          <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-3">
               <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Company Info
+                Warehouse Info
               </h2>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Company Name *
+                  Warehouse Name *
                 </label>
                 <input
                   required
@@ -107,41 +98,54 @@ const SupplierModal = ({
                   value={form.name}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. Dhaka Textile Ltd."
+                  placeholder="e.g. Dhaka Central Warehouse"
                 />
               </div>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Contact Person *
+                  Location *
                 </label>
                 <input
                   required
-                  name="contactPerson"
-                  value={form.contactPerson}
+                  name="location"
+                  value={form.location}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. Mr. Karim"
+                  placeholder="e.g. Tejgaon, Dhaka"
                 />
               </div>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Address *
+                  Capacity *
                 </label>
                 <input
                   required
-                  name="address"
-                  value={form.address}
+                  name="capacity"
+                  value={form.capacity}
                   onChange={onChange}
                   className={inp}
-                  placeholder="e.g. 45 Mirpur Road, Dhaka"
+                  placeholder="e.g. 10000 sq ft"
                 />
               </div>
             </div>
             <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
               <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Contact Info
+                Manager Info
               </h2>
               <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
+                    Manager Name *
+                  </label>
+                  <input
+                    required
+                    name="manager"
+                    value={form.manager}
+                    onChange={onChange}
+                    className={inp}
+                    placeholder="e.g. Mr. Karim"
+                  />
+                </div>
                 <div>
                   <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
                     Mobile *
@@ -156,57 +160,20 @@ const SupplierModal = ({
                     placeholder="01712345678"
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Email *
-                  </label>
-                  <input
-                    required
-                    name="email"
-                    value={form.email}
-                    onChange={onChange}
-                    className={inp}
-                    type="email"
-                    placeholder="supplier@company.com"
-                  />
-                </div>
               </div>
-            </div>
-            <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
-              <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wide">
-                Terms & Status
-              </h2>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Payment Terms *
-                  </label>
-                  <select
-                    name="paymentTerms"
-                    value={form.paymentTerms}
-                    onChange={onChange}
-                    className={inp}
-                  >
-                    <option value="Cash">Cash</option>
-                    <option value="Credit 15 days">Credit 15 days</option>
-                    <option value="Credit 30 days">Credit 30 days</option>
-                    <option value="Credit 60 days">Credit 60 days</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                    Status *
-                  </label>
-                  <select
-                    name="status"
-                    value={form.status}
-                    onChange={onChange}
-                    className={inp}
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
+              <div>
+                <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
+                  Status *
+                </label>
+                <select
+                  name="status"
+                  value={form.status}
+                  onChange={onChange}
+                  className={inp}
+                >
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">
@@ -225,8 +192,8 @@ const SupplierModal = ({
                 {loading
                   ? "Saving..."
                   : mode === "edit"
-                    ? "Update Supplier"
-                    : "Add Supplier"}
+                    ? "Update Warehouse"
+                    : "Add Warehouse"}
               </button>
             </div>
           </form>
@@ -235,4 +202,4 @@ const SupplierModal = ({
     </section>
   );
 };
-export default SupplierModal;
+export default WarehouseModal;
