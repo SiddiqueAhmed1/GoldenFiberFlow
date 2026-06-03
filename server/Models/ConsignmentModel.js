@@ -3,66 +3,34 @@ import mongoose from "mongoose";
 const consignmentSchema = mongoose.Schema(
   {
     sender_details: {
-      name: {
-        type: String,
-        required: true,
-      },
-      address: {
-        type: String,
-        required: true,
-      },
-      mobile: {
-        type: Number,
-        required: true,
-      },
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      mobile: { type: Number, required: true },
     },
     receiver_details: {
-      name: {
-        type: String,
-        requred: true,
-      },
-      address: {
-        type: String,
-        required: true,
-      },
-      mobile: {
-        type: Number,
-        required: true,
-      },
+      name: { type: String, required: true },
+      address: { type: String, required: true },
+      mobile: { type: Number, required: true },
     },
     transportation_details: {
-      trackDetails: {
-        type: String,
+      driverId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Driver",
         required: true,
       },
-      driverName: {
-        type: String,
+      vehicleId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vehicle",
         required: true,
       },
     },
-
     items: [
       {
-        description: {
-          type: String,
-          required: true,
-        },
-        grade: {
-          type: String,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-        weight: {
-          type: Number,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        description: { type: String, required: true },
+        grade: { type: String, required: true },
+        quantity: { type: Number, required: true },
+        weight: { type: Number, required: true },
+        price: { type: Number, required: true },
       },
     ],
     status: {

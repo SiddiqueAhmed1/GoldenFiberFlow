@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import jsPDF from "jspdf";
 import { toPng } from "html-to-image";
 import toast from "react-hot-toast";
-import { ArrowLeft, Backpack, Download, Printer } from "lucide-react";
+import { ArrowLeft, Download, Printer } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { useParams } from "react-router-dom";
 import { getSingleConsignment } from "../Services/consignmentService";
@@ -33,7 +33,6 @@ const Pdf = () => {
   const handleDownloadPdf = async () => {
     const element = boxRef.current;
     if (!element) return;
-
     try {
       setLoader(true);
       const canvas = await toPng(element, {
@@ -41,24 +40,21 @@ const Pdf = () => {
         pixelRatio: 1,
         skipFonts: false,
       });
-
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
         format: "a4",
       });
-
       const imgProps = pdf.getImageProperties(canvas);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
       pdf.addImage(canvas, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`${consignmentId(selectedConsignment._id)}.pdf`);
       toast.success("PDF downloaded successfully", {
         position: "bottom-right",
       });
     } catch (error) {
-      return toast.error(error?.message, { position: "bottom-right" });
+      toast.error(error?.message, { position: "bottom-right" });
     } finally {
       setLoader(false);
     }
@@ -70,28 +66,34 @@ const Pdf = () => {
     pageStyle: `
       @page { margin: 0; }
       @media print {
-        body {
-          margin: 0;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
+        body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       }
     `,
   });
 
+  // resolve driver & vehicle — populated objects or plain strings (backwards compat)
+  const driverName =
+    selectedConsignment?.transportation_details?.driverId?.name ||
+    selectedConsignment?.transportation_details?.driverName ||
+    "—";
+  const vehiclePlate =
+    selectedConsignment?.transportation_details?.vehicleId?.plateNumber ||
+    selectedConsignment?.transportation_details?.trackDetails ||
+    "—";
+  const vehicleType =
+    selectedConsignment?.transportation_details?.vehicleId?.type || "";
+
   return (
     <section className="bg-neutral-700 min-h-screen">
       {/* Buttons */}
-      <div className="flex justify-between gap-3 py-4 w-200 mx-auto">
-        <div>
-          <button
-            onClick={() => window.history.back()}
-            title="Back"
-            className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
-          >
-            <ArrowLeft />
-          </button>
-        </div>
+      <div className="flex justify-between gap-3 py-4 w-full max-w-4xl mx-auto px-4">
+        <button
+          onClick={() => window.history.back()}
+          title="Back"
+          className="bg-neutral-600 hover:bg-neutral-500 text-white px-4 py-2 rounded flex items-center gap-2"
+        >
+          <ArrowLeft size={18} />
+        </button>
         <div className="flex gap-3">
           <button
             title="Download PDF"
@@ -143,7 +145,7 @@ const Pdf = () => {
                 <span className="text-lg">Mobile: 01986949894</span>
               </header>
 
-              {/* Receiver Details */}
+              {/* Consignment meta */}
               <div className="mt-5 mb-7 flex flex-col gap-5">
                 <div className="flex justify-between mx-5">
                   <p className="flex flex-1">
@@ -175,7 +177,7 @@ const Pdf = () => {
                     <span className="font-semibold">
                       {selectedConsignment?.receiver_details?.address}
                     </span>
-                    <div className="flex-1 border-b border-gray-800 "></div>
+                    <div className="flex-1 border-b border-gray-800"></div>
                   </div>
                 </div>
               </div>
@@ -188,7 +190,7 @@ const Pdf = () => {
                       rowSpan={2}
                       className="border w-[16%] border-black text-sm p-3"
                     >
-                      Vehicles Description / Track no.
+                      Vehicle / Plate No.
                     </th>
                     <th
                       rowSpan={2}
@@ -233,19 +235,14 @@ const Pdf = () => {
                             rowSpan={selectedConsignment.items.length}
                             className="border border-black text-sm p-3"
                           >
-                            {
-                              selectedConsignment?.transportation_details
-                                ?.trackDetails
-                            }
+                            {vehiclePlate}
+                            {vehicleType ? ` (${vehicleType})` : ""}
                           </td>
                           <td
                             rowSpan={selectedConsignment.items.length}
                             className="border border-black text-sm p-3"
                           >
-                            {
-                              selectedConsignment?.transportation_details
-                                ?.driverName
-                            }
+                            {driverName}
                           </td>
                         </>
                       )}
@@ -259,7 +256,7 @@ const Pdf = () => {
                         {item.weight}
                       </td>
                       <td className="border border-black text-sm p-3">
-                        {item.weight / 40}
+                        {(item.weight / 40).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -269,14 +266,18 @@ const Pdf = () => {
                       <strong>Total:</strong> kg/Mon
                     </td>
                     <td className="border border-black text-sm p-3">
-                      {selectedConsignment?.items?.reduce((acc, current) => {
-                        return Number(acc) + Number(current.weight);
-                      }, 0)}
+                      {selectedConsignment?.items?.reduce(
+                        (acc, cur) => acc + Number(cur.weight),
+                        0,
+                      )}
                     </td>
                     <td className="border border-black text-sm p-3">
-                      {selectedConsignment?.items?.reduce((acc, current) => {
-                        return Number(acc) + Number(current.weight) / 40;
-                      }, 0)}
+                      {(
+                        selectedConsignment?.items?.reduce(
+                          (acc, cur) => acc + Number(cur.weight),
+                          0,
+                        ) / 40
+                      ).toFixed(2)}
                     </td>
                   </tr>
                 </tbody>

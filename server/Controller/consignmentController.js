@@ -1,39 +1,37 @@
 import ConsignmentModel from "../Models/ConsignmentModel.js";
 import UserModel from "../Models/UserModel.js";
 
-// get all consignment TODO:
+const populateConsignment = (query) =>
+  query
+    .populate("createdBy", "name email")
+    .populate("transportation_details.driverId", "name licenseNumber")
+    .populate("transportation_details.vehicleId", "plateNumber type");
+
+// get all consignments
 export const getConsignment = async (req, res) => {
   try {
-    const getUser = await UserModel.findOne({ _id: req.user.id });
-    let consignment;
+    const user = await UserModel.findOne({ _id: req.user.id });
+    const query =
+      user.role === "Admin"
+        ? ConsignmentModel.find()
+        : ConsignmentModel.find({ createdBy: req.user.id });
 
-    if (getUser.role === "Admin") {
-      consignment = await ConsignmentModel.find().populate(
-        "createdBy",
-        "name email",
-      );
-    } else {
-      consignment = await ConsignmentModel.find({
-        createdBy: req.user.id,
-      }).populate("createdBy", "name email");
-    }
+    const consignment = await populateConsignment(query);
 
     return res.status(200).json({
-      message: "Consignment get succesfull",
+      message: "Consignment get successful",
       success: true,
       error: false,
       data: consignment,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      success: false,
-      error: true,
-    });
+    return res
+      .status(500)
+      .json({ message: error.message || error, success: false, error: true });
   }
 };
 
-// create consginment FIXME:
+// create consignment
 export const createConsignment = async (req, res) => {
   const {
     sender_details,
@@ -52,14 +50,15 @@ export const createConsignment = async (req, res) => {
       !items ||
       !status
     ) {
-      return res.status(401).json({
-        message: "All fields are required",
-        success: false,
-        error: true,
-      });
+      return res
+        .status(400)
+        .json({
+          message: "All fields are required",
+          success: false,
+          error: true,
+        });
     }
 
-    // add consignment to db
     const consignment = new ConsignmentModel({
       sender_details: {
         name: sender_details.name,
@@ -72,98 +71,126 @@ export const createConsignment = async (req, res) => {
         mobile: receiver_details.mobile,
       },
       transportation_details: {
-        trackDetails: transportation_details.trackDetails,
-        driverName: transportation_details.driverName,
+        driverId: transportation_details.driverId,
+        vehicleId: transportation_details.vehicleId,
       },
-      items: items,
+      items,
       status,
       createdBy: userId,
     });
 
     await consignment.save();
-    await consignment.populate("createdBy", "name email");
+    await populateConsignment(ConsignmentModel.findById(consignment._id)).then(
+      (populated) => {
+        Object.assign(consignment, populated.toObject());
+      },
+    );
+
+    const result = await populateConsignment(
+      ConsignmentModel.findById(consignment._id),
+    );
 
     return res.status(201).json({
-      message: "Consignment create successfull",
+      message: "Consignment created successfully",
       success: true,
       error: false,
-      data: consignment,
+      data: result,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      success: true,
-      error: false,
-    });
+    return res
+      .status(500)
+      .json({ message: error.message || error, success: false, error: true });
   }
 };
-// update consginment TODO:
+
+// update consignment
 export const updateConsignment = async (req, res) => {
   try {
-    // add consignment to db
-    const consignment = await ConsignmentModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true },
-    ).populate("createdBy", "name email");
+    const consignment = await populateConsignment(
+      ConsignmentModel.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      }),
+    );
+
+    if (!consignment) {
+      return res
+        .status(404)
+        .json({
+          message: "Consignment not found",
+          success: false,
+          error: true,
+        });
+    }
 
     return res.status(200).json({
-      message: "Consignment update successfull",
+      message: "Consignment updated successfully",
       success: true,
       error: false,
       data: consignment,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      success: true,
-      error: false,
-    });
+    return res
+      .status(500)
+      .json({ message: error.message || error, success: false, error: true });
   }
 };
 
-// delete consignment FIXME:
+// delete consignment
 export const deleteConsignment = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // delete
     const deletedConsignment = await ConsignmentModel.findByIdAndDelete(id);
 
+    if (!deletedConsignment) {
+      return res
+        .status(404)
+        .json({
+          message: "Consignment not found",
+          success: false,
+          error: true,
+        });
+    }
+
     return res.status(200).json({
-      message: "Consignment deleted succesfull",
+      message: "Consignment deleted successfully",
       success: true,
       error: false,
       data: deletedConsignment,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      success: true,
-      error: false,
-    });
+    return res
+      .status(500)
+      .json({ message: error.message || error, success: false, error: true });
   }
 };
 
-// get single consignment TODO:
+// get single consignment
 export const singleConsignment = async (req, res) => {
   try {
     const { id } = req.params;
+    const consignment = await populateConsignment(
+      ConsignmentModel.findById(id),
+    );
 
-    // get consignment form db
-    const consignment = await ConsignmentModel.findById(id);
+    if (!consignment) {
+      return res
+        .status(404)
+        .json({
+          message: "Consignment not found",
+          success: false,
+          error: true,
+        });
+    }
 
     return res.status(200).json({
-      message: "Consignment get successfull",
+      message: "Consignment get successful",
       success: true,
       error: false,
       data: consignment,
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-      success: false,
-      error: true,
-    });
+    return res
+      .status(500)
+      .json({ message: error.message, success: false, error: true });
   }
 };

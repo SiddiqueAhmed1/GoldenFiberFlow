@@ -6,16 +6,26 @@ import {
 } from "../Services/consignmentService";
 import { getDrivers } from "../Services/driverService";
 import { getVehicles } from "../Services/vehicleService";
+import { getProducts } from "../Services/productService";
 import { toast } from "react-hot-toast";
 
 const inp =
   "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
 
+const emptyItem = {
+  productId: "",
+  description: "",
+  grade: "",
+  quantity: "",
+  weight: "",
+  price: "",
+};
+
 const emptyForm = {
   sender_details: { name: "", address: "", mobile: "" },
   receiver_details: { name: "", address: "", mobile: "" },
   transportation_details: { driverId: "", vehicleId: "" },
-  items: [{ description: "", grade: "", quantity: "", weight: "", price: "" }],
+  items: [{ ...emptyItem }],
   status: "Pending",
 };
 
@@ -29,9 +39,10 @@ const ConsignmentModal = ({
   const [original, setOriginal] = useState(null);
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // load drivers & vehicles for dropdowns
+  // load dropdowns
   useEffect(() => {
     getDrivers()
       .then((d) => setDrivers(d.filter((x) => x.status === "Available")))
@@ -39,9 +50,12 @@ const ConsignmentModal = ({
     getVehicles()
       .then((v) => setVehicles(v.filter((x) => x.status === "Available")))
       .catch(() => {});
+    getProducts()
+      .then((p) => setProducts(p.filter((x) => x.status === "Active")))
+      .catch(() => {});
   }, []);
 
-  // populate form in edit mode
+  // populate edit mode
   useEffect(() => {
     if (mode === "edit" && selectedConsignmnet) {
       const d = {
@@ -49,15 +63,22 @@ const ConsignmentModal = ({
         receiver_details: selectedConsignmnet.receiver_details,
         transportation_details: {
           driverId:
+            selectedConsignmnet.transportation_details?.driverId?._id ||
             selectedConsignmnet.transportation_details?.driverId ||
-            selectedConsignmnet.transportation_details?.driverName ||
             "",
           vehicleId:
+            selectedConsignmnet.transportation_details?.vehicleId?._id ||
             selectedConsignmnet.transportation_details?.vehicleId ||
-            selectedConsignmnet.transportation_details?.trackDetails ||
             "",
         },
-        items: selectedConsignmnet.items,
+        items: selectedConsignmnet.items.map((item) => ({
+          productId: item.productId || "",
+          description: item.description,
+          grade: item.grade,
+          quantity: item.quantity,
+          weight: item.weight,
+          price: item.price,
+        })),
         status: selectedConsignmnet.status,
       };
       setFormData(d);
@@ -65,7 +86,7 @@ const ConsignmentModal = ({
     }
   }, [mode, selectedConsignmnet]);
 
-  // nested sender/receiver updater
+  // section updaters
   const setSender = (field, val) =>
     setFormData((p) => ({
       ...p,
@@ -82,23 +103,32 @@ const ConsignmentModal = ({
       transportation_details: { ...p.transportation_details, [field]: val },
     }));
 
-  // items
+  // item updaters
   const addItem = () =>
-    setFormData((p) => ({
-      ...p,
-      items: [
-        ...p.items,
-        { description: "", grade: "", quantity: "", weight: "", price: "" },
-      ],
-    }));
+    setFormData((p) => ({ ...p, items: [...p.items, { ...emptyItem }] }));
   const removeItem = (i) =>
     setFormData((p) => ({
       ...p,
       items: p.items.filter((_, idx) => idx !== i),
     }));
+
   const updateItem = (i, field, val) => {
     const items = [...formData.items];
     items[i] = { ...items[i], [field]: val };
+    setFormData((p) => ({ ...p, items }));
+  };
+
+  // when a product is selected from dropdown — auto-fill grade and price
+  const handleProductSelect = (i, productId) => {
+    const product = products.find((p) => p._id === productId);
+    const items = [...formData.items];
+    items[i] = {
+      ...items[i],
+      productId,
+      description: product ? product.name : "",
+      grade: product ? product.grade : "",
+      price: product ? product.unitPrice : "",
+    };
     setFormData((p) => ({ ...p, items }));
   };
 
@@ -158,10 +188,14 @@ const ConsignmentModal = ({
     </label>
   );
 
+  const NoDataWarning = ({ message }) => (
+    <p className="text-xs text-amber-500 dark:text-amber-400 mt-1">{message}</p>
+  );
+
   return (
     <section className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl mx-4 shadow-2xl">
-        {/* header */}
+        {/* ── Header ── */}
         <div className="sticky top-0 flex justify-between items-start border-b border-neutral-200 dark:border-neutral-700 p-5 bg-white dark:bg-neutral-800 z-10">
           <div>
             <h1 className="text-lg font-bold text-neutral-800 dark:text-white">
@@ -182,13 +216,13 @@ const ConsignmentModal = ({
         </div>
 
         <div className="p-5">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* ── Sender ── */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
               <SectionTitle>Sender Details</SectionTitle>
               <div className="space-y-3">
                 <div>
-                  <Label>Name *</Label>
+                  <Label>Full Name *</Label>
                   <input
                     required
                     value={formData.sender_details.name}
@@ -227,7 +261,7 @@ const ConsignmentModal = ({
               <SectionTitle>Receiver Details</SectionTitle>
               <div className="space-y-3">
                 <div>
-                  <Label>Name *</Label>
+                  <Label>Full Name *</Label>
                   <input
                     required
                     value={formData.receiver_details.name}
@@ -281,9 +315,7 @@ const ConsignmentModal = ({
                     ))}
                   </select>
                   {drivers.length === 0 && (
-                    <p className="text-xs text-amber-500 mt-1">
-                      No available drivers. Add drivers first.
-                    </p>
+                    <NoDataWarning message="No available drivers. Add a driver with 'Available' status first." />
                   )}
                 </div>
                 <div>
@@ -302,9 +334,7 @@ const ConsignmentModal = ({
                     ))}
                   </select>
                   {vehicles.length === 0 && (
-                    <p className="text-xs text-amber-500 mt-1">
-                      No available vehicles. Add vehicles first.
-                    </p>
+                    <NoDataWarning message="No available vehicles. Add a vehicle with 'Available' status first." />
                   )}
                 </div>
               </div>
@@ -317,11 +347,21 @@ const ConsignmentModal = ({
                 <button
                   type="button"
                   onClick={addItem}
-                  className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 cursor-pointer transition"
+                  className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 cursor-pointer transition"
                 >
                   <Plus size={14} /> Add Item
                 </button>
               </div>
+
+              {products.length === 0 && (
+                <div className="mb-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 rounded-lg px-3 py-2">
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
+                    No active products found. You can still enter item details
+                    manually, or add products first for quick selection.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-3">
                 {formData.items.map((item, index) => (
                   <div
@@ -342,6 +382,32 @@ const ConsignmentModal = ({
                         </button>
                       )}
                     </div>
+
+                    {/* Product dropdown — auto-fills description, grade, price */}
+                    {products.length > 0 && (
+                      <div className="mb-3">
+                        <Label>
+                          Select Product (optional — auto-fills below)
+                        </Label>
+                        <select
+                          value={item.productId}
+                          onChange={(e) =>
+                            handleProductSelect(index, e.target.value)
+                          }
+                          className={inp}
+                        >
+                          <option value="">
+                            — Pick a product or fill manually —
+                          </option>
+                          {products.map((p) => (
+                            <option key={p._id} value={p._id}>
+                              {p.name} · {p.grade} · ৳{p.unitPrice}/{p.unit}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
                         <Label>Description *</Label>
@@ -374,6 +440,7 @@ const ConsignmentModal = ({
                         <input
                           required
                           type="number"
+                          min="1"
                           value={item.quantity}
                           onChange={(e) =>
                             updateItem(index, "quantity", e.target.value)
@@ -387,6 +454,7 @@ const ConsignmentModal = ({
                         <input
                           required
                           type="number"
+                          min="0"
                           value={item.weight}
                           onChange={(e) =>
                             updateItem(index, "weight", e.target.value)
@@ -400,6 +468,7 @@ const ConsignmentModal = ({
                         <input
                           required
                           type="number"
+                          min="0"
                           value={item.price}
                           onChange={(e) =>
                             updateItem(index, "price", e.target.value)
