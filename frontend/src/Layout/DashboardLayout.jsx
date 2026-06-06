@@ -32,7 +32,7 @@ export const DashboardLayout = () => {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto dashboard-area">
           <Outlet />
         </main>
       </div>
