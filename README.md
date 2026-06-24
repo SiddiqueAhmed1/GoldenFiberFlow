@@ -1,3 +1,4 @@
+
 # Golden Fiber Flow 📦
 
 **Golden Fiber Flow** is a production-ready, specialized MERN stack logistics application engineered for high-efficiency consignment management. The platform delivers role-based dashboards empowering administrators with comprehensive user management and global logistics oversight, while providing standard users with secure tools to track, manage, and export their dedicated consignment records.
@@ -17,8 +18,9 @@ The platform features a fully adaptive interface with custom-tailored dark and l
     <td align="center"><b>Admin Dashboard (Light Mode)</b></td>
   </tr>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/0f9a2a4d-2a2a-4e4b-90af-802ce7bd708a" width="100%" alt="Admin Dashboard Dark Mode" /></td>
-    <td><img src="https://github.com/user-attachments/assets/adb86472-556a-4911-8650-c5f05ee03f69" width="100%" alt="Admin Dashboard Light Mode" /></td>
+    <td><img width="1680" height="923" alt="dashboard" src="https://github.com/user-attachments/assets/c6fe129d-d60d-4e17-ad67-f083bdfbaa03" />
+</td>
+    <td><img width="1680" height="923" alt="Dashboard Light mode" src="https://github.com/user-attachments/assets/1a26ad64-4a38-4bd4-8403-db1cbd7a70d3" /></td>
   </tr>
 </table>
 
@@ -32,13 +34,14 @@ Data-dense tables, conditional form states, and seamless overlays ensure clean w
     <td align="center"><b>Contextual Add Product Modal</b></td>
   </tr>
   <tr>
-    <td valign="top"><img src="https://github.com/user-attachments/assets/0f9a2a4d-2a2a-4e4b-90af-802ce7bd708a" width="100%" alt="Consignment List View" /></td>
-    <td valign="top"><img src="https://github.com/user-attachments/assets/adb86472-556a-4911-8650-c5f05ee03f69" width="100%" alt="Suppliers Empty State" /></td>
-    <td valign="top"><img src="https://github.com/user-attachments/assets/0f9a2a4d-2a2a-4e4b-90af-802ce7bd708a" width="100%" alt="Add Product Modal Window" /></td>
+    <td valign="top"><img width="1680" height="923" alt="consignment" src="https://github.com/user-attachments/assets/3a08684a-ee0e-49e2-8628-e1ce7d0448e3" />
+</td>
+    <td valign="top"><img width="1680" height="923" alt="suppliers" src="https://github.com/user-attachments/assets/920f69bb-4b07-4af5-85df-1e6b25eac73c" />
+</td>
+    <td valign="top"><img width="1680" height="923" alt="product modal" src="https://github.com/user-attachments/assets/fe3c2b33-5598-40df-890f-47f7f8581307" />
+</td>
   </tr>
 </table>
-
-*(Note: Please ensure the five image asset URLs listed above correspond correctly to your uploaded repository images once updated.)*
 
 ---
 
