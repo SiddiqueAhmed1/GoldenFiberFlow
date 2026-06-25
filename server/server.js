@@ -44,6 +44,10 @@ app.use("/api/v1", vehicleRouter);
 app.use("/api/v1", warehouseRouter);
 app.use("/api/v1", productRouter);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // listen server
 app.listen(port, () => {
   console.log(`server is running on port ${port}`.bgGreen.black);
