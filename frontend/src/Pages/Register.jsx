@@ -56,10 +56,11 @@ export const Register = () => {
 
               <div className="flex flex-col lg:mt-2">
                 <button
+                  disabled
                   type="submit"
-                  className="bg-blue-600 py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold cursor-pointer hover:bg-blue-500 transition-all"
+                  className="bg-gray-600 cursor-not-allowed py-2 lg:py-3 text-sm lg:text-lg rounded-lg text-white lg:font-semibold hover:bg-gray-700 transition-all"
                 >
-                  Register
+                  Registration not available
                 </button>
               </div>
             </form>

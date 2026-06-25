@@ -38,11 +38,9 @@ body {
   background: #374151;
 }
 
-label {
-  font-size: 14px;
-  font-weight: 500;
+.dark label {
   color: rgb(32, 32, 32);
 }
-.dark label {
+.dark .dashboard-area label {
   color: rgb(209, 213, 219);
 }
