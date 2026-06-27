@@ -139,9 +139,6 @@ const Products = () => {
                         Unit
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Supplier
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
                         Status
                       </th>
                       <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400 text-center">
@@ -172,9 +169,6 @@ const Products = () => {
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
                           {p.unit}
-                        </td>
-                        <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          {p.supplier?.name || "—"}
                         </td>
                         <td className="px-5 py-3.5">
                           <span

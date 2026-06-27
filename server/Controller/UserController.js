@@ -1,7 +1,8 @@
 import UserModel from "../Models/UserModel.js";
 import validator from "validator";
 import bcrypt from "bcrypt";
-import ConsignmentModel from "../Models/ConsignmentModel.js";
+import SalesOrderModel from "../Models/SalesOrderModel.js";
+import InvoiceModel from "../Models/InvoiceModel.js";
 
 // create user
 export const createUser = async (req, res) => {
@@ -85,8 +86,8 @@ export const userdelete = async (req, res) => {
         .json({ message: "User id not found", success: false, error: true });
     }
 
-    // also delete their consignments
-    await ConsignmentModel.deleteMany({ createdBy: id });
+    await SalesOrderModel.deleteMany({ createdBy: id });
+    await InvoiceModel.deleteMany({ createdBy: id });
 
     const deletedUser = await UserModel.findOneAndDelete({ _id: id });
     if (!deletedUser) {

@@ -1,11 +1,8 @@
 import ProductModel from "../Models/ProductModel.js";
 
-//get all products
 export const getProducts = async (req, res) => {
   try {
-    const products = await ProductModel.find()
-      .populate("supplier", "name")
-      .populate("createdBy", "name email");
+    const products = await ProductModel.find().populate("createdBy", "name email");
     return res.status(200).json({
       message: "Products fetched successfully",
       success: true,
@@ -19,12 +16,11 @@ export const getProducts = async (req, res) => {
   }
 };
 
-// create product
 export const createProduct = async (req, res) => {
-  const { name, sku, grade, unitPrice, unit, supplier, status } = req.body;
+  const { name, sku, grade, unitPrice, unit, status } = req.body;
   const userId = req.user.id;
   try {
-    if (!name || !sku || !grade || !unitPrice || !supplier) {
+    if (!name || !sku || !grade || !unitPrice) {
       return res.status(400).json({
         message: "All required fields must be filled",
         success: false,
@@ -44,12 +40,10 @@ export const createProduct = async (req, res) => {
       grade,
       unitPrice,
       unit,
-      supplier,
       status,
       createdBy: userId,
     });
     await product.save();
-    await product.populate("supplier", "name");
     await product.populate("createdBy", "name email");
     return res.status(201).json({
       message: "Product created successfully",
@@ -64,15 +58,12 @@ export const createProduct = async (req, res) => {
   }
 };
 
-// update product
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await ProductModel.findByIdAndUpdate(id, req.body, {
       new: true,
-    })
-      .populate("supplier", "name")
-      .populate("createdBy", "name email");
+    }).populate("createdBy", "name email");
     if (!product)
       return res
         .status(404)
@@ -90,7 +81,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// delete product
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;

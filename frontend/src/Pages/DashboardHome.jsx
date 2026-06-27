@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../Hooks/useAuth";
-import { getConsignments } from "../Services/consignmentService";
+import { getSalesOrders } from "../Services/salesOrderService";
 import { getSuppliers } from "../Services/supplierService";
 import {
-  Package,
+  ShoppingCart,
   Building2,
   TrendingUp,
   Clock,
@@ -25,14 +25,13 @@ import {
   Legend,
 } from "recharts";
 
-// ── helpers ──────────────────────────────────────────────
 const monthName = (iso) =>
   new Date(iso).toLocaleString("default", { month: "short" });
 
-const buildMonthlyData = (consignments) => {
+const buildMonthlyData = (orders) => {
   const map = {};
-  consignments.forEach((c) => {
-    const m = monthName(c.createdAt);
+  orders.forEach((o) => {
+    const m = monthName(o.createdAt);
     map[m] = (map[m] || 0) + 1;
   });
   return Object.entries(map)
@@ -40,9 +39,8 @@ const buildMonthlyData = (consignments) => {
     .map(([month, count]) => ({ month, count }));
 };
 
-const PIE_COLORS = ["#f59e0b", "#10b981", "#3b82f6", "#ef4444"];
+const PIE_COLORS = ["#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#8b5cf6"];
 
-// ── Stat card ─────────────────────────────────────────────
 const StatCard = ({ icon: Icon, label, value, sub, color }) => (
   <div className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
     <div
@@ -66,7 +64,6 @@ const StatCard = ({ icon: Icon, label, value, sub, color }) => (
   </div>
 );
 
-// ── Custom tooltip ────────────────────────────────────────
 const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -75,27 +72,26 @@ const ChartTooltip = ({ active, payload, label }) => {
         {label}
       </p>
       <p className="text-amber-500 font-bold">
-        {payload[0].value} consignments
+        {payload[0].value} sales orders
       </p>
     </div>
   );
 };
 
-// ── Main component ────────────────────────────────────────
 const DashboardHome = () => {
   const { user } = useAuth();
-  const [consignments, setConsignments] = useState([]);
+  const [salesOrders, setSalesOrders] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [cons, sups] = await Promise.all([
-          getConsignments(),
+        const [orders, sups] = await Promise.all([
+          getSalesOrders(),
           getSuppliers(),
         ]);
-        setConsignments(cons || []);
+        setSalesOrders(orders || []);
         setSuppliers(sups || []);
       } catch (_) {
         /* silent */
@@ -106,16 +102,13 @@ const DashboardHome = () => {
     load();
   }, []);
 
-  // computed stats
-  const total = consignments.length;
-  const pending = consignments.filter((c) => c.status === "Pending").length;
-  const inTransit = consignments.filter(
-    (c) => c.status === "In transit",
-  ).length;
-  const delivered = consignments.filter((c) => c.status === "Delivered").length;
-  const cancelled = consignments.filter((c) => c.status === "Cancelled").length;
+  const total = salesOrders.length;
+  const pending = salesOrders.filter((o) => o.status === "Pending").length;
+  const inTransit = salesOrders.filter((o) => o.status === "In Transit").length;
+  const delivered = salesOrders.filter((o) => o.status === "Delivered").length;
+  const cancelled = salesOrders.filter((o) => o.status === "Cancelled").length;
 
-  const monthlyData = buildMonthlyData(consignments);
+  const monthlyData = buildMonthlyData(salesOrders);
 
   const pieData = [
     { name: "Pending", value: pending },
@@ -124,20 +117,16 @@ const DashboardHome = () => {
     { name: "Cancelled", value: cancelled },
   ].filter((d) => d.value > 0);
 
-  // recent 5
-  const recentConsignments = [...consignments]
+  const recentOrders = [...salesOrders]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 5);
 
   const statusStyle = {
-    Pending:
-      "bg-amber-100  dark:bg-amber-900/30  text-amber-600  dark:text-amber-400",
-    "In transit":
-      "bg-green-100  dark:bg-green-900/30  text-green-600  dark:text-green-400",
-    Delivered:
-      "bg-blue-100   dark:bg-blue-900/30   text-blue-600   dark:text-blue-400",
-    Cancelled:
-      "bg-red-100    dark:bg-red-900/30    text-red-600    dark:text-red-400",
+    Pending: "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400",
+    Confirmed: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+    "In Transit": "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+    Delivered: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+    Cancelled: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
   };
 
   const greeting = () => {
@@ -157,21 +146,19 @@ const DashboardHome = () => {
 
   return (
     <section className="p-5 md:p-8 min-h-screen bg-neutral-50 dark:bg-neutral-950 transition-colors duration-300">
-      {/* ── Header ── */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 dark:text-white">
           {greeting()}, {user?.name?.split(" ")[0]} 👋
         </h1>
         <p className="text-neutral-500 dark:text-neutral-400 mt-1 text-sm md:text-base">
-          Here's what's happening with your shipments today.
+          Here's what's happening with your sales orders today.
         </p>
       </div>
 
-      {/* ── Stat cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard
-          icon={Package}
-          label="Total Consignments"
+          icon={ShoppingCart}
+          label="Total Sales Orders"
           value={total}
           sub="All time"
           color="bg-gradient-to-br from-amber-400 to-yellow-600"
@@ -180,7 +167,7 @@ const DashboardHome = () => {
           icon={Clock}
           label="Pending"
           value={pending}
-          sub="Awaiting dispatch"
+          sub="Awaiting confirmation"
           color="bg-gradient-to-br from-orange-400 to-orange-600"
         />
         <StatCard
@@ -223,12 +210,10 @@ const DashboardHome = () => {
         />
       </div>
 
-      {/* ── Charts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-        {/* Area chart */}
         <div className="lg:col-span-2 bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 p-5 shadow-sm">
           <h2 className="text-base font-bold text-neutral-800 dark:text-white mb-1">
-            Consignment Trend
+            Sales Order Trend
           </h2>
           <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-5">
             Last 6 months
@@ -281,13 +266,12 @@ const DashboardHome = () => {
           )}
         </div>
 
-        {/* Pie chart */}
         <div className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 p-5 shadow-sm">
           <h2 className="text-base font-bold text-neutral-800 dark:text-white mb-1">
             Status Breakdown
           </h2>
           <p className="text-xs text-neutral-400 dark:text-neutral-500 mb-3">
-            All consignments
+            All sales orders
           </p>
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={230}>
@@ -321,46 +305,49 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* ── Recent consignments ── */}
       <div className="bg-white dark:bg-neutral-800/70 rounded-2xl border border-neutral-200 dark:border-neutral-700/50 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700/50">
           <h2 className="text-base font-bold text-neutral-800 dark:text-white">
-            Recent Consignments
+            Recent Sales Orders
           </h2>
           <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
             Latest 5 records
           </p>
         </div>
 
-        {recentConsignments.length === 0 ? (
+        {recentOrders.length === 0 ? (
           <div className="text-center py-12 text-neutral-400 dark:text-neutral-500 text-sm">
-            No consignments yet
+            No sales orders yet
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-neutral-50 dark:bg-neutral-700/30 text-neutral-500 dark:text-neutral-400 text-left">
-                  <th className="px-5 py-3 font-medium">Sender</th>
-                  <th className="px-5 py-3 font-medium">Receiver</th>
+                  <th className="px-5 py-3 font-medium">Order No</th>
+                  <th className="px-5 py-3 font-medium">Customer</th>
+                  <th className="px-5 py-3 font-medium">Amount</th>
                   <th className="px-5 py-3 font-medium">Date</th>
                   <th className="px-5 py-3 font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {recentConsignments.map((c) => (
+                {recentOrders.map((o) => (
                   <tr
-                    key={c._id}
+                    key={o._id}
                     className="border-t border-neutral-100 dark:border-neutral-700/40 hover:bg-neutral-50 dark:hover:bg-neutral-700/20 transition"
                   >
+                    <td className="px-5 py-3 font-mono text-xs font-semibold text-amber-600 dark:text-amber-400">
+                      {o.orderNumber}
+                    </td>
                     <td className="px-5 py-3 font-medium text-neutral-800 dark:text-neutral-100">
-                      {c.sender_details?.name}
+                      {o.customer?.name}
                     </td>
                     <td className="px-5 py-3 text-neutral-600 dark:text-neutral-300">
-                      {c.receiver_details?.name}
+                      ৳ {o.totalAmount?.toLocaleString()}
                     </td>
                     <td className="px-5 py-3 text-neutral-400 dark:text-neutral-500">
-                      {new Date(c.createdAt).toLocaleDateString("en-GB", {
+                      {new Date(o.createdAt).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
                         year: "numeric",
@@ -368,9 +355,9 @@ const DashboardHome = () => {
                     </td>
                     <td className="px-5 py-3">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle[c.status] || ""}`}
+                        className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusStyle[o.status] || ""}`}
                       >
-                        {c.status}
+                        {o.status}
                       </span>
                     </td>
                   </tr>

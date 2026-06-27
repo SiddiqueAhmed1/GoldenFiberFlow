@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createProduct, updateProduct } from "../Services/productService";
-import { getSuppliers } from "../Services/supplierService";
 import { toast } from "react-hot-toast";
 
 const empty = {
@@ -10,7 +9,6 @@ const empty = {
   grade: "",
   unitPrice: "",
   unit: "kg",
-  supplier: "",
   status: "Active",
 };
 const inp =
@@ -20,13 +18,6 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
   const [form, setForm] = useState(empty);
   const [original, setOriginal] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [suppliers, setSuppliers] = useState([]);
-
-  useEffect(() => {
-    getSuppliers()
-      .then((data) => setSuppliers(data.filter((s) => s.status === "Active")))
-      .catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (mode === "edit" && selected) {
@@ -36,7 +27,6 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
         grade: selected.grade,
         unitPrice: selected.unitPrice,
         unit: selected.unit,
-        supplier: selected.supplier?._id || selected.supplier,
         status: selected.status,
       };
       setForm(d);
@@ -97,7 +87,6 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
 
         <div className="p-5">
           <form onSubmit={onSubmit} className="space-y-5">
-            {/* Product Info */}
             <div className="space-y-3">
               <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                 Product Info
@@ -145,7 +134,6 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
               </div>
             </div>
 
-            {/* Pricing */}
             <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
               <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                 Pricing & Unit
@@ -164,6 +152,11 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
                     type="number"
                     placeholder="e.g. 5000"
                   />
+                  {form.unit && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                      ৳ {form.unitPrice || 0} / {form.unit}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
@@ -185,35 +178,10 @@ const ProductModal = ({ handleClose, setProducts, mode, selected }) => {
               </div>
             </div>
 
-            {/* Supplier & Status */}
             <div className="space-y-3 border-t border-neutral-200 dark:border-neutral-700 pt-4">
               <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                Supplier & Status
+                Status
               </h2>
-              <div>
-                <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
-                  Supplier *
-                </label>
-                <select
-                  required
-                  name="supplier"
-                  value={form.supplier}
-                  onChange={onChange}
-                  className={inp}
-                >
-                  <option value="">— Select supplier —</option>
-                  {suppliers.map((s) => (
-                    <option key={s._id} value={s._id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                {suppliers.length === 0 && (
-                  <p className="text-xs text-amber-500 mt-1">
-                    No active suppliers found. Add a supplier first.
-                  </p>
-                )}
-              </div>
               <div>
                 <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">
                   Status *

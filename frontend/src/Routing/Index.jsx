@@ -1,20 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Login } from "../Pages/Login";
-import { Register } from "../Pages/Register";
-import { Dashboard } from "../Pages/Dashboard";
-import { MainLayout } from "../Layout/MainLayout";
-import ProtectedRoutes from "./ProtectedRoutes";
-import PublicRoutes from "./PublicRoutes";
-import Admin from "../Pages/Admin";
-import IndexRedirect from "./IndexRedirect";
+import { Login }          from "../Pages/Login";
+import { Register }       from "../Pages/Register";
+import { MainLayout }     from "../Layout/MainLayout";
+import ProtectedRoutes    from "./ProtectedRoutes";
+import PublicRoutes       from "./PublicRoutes";
+import Admin              from "../Pages/Admin";
+import IndexRedirect      from "./IndexRedirect";
 import { DashboardLayout } from "../Layout/DashboardLayout";
-import Pdf from "../Pages/Pdf";
-import Suppliers from "../Pages/Suppliers";
-import Products from "../Pages/Products";
-import Drivers from "../Pages/Drivers";
-import Vehicles from "../Pages/Vehicles";
-import Warehouses from "../Pages/Warehouses";
-import DashboardHome from "../Pages/DashboardHome";
+import DashboardHome      from "../Pages/DashboardHome";
+import Suppliers          from "../Pages/Suppliers";
+import Products           from "../Pages/Products";
+import Drivers            from "../Pages/Drivers";
+import Vehicles           from "../Pages/Vehicles";
+import Warehouses         from "../Pages/Warehouses";
+import Customers          from "../Pages/Customers";
+import SalesOrders        from "../Pages/SalesOrders";
+import PurchaseOrders     from "../Pages/PurchaseOrders";
+import Inventory          from "../Pages/Inventory";
+import Invoices           from "../Pages/Invoices";
 
 const router = createBrowserRouter([
   {
@@ -29,15 +32,18 @@ const router = createBrowserRouter([
             path: "dashboard",
             element: <DashboardLayout />,
             children: [
-              { index: true, element: <DashboardHome /> },
-              { path: "consignments", element: <Dashboard /> },
-              { path: "consignment/:id", element: <Pdf /> },
-              { path: "suppliers", element: <Suppliers /> },
-              { path: "products", element: <Products /> },
-              { path: "drivers", element: <Drivers /> },
-              { path: "vehicles", element: <Vehicles /> },
-              { path: "warehouses", element: <Warehouses /> },
-              { path: "admin", element: <Admin /> },
+              { index: true,                      element: <DashboardHome />   },
+              { path: "customers",                element: <Customers />       },
+              { path: "suppliers",                element: <Suppliers />       },
+              { path: "products",                 element: <Products />        },
+              { path: "inventory",                element: <Inventory />       },
+              { path: "sales-orders",             element: <SalesOrders />     },
+              { path: "purchase-orders",          element: <PurchaseOrders />  },
+              { path: "invoices",                 element: <Invoices />        },
+              { path: "drivers",                  element: <Drivers />         },
+              { path: "vehicles",                 element: <Vehicles />        },
+              { path: "warehouses",               element: <Warehouses />      },
+              { path: "admin",                    element: <Admin />           },
             ],
           },
         ],
@@ -47,10 +53,9 @@ const router = createBrowserRouter([
   {
     element: <PublicRoutes />,
     children: [
-      { path: "login", element: <Login /> },
+      { path: "login",    element: <Login />    },
       { path: "register", element: <Register /> },
     ],
   },
 ]);
-
 export default router;

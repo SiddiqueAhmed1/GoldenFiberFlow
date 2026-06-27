@@ -1,0 +1,10 @@
+import express from "express";
+import authMiddleware from "../Utils/authMiddleware.js";
+import { createSalesOrder, deleteSalesOrder, getSalesOrders, getSingleSalesOrder, updateSalesOrder } from "../Controller/salesOrderController.js";
+const router = express.Router();
+router.get("/sales-order", authMiddleware, getSalesOrders);
+router.get("/sales-order/:id", authMiddleware, getSingleSalesOrder);
+router.post("/sales-order", authMiddleware, createSalesOrder);
+router.patch("/sales-order/:id", authMiddleware, updateSalesOrder);
+router.delete("/sales-order/:id", authMiddleware, deleteSalesOrder);
+export default router;

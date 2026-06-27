@@ -11,11 +11,6 @@ const productSchema = mongoose.Schema(
       enum: ["kg", "ton", "bale", "piece", "bundle"],
       default: "kg",
     },
-    supplier: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Supplier",
-      required: true,
-    },
     status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

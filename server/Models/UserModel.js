@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import ConsignmentModel from "./ConsignmentModel.js";
 
 const userSchema = mongoose.Schema(
   {
