@@ -6,7 +6,7 @@ import { getProducts } from "../Services/productService";
 import { toast } from "react-hot-toast";
 
 const inp = "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
-const emptyItem = { product: "", description: "", unit: "", quantity: "", weight: "", unitPrice: "", totalPrice: "" };
+const emptyItem = { product: "", description: "", unit: "", quantity: "", unitPrice: "", totalPrice: "" };
 const emptyForm = { supplier: "", items: [{ ...emptyItem }], totalAmount: "", expectedDate: "", note: "", status: "Pending" };
 
 const Label = ({ children }) => <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">{children}</label>;
@@ -33,7 +33,6 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
           description: i.description,
           unit: i.product?.unit || "",
           quantity: i.quantity,
-          weight: i.weight,
           unitPrice: i.unitPrice,
           totalPrice: i.totalPrice,
         })),
@@ -57,7 +56,7 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
       description: product?.name || "",
       unit: product?.unit || "",
       unitPrice: product?.unitPrice || "",
-      totalPrice: (Number(items[idx].weight) || 0) * (product?.unitPrice || 0),
+      totalPrice: (Number(items[idx].quantity) || 0) * (product?.unitPrice || 0),
     };
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
@@ -65,8 +64,8 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const updateItem = (idx, field, val) => {
     const items = [...form.items];
     items[idx] = { ...items[idx], [field]: val };
-    if (field === "weight" || field === "unitPrice") {
-      items[idx].totalPrice = (Number(items[idx].weight) || 0) * (Number(items[idx].unitPrice) || 0);
+    if (field === "quantity" || field === "unitPrice") {
+      items[idx].totalPrice = (Number(items[idx].quantity) || 0) * (Number(items[idx].unitPrice) || 0);
     }
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
@@ -79,8 +78,8 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
     try {
       const payload = {
         ...form,
-        items: form.items.map(({ product, description, quantity, weight, unitPrice, totalPrice }) => ({
-          product, description, quantity, weight, unitPrice, totalPrice,
+        items: form.items.map(({ product, description, quantity, unitPrice, totalPrice }) => ({
+          product, description, quantity, unitPrice, totalPrice,
         })),
         totalAmount: Number(form.totalAmount),
       };
@@ -154,9 +153,8 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                       </div>
                     )}
                     <div className="mb-3"><Label>Description *</Label><input required value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} className={inp} placeholder="e.g. Hessian Cloth" /></div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <div><Label>Quantity *</Label><input required type="number" min="1" value={item.quantity} onChange={(e) => updateItem(idx, "quantity", e.target.value)} className={inp} placeholder="0" /></div>
-                      <div><Label>Weight ({item.unit || "unit"}) *</Label><input required type="number" min="0" value={item.weight} onChange={(e) => updateItem(idx, "weight", e.target.value)} className={inp} placeholder="0" /></div>
                       <div>
                         <Label>Unit Price (৳/{item.unit || "unit"}) *</Label>
                         <input required type="number" min="0" value={item.unitPrice} onChange={(e) => updateItem(idx, "unitPrice", e.target.value)} className={inp} placeholder="0" />

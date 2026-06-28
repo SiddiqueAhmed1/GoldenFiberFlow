@@ -1,4 +1,4 @@
-import { Plus, Pencil, Trash2, ShoppingCart } from "lucide-react";
+import { Plus, Pencil, Trash2, ShoppingCart, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import SalesOrderModal from "../Components/SalesOrderModal";
 import { getSalesOrders, deleteSalesOrder } from "../Services/salesOrderService";
@@ -78,7 +78,7 @@ const SalesOrders = () => {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-neutral-50 dark:bg-neutral-700/40 border-b border-neutral-200 dark:border-neutral-700 text-left">
-                        {["Order No", "Customer", "Items", "Total (৳)", "Advance (৳)", "Due (৳)", "Status", "Date", "Actions"].map((h) => (
+                        {["Order No", "Customer", "Items", "Total (৳)", "Advance (৳)", "Due (৳)", "Status", "Dispatch", "Date", "Actions"].map((h) => (
                           <th key={h} className={`px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400 ${h === "Actions" ? "text-center" : ""}`}>{h}</th>
                         ))}
                       </tr>
@@ -93,6 +93,15 @@ const SalesOrders = () => {
                           <td className="px-5 py-3.5 text-green-600 dark:text-green-400">৳ {o.advanceAmount?.toLocaleString()}</td>
                           <td className="px-5 py-3.5 text-red-500 dark:text-red-400">৳ {o.dueAmount?.toLocaleString()}</td>
                           <td className="px-5 py-3.5"><span className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${statusStyle(o.status)}`}>{o.status}</span></td>
+                          <td className="px-5 py-3.5">
+                            {o.dispatchDetails?.driver || o.dispatchDetails?.vehicle ? (
+                              <div className="flex items-center gap-1.5 text-xs text-violet-600 dark:text-violet-400">
+                                <Truck size={12} />
+                                <span className="font-medium">{o.dispatchDetails?.driver?.name || "—"}</span>
+                                {o.dispatchDetails?.vehicle?.plateNumber && <span className="text-neutral-400">· {o.dispatchDetails.vehicle.plateNumber}</span>}
+                              </div>
+                            ) : <span className="text-xs text-neutral-400">—</span>}
+                          </td>
                           <td className="px-5 py-3.5 text-neutral-500 dark:text-neutral-400 whitespace-nowrap">{new Date(o.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
                           <td className="px-5 py-3.5">
                             <div className="flex justify-center gap-2">

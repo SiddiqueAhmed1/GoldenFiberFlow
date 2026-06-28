@@ -9,7 +9,6 @@ const purchaseOrderSchema = mongoose.Schema(
         product:    { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
         description:{ type: String, required: true },
         quantity:   { type: Number, required: true },
-        weight:     { type: Number, required: true },
         unitPrice:  { type: Number, required: true },
         totalPrice: { type: Number, required: true },
       },

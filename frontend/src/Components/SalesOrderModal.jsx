@@ -1,16 +1,22 @@
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createSalesOrder, updateSalesOrder } from "../Services/salesOrderService";
 import { getCustomers } from "../Services/customerService";
 import { getProducts } from "../Services/productService";
+import { getDrivers } from "../Services/driverService";
+import { getVehicles } from "../Services/vehicleService";
+import { getWarehouses } from "../Services/warehouseService";
 import { toast } from "react-hot-toast";
 
 const inp = "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
-const emptyItem = { product: "", description: "", grade: "", unit: "", quantity: "", weight: "", unitPrice: "", totalPrice: "" };
-const emptyForm = { customer: "", items: [{ ...emptyItem }], totalAmount: "", advanceAmount: "", note: "", status: "Pending" };
+const emptyItem = { product: "", description: "", grade: "", unit: "", quantity: "", unitPrice: "", totalPrice: "" };
+const emptyDispatch = { driver: "", vehicle: "", warehouse: "" };
+const emptyForm = { customer: "", items: [{ ...emptyItem }], totalAmount: "", advanceAmount: "", note: "", status: "Pending", dispatchDetails: { ...emptyDispatch } };
 
 const Label = ({ children }) => <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">{children}</label>;
 const Section = ({ children }) => <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">{children}</h2>;
+
+const DISPATCH_STATUSES = ["In Transit", "Delivered"];
 
 const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const [form, setForm] = useState(emptyForm);
@@ -18,10 +24,16 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
 
   useEffect(() => {
     getCustomers().then((d) => setCustomers(d.filter((c) => c.status === "Active"))).catch(() => {});
     getProducts().then((d) => setProducts(d.filter((p) => p.status === "Active"))).catch(() => {});
+    getDrivers().then((d) => setDrivers(d.filter((dr) => dr.status === "Available"))).catch(() => {});
+    getVehicles().then((d) => setVehicles(d.filter((v) => v.status === "Available"))).catch(() => {});
+    getWarehouses().then((d) => setWarehouses(d.filter((w) => w.status === "Active"))).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -34,7 +46,6 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
           grade: i.grade,
           unit: i.product?.unit || "",
           quantity: i.quantity,
-          weight: i.weight,
           unitPrice: i.unitPrice,
           totalPrice: i.totalPrice,
         })),
@@ -42,6 +53,11 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
         advanceAmount: selected.advanceAmount,
         note: selected.note || "",
         status: selected.status,
+        dispatchDetails: {
+          driver:    selected.dispatchDetails?.driver?._id    || selected.dispatchDetails?.driver    || "",
+          vehicle:   selected.dispatchDetails?.vehicle?._id   || selected.dispatchDetails?.vehicle   || "",
+          warehouse: selected.dispatchDetails?.warehouse?._id || selected.dispatchDetails?.warehouse || "",
+        },
       };
       setForm(d); setOriginal(d);
     }
@@ -59,7 +75,7 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
       grade: product?.grade || "",
       unit: product?.unit || "",
       unitPrice: product?.unitPrice || "",
-      totalPrice: (Number(items[idx].weight) || 0) * (product?.unitPrice || 0),
+      totalPrice: (Number(items[idx].quantity) || 0) * (product?.unitPrice || 0),
     };
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
@@ -67,11 +83,14 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const updateItem = (idx, field, val) => {
     const items = [...form.items];
     items[idx] = { ...items[idx], [field]: val };
-    if (field === "weight" || field === "unitPrice") {
-      items[idx].totalPrice = (Number(items[idx].weight) || 0) * (Number(items[idx].unitPrice) || 0);
+    if (field === "quantity" || field === "unitPrice") {
+      items[idx].totalPrice = (Number(items[idx].quantity) || 0) * (Number(items[idx].unitPrice) || 0);
     }
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
+
+  const setDispatch = (field, val) =>
+    setForm((p) => ({ ...p, dispatchDetails: { ...p.dispatchDetails, [field]: val } }));
 
   const addItem = () => setForm((p) => ({ ...p, items: [...p.items, { ...emptyItem }] }));
   const removeItem = (idx) => {
@@ -82,13 +101,21 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const onSubmit = async (e) => {
     e.preventDefault(); setLoading(true);
     try {
+      const showDispatch = DISPATCH_STATUSES.includes(form.status);
       const payload = {
         ...form,
-        items: form.items.map(({ product, description, grade, quantity, weight, unitPrice, totalPrice }) => ({
-          product, description, grade, quantity, weight, unitPrice, totalPrice,
+        items: form.items.map(({ product, description, grade, quantity, unitPrice, totalPrice }) => ({
+          product, description, grade, quantity, unitPrice, totalPrice,
         })),
         totalAmount: Number(form.totalAmount),
         advanceAmount: Number(form.advanceAmount) || 0,
+        dispatchDetails: showDispatch
+          ? {
+              driver:    form.dispatchDetails.driver    || null,
+              vehicle:   form.dispatchDetails.vehicle   || null,
+              warehouse: form.dispatchDetails.warehouse || null,
+            }
+          : { driver: null, vehicle: null, warehouse: null },
       };
       if (mode === "create") {
         const data = await createSalesOrder(payload);
@@ -106,6 +133,8 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
     finally { setLoading(false); }
   };
 
+  const showDispatch = DISPATCH_STATUSES.includes(form.status);
+
   return (
     <section className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl mx-4 shadow-2xl">
@@ -118,6 +147,7 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
         </div>
         <div className="p-5">
           <form onSubmit={onSubmit} className="space-y-5">
+            {/* Customer */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
               <Section>Customer</Section>
               <div><Label>Customer *</Label>
@@ -129,6 +159,7 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
               </div>
             </div>
 
+            {/* Items */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
               <div className="flex justify-between items-center mb-3">
                 <Section>Items</Section>
@@ -161,9 +192,8 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                       <div><Label>Description *</Label><input required value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} className={inp} placeholder="e.g. Jute Fiber" /></div>
                       <div><Label>Grade *</Label><input required value={item.grade} onChange={(e) => updateItem(idx, "grade", e.target.value)} className={inp} placeholder="e.g. Grade A" /></div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <div><Label>Quantity *</Label><input required type="number" min="1" value={item.quantity} onChange={(e) => updateItem(idx, "quantity", e.target.value)} className={inp} placeholder="0" /></div>
-                      <div><Label>Weight ({item.unit || "unit"}) *</Label><input required type="number" min="0" value={item.weight} onChange={(e) => updateItem(idx, "weight", e.target.value)} className={inp} placeholder="0" /></div>
                       <div>
                         <Label>Unit Price (৳/{item.unit || "unit"}) *</Label>
                         <input required type="number" min="0" value={item.unitPrice} onChange={(e) => updateItem(idx, "unitPrice", e.target.value)} className={inp} placeholder="0" />
@@ -175,6 +205,7 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
               </div>
             </div>
 
+            {/* Payment & Status */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
               <Section>Payment & Status</Section>
               <div className="grid grid-cols-2 gap-3 mb-3">
@@ -195,6 +226,42 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                 <div><Label>Note</Label><input value={form.note} onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))} className={inp} placeholder="Optional note" /></div>
               </div>
             </div>
+
+            {/* Dispatch Info — only when In Transit or Delivered */}
+            {showDispatch && (
+              <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Truck size={14} className="text-violet-600 dark:text-violet-400" />
+                  <Section>Dispatch Info</Section>
+                </div>
+                <p className="text-xs text-violet-600 dark:text-violet-400 mb-3 -mt-2">
+                  Assign driver, vehicle and source warehouse for this shipment.
+                </p>
+                <div className="grid grid-cols-1 gap-3">
+                  <div><Label>Driver</Label>
+                    <select value={form.dispatchDetails.driver} onChange={(e) => setDispatch("driver", e.target.value)} className={inp}>
+                      <option value="">— Select driver —</option>
+                      {drivers.map((d) => <option key={d._id} value={d._id}>{d.name} · {d.mobile}</option>)}
+                    </select>
+                    {drivers.length === 0 && <p className="text-xs text-amber-500 mt-1">No available drivers. Check Driver management.</p>}
+                  </div>
+                  <div><Label>Vehicle</Label>
+                    <select value={form.dispatchDetails.vehicle} onChange={(e) => setDispatch("vehicle", e.target.value)} className={inp}>
+                      <option value="">— Select vehicle —</option>
+                      {vehicles.map((v) => <option key={v._id} value={v._id}>{v.plateNumber} · {v.type} · {v.capacity}</option>)}
+                    </select>
+                    {vehicles.length === 0 && <p className="text-xs text-amber-500 mt-1">No available vehicles. Check Vehicle management.</p>}
+                  </div>
+                  <div><Label>Dispatch Warehouse</Label>
+                    <select value={form.dispatchDetails.warehouse} onChange={(e) => setDispatch("warehouse", e.target.value)} className={inp}>
+                      <option value="">— Select warehouse —</option>
+                      {warehouses.map((w) => <option key={w._id} value={w._id}>{w.name} · {w.location}</option>)}
+                    </select>
+                    {warehouses.length === 0 && <p className="text-xs text-amber-500 mt-1">No active warehouses. Check Warehouse management.</p>}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-end gap-3 pt-2">
               <button type="button" onClick={handleClose} className="px-4 py-2 text-sm rounded-lg border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 cursor-pointer transition">Cancel</button>

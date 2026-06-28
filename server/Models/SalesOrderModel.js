@@ -10,7 +10,6 @@ const salesOrderSchema = mongoose.Schema(
         description: { type: String, required: true },
         grade:       { type: String, required: true },
         quantity:    { type: Number, required: true },
-        weight:      { type: Number, required: true },
         unitPrice:   { type: Number, required: true },
         totalPrice:  { type: Number, required: true },
       },
@@ -24,6 +23,11 @@ const salesOrderSchema = mongoose.Schema(
       default: "Pending",
     },
     note:      { type: String, default: "" },
+    dispatchDetails: {
+      driver:    { type: mongoose.Schema.Types.ObjectId, ref: "Driver",    default: null },
+      vehicle:   { type: mongoose.Schema.Types.ObjectId, ref: "Vehicle",   default: null },
+      warehouse: { type: mongoose.Schema.Types.ObjectId, ref: "Warehouse", default: null },
+    },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }

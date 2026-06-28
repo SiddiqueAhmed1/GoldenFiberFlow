@@ -2,7 +2,11 @@ import InvoiceModel from "../Models/InvoiceModel.js";
 
 const populate = (q) =>
   q.populate("customer", "name mobile address businessName")
-   .populate("salesOrder", "orderNumber totalAmount status")
+   .populate({
+     path: "salesOrder",
+     select: "orderNumber totalAmount status items note",
+     populate: { path: "items.product", select: "name grade unit unitPrice" },
+   })
    .populate("createdBy", "name email");
 
 export const getInvoices = async (req, res) => {
