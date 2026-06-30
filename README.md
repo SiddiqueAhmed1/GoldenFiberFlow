@@ -118,3 +118,409 @@ npm run dev
 
 ## 📄 License
 Distributed under the permissive open-source MIT License.
+
+```
+GoldenFiberFlow
+├─ frontend
+│  ├─ Claude.md
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  ├─ favicon.svg
+│  │  ├─ gftcl.png
+│  │  └─ icons.svg
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ Api
+│  │  │  └─ api.js
+│  │  ├─ App.css
+│  │  ├─ App.jsx
+│  │  ├─ assets
+│  │  │  ├─ gftcl.png
+│  │  │  ├─ hero.png
+│  │  │  ├─ react.svg
+│  │  │  └─ vite.svg
+│  │  ├─ Components
+│  │  │  ├─ CustomerModal.jsx
+│  │  │  ├─ DriverModal.jsx
+│  │  │  ├─ Header.jsx
+│  │  │  ├─ InvoiceModal.jsx
+│  │  │  ├─ LoadingSpinner.jsx
+│  │  │  ├─ ProductModal.jsx
+│  │  │  ├─ PurchaseOrderModal.jsx
+│  │  │  ├─ SalesOrderModal.jsx
+│  │  │  ├─ Sidebar.jsx
+│  │  │  ├─ SupplierModal.jsx
+│  │  │  ├─ UserModal.jsx
+│  │  │  ├─ VehicleModal.jsx
+│  │  │  └─ WarehouseModal.jsx
+│  │  ├─ Context
+│  │  │  ├─ AuthContext.jsx
+│  │  │  └─ ThemeContext.jsx
+│  │  ├─ Hooks
+│  │  │  └─ useAuth.js
+│  │  ├─ index.css
+│  │  ├─ Layout
+│  │  │  ├─ DashboardLayout.jsx
+│  │  │  └─ MainLayout.jsx
+│  │  ├─ main.jsx
+│  │  ├─ Pages
+│  │  │  ├─ Admin.jsx
+│  │  │  ├─ Customers.jsx
+│  │  │  ├─ DashboardHome.jsx
+│  │  │  ├─ Drivers.jsx
+│  │  │  ├─ Inventory.jsx
+│  │  │  ├─ Invoices.jsx
+│  │  │  ├─ Login.jsx
+│  │  │  ├─ Products.jsx
+│  │  │  ├─ PurchaseOrders.jsx
+│  │  │  ├─ Register.jsx
+│  │  │  ├─ SalesOrders.jsx
+│  │  │  ├─ Suppliers.jsx
+│  │  │  ├─ Vehicles.jsx
+│  │  │  └─ Warehouses.jsx
+│  │  ├─ Routing
+│  │  │  ├─ Index.jsx
+│  │  │  ├─ IndexRedirect.jsx
+│  │  │  ├─ ProtectedRoutes.jsx
+│  │  │  └─ PublicRoutes.jsx
+│  │  ├─ Services
+│  │  │  ├─ authService.js
+│  │  │  ├─ customerService.js
+│  │  │  ├─ driverService.js
+│  │  │  ├─ inventoryService.js
+│  │  │  ├─ invoiceService.js
+│  │  │  ├─ productService.js
+│  │  │  ├─ purchaseOrderService.js
+│  │  │  ├─ salesOrderService.js
+│  │  │  ├─ supplierService.js
+│  │  │  ├─ userService.js
+│  │  │  ├─ vehicleService.js
+│  │  │  └─ warehouseService.js
+│  │  └─ utils
+│  ├─ vercel.json
+│  └─ vite.config.js
+├─ README.md
+└─ server
+   ├─ Config
+   │  └─ mongoDb.js
+   ├─ Controller
+   │  ├─ authController.js
+   │  ├─ customerController.js
+   │  ├─ driverController.js
+   │  ├─ inventoryController.js
+   │  ├─ invoiceController.js
+   │  ├─ productController.js
+   │  ├─ purchaseOrderController.js
+   │  ├─ salesOrderController.js
+   │  ├─ supplierController.js
+   │  ├─ UserController.js
+   │  ├─ vehicleController.js
+   │  └─ warehouseController.js
+   ├─ Models
+   │  ├─ CustomerModel.js
+   │  ├─ DriverModel.js
+   │  ├─ InventoryModel.js
+   │  ├─ InvoiceModel.js
+   │  ├─ ProductModel.js
+   │  ├─ PurchaseOrderModel.js
+   │  ├─ SalesOrderModel.js
+   │  ├─ SupplierModel.js
+   │  ├─ UserModel.js
+   │  ├─ VehicleModel.js
+   │  └─ WarehouseModel.js
+   ├─ package-lock.json
+   ├─ package.json
+   ├─ Routing
+   │  ├─ authRouter.js
+   │  ├─ customerRouter.js
+   │  ├─ driverRouter.js
+   │  ├─ inventoryRouter.js
+   │  ├─ invoiceRouter.js
+   │  ├─ productRouter.js
+   │  ├─ purchaseOrderRouter.js
+   │  ├─ salesOrderRouter.js
+   │  ├─ supplierRouter.js
+   │  ├─ userRouter.js
+   │  ├─ vehicleRouter.js
+   │  └─ warehouseRouter.js
+   ├─ server.js
+   └─ Utils
+      ├─ adminMiddleware.js
+      ├─ authMiddleware.js
+      ├─ generateAccessToken.js
+      └─ generateRefreshToken.js
+
+```
+```
+GoldenFiberFlow
+├─ frontend
+│  ├─ Claude.md
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  ├─ favicon.svg
+│  │  ├─ gftcl.png
+│  │  └─ icons.svg
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ Api
+│  │  │  └─ api.js
+│  │  ├─ App.css
+│  │  ├─ App.jsx
+│  │  ├─ assets
+│  │  │  ├─ gftcl.png
+│  │  │  ├─ hero.png
+│  │  │  ├─ react.svg
+│  │  │  └─ vite.svg
+│  │  ├─ Components
+│  │  │  ├─ CustomerModal.jsx
+│  │  │  ├─ DriverModal.jsx
+│  │  │  ├─ Header.jsx
+│  │  │  ├─ InvoiceModal.jsx
+│  │  │  ├─ LoadingSpinner.jsx
+│  │  │  ├─ ProductModal.jsx
+│  │  │  ├─ PurchaseOrderModal.jsx
+│  │  │  ├─ SalesOrderModal.jsx
+│  │  │  ├─ Sidebar.jsx
+│  │  │  ├─ SupplierModal.jsx
+│  │  │  ├─ UserModal.jsx
+│  │  │  ├─ VehicleModal.jsx
+│  │  │  └─ WarehouseModal.jsx
+│  │  ├─ Context
+│  │  │  ├─ AuthContext.jsx
+│  │  │  └─ ThemeContext.jsx
+│  │  ├─ Hooks
+│  │  │  └─ useAuth.js
+│  │  ├─ index.css
+│  │  ├─ Layout
+│  │  │  ├─ DashboardLayout.jsx
+│  │  │  └─ MainLayout.jsx
+│  │  ├─ main.jsx
+│  │  ├─ Pages
+│  │  │  ├─ Admin.jsx
+│  │  │  ├─ Customers.jsx
+│  │  │  ├─ DashboardHome.jsx
+│  │  │  ├─ Drivers.jsx
+│  │  │  ├─ Inventory.jsx
+│  │  │  ├─ Invoices.jsx
+│  │  │  ├─ Login.jsx
+│  │  │  ├─ Products.jsx
+│  │  │  ├─ PurchaseOrders.jsx
+│  │  │  ├─ Register.jsx
+│  │  │  ├─ SalesOrders.jsx
+│  │  │  ├─ Suppliers.jsx
+│  │  │  ├─ Vehicles.jsx
+│  │  │  └─ Warehouses.jsx
+│  │  ├─ Routing
+│  │  │  ├─ Index.jsx
+│  │  │  ├─ IndexRedirect.jsx
+│  │  │  ├─ ProtectedRoutes.jsx
+│  │  │  └─ PublicRoutes.jsx
+│  │  ├─ Services
+│  │  │  ├─ authService.js
+│  │  │  ├─ customerService.js
+│  │  │  ├─ driverService.js
+│  │  │  ├─ inventoryService.js
+│  │  │  ├─ invoiceService.js
+│  │  │  ├─ productService.js
+│  │  │  ├─ purchaseOrderService.js
+│  │  │  ├─ salesOrderService.js
+│  │  │  ├─ supplierService.js
+│  │  │  ├─ userService.js
+│  │  │  ├─ vehicleService.js
+│  │  │  └─ warehouseService.js
+│  │  └─ utils
+│  ├─ vercel.json
+│  └─ vite.config.js
+├─ README.md
+└─ server
+   ├─ Config
+   │  └─ mongoDb.js
+   ├─ Controller
+   │  ├─ authController.js
+   │  ├─ customerController.js
+   │  ├─ driverController.js
+   │  ├─ inventoryController.js
+   │  ├─ invoiceController.js
+   │  ├─ productController.js
+   │  ├─ purchaseOrderController.js
+   │  ├─ salesOrderController.js
+   │  ├─ supplierController.js
+   │  ├─ UserController.js
+   │  ├─ vehicleController.js
+   │  └─ warehouseController.js
+   ├─ Models
+   │  ├─ CustomerModel.js
+   │  ├─ DriverModel.js
+   │  ├─ InventoryModel.js
+   │  ├─ InvoiceModel.js
+   │  ├─ ProductModel.js
+   │  ├─ PurchaseOrderModel.js
+   │  ├─ SalesOrderModel.js
+   │  ├─ SupplierModel.js
+   │  ├─ UserModel.js
+   │  ├─ VehicleModel.js
+   │  └─ WarehouseModel.js
+   ├─ package-lock.json
+   ├─ package.json
+   ├─ Routing
+   │  ├─ authRouter.js
+   │  ├─ customerRouter.js
+   │  ├─ driverRouter.js
+   │  ├─ inventoryRouter.js
+   │  ├─ invoiceRouter.js
+   │  ├─ productRouter.js
+   │  ├─ purchaseOrderRouter.js
+   │  ├─ salesOrderRouter.js
+   │  ├─ supplierRouter.js
+   │  ├─ userRouter.js
+   │  ├─ vehicleRouter.js
+   │  └─ warehouseRouter.js
+   ├─ server.js
+   └─ Utils
+      ├─ adminMiddleware.js
+      ├─ authMiddleware.js
+      ├─ generateAccessToken.js
+      └─ generateRefreshToken.js
+
+```
+```
+GoldenFiberFlow
+├─ frontend
+│  ├─ Claude.md
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  ├─ favicon.svg
+│  │  ├─ gftcl.png
+│  │  └─ icons.svg
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ Api
+│  │  │  └─ api.js
+│  │  ├─ App.css
+│  │  ├─ App.jsx
+│  │  ├─ assets
+│  │  │  ├─ gftcl.png
+│  │  │  ├─ hero.png
+│  │  │  ├─ react.svg
+│  │  │  └─ vite.svg
+│  │  ├─ Components
+│  │  │  ├─ CustomerModal.jsx
+│  │  │  ├─ DriverModal.jsx
+│  │  │  ├─ Header.jsx
+│  │  │  ├─ InvoiceModal.jsx
+│  │  │  ├─ LoadingSpinner.jsx
+│  │  │  ├─ ProductModal.jsx
+│  │  │  ├─ PurchaseOrderModal.jsx
+│  │  │  ├─ SalesOrderModal.jsx
+│  │  │  ├─ Sidebar.jsx
+│  │  │  ├─ SupplierModal.jsx
+│  │  │  ├─ UserModal.jsx
+│  │  │  ├─ VehicleModal.jsx
+│  │  │  └─ WarehouseModal.jsx
+│  │  ├─ Context
+│  │  │  ├─ AuthContext.jsx
+│  │  │  └─ ThemeContext.jsx
+│  │  ├─ Hooks
+│  │  │  └─ useAuth.js
+│  │  ├─ index.css
+│  │  ├─ Layout
+│  │  │  ├─ DashboardLayout.jsx
+│  │  │  └─ MainLayout.jsx
+│  │  ├─ main.jsx
+│  │  ├─ Pages
+│  │  │  ├─ Admin.jsx
+│  │  │  ├─ Customers.jsx
+│  │  │  ├─ DashboardHome.jsx
+│  │  │  ├─ Drivers.jsx
+│  │  │  ├─ Inventory.jsx
+│  │  │  ├─ Invoices.jsx
+│  │  │  ├─ Login.jsx
+│  │  │  ├─ Products.jsx
+│  │  │  ├─ PurchaseOrders.jsx
+│  │  │  ├─ Register.jsx
+│  │  │  ├─ SalesOrders.jsx
+│  │  │  ├─ Suppliers.jsx
+│  │  │  ├─ Vehicles.jsx
+│  │  │  └─ Warehouses.jsx
+│  │  ├─ Routing
+│  │  │  ├─ Index.jsx
+│  │  │  ├─ IndexRedirect.jsx
+│  │  │  ├─ ProtectedRoutes.jsx
+│  │  │  └─ PublicRoutes.jsx
+│  │  ├─ Services
+│  │  │  ├─ authService.js
+│  │  │  ├─ customerService.js
+│  │  │  ├─ driverService.js
+│  │  │  ├─ inventoryService.js
+│  │  │  ├─ invoiceService.js
+│  │  │  ├─ productService.js
+│  │  │  ├─ purchaseOrderService.js
+│  │  │  ├─ salesOrderService.js
+│  │  │  ├─ supplierService.js
+│  │  │  ├─ userService.js
+│  │  │  ├─ vehicleService.js
+│  │  │  └─ warehouseService.js
+│  │  └─ utils
+│  ├─ vercel.json
+│  └─ vite.config.js
+├─ README.md
+└─ server
+   ├─ Config
+   │  └─ mongoDb.js
+   ├─ Controller
+   │  ├─ authController.js
+   │  ├─ customerController.js
+   │  ├─ driverController.js
+   │  ├─ inventoryController.js
+   │  ├─ invoiceController.js
+   │  ├─ productController.js
+   │  ├─ purchaseOrderController.js
+   │  ├─ salesOrderController.js
+   │  ├─ supplierController.js
+   │  ├─ UserController.js
+   │  ├─ vehicleController.js
+   │  └─ warehouseController.js
+   ├─ Models
+   │  ├─ CustomerModel.js
+   │  ├─ DriverModel.js
+   │  ├─ InventoryModel.js
+   │  ├─ InvoiceModel.js
+   │  ├─ ProductModel.js
+   │  ├─ PurchaseOrderModel.js
+   │  ├─ SalesOrderModel.js
+   │  ├─ SupplierModel.js
+   │  ├─ UserModel.js
+   │  ├─ VehicleModel.js
+   │  └─ WarehouseModel.js
+   ├─ package-lock.json
+   ├─ package.json
+   ├─ Routing
+   │  ├─ authRouter.js
+   │  ├─ customerRouter.js
+   │  ├─ driverRouter.js
+   │  ├─ inventoryRouter.js
+   │  ├─ invoiceRouter.js
+   │  ├─ productRouter.js
+   │  ├─ purchaseOrderRouter.js
+   │  ├─ salesOrderRouter.js
+   │  ├─ supplierRouter.js
+   │  ├─ userRouter.js
+   │  ├─ vehicleRouter.js
+   │  └─ warehouseRouter.js
+   ├─ server.js
+   └─ Utils
+      ├─ adminMiddleware.js
+      ├─ authMiddleware.js
+      ├─ generateAccessToken.js
+      └─ generateRefreshToken.js
+
+```

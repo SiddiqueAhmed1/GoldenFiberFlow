@@ -1,3 +1,4 @@
+import { bulkImportProducts } from "../Controller/productController.js";
 import express from "express";
 import authMiddleware from "../Utils/authMiddleware.js";
 import {
@@ -11,4 +12,6 @@ router.get("/product", authMiddleware, getProducts);
 router.post("/product", authMiddleware, createProduct);
 router.patch("/product/:id", authMiddleware, updateProduct);
 router.delete("/product/:id", authMiddleware, deleteProduct);
+router.post("/bulk-import", authMiddleware, bulkImportProducts);
+
 export default router;

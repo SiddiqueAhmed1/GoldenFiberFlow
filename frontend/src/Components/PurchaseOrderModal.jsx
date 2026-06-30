@@ -2,45 +2,46 @@ import { Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPurchaseOrder, updatePurchaseOrder } from "../Services/purchaseOrderService";
 import { getSuppliers } from "../Services/supplierService";
-import { getProducts } from "../Services/productService";
-import { toast } from "react-hot-toast";
+import { getProducts }  from "../Services/productService";
+import { toast }        from "react-hot-toast";
 
-const inp = "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
+const inp   = "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
+const roInp = `${inp} bg-neutral-100 dark:bg-neutral-600 cursor-not-allowed`;
 const emptyItem = { product: "", description: "", unit: "", quantity: "", weight: "", unitPrice: "", totalPrice: "" };
-const emptyForm = { supplier: "", items: [{ ...emptyItem }], totalAmount: "", expectedDate: "", note: "", status: "Pending" };
+const emptyForm = { supplier: "", items: [{ ...emptyItem }], totalAmount: 0, expectedDate: "", note: "", status: "Pending" };
 
-const Label = ({ children }) => <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">{children}</label>;
-const Section = ({ children }) => <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">{children}</h2>;
+const Label   = ({ c }) => <label className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1 block">{c}</label>;
+const Section = ({ c }) => <h2 className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-3">{c}</h2>;
 
 const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
-  const [form, setForm] = useState(emptyForm);
-  const [original, setOriginal] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [form,      setForm]      = useState(emptyForm);
+  const [original,  setOriginal]  = useState(null);
+  const [loading,   setLoading]   = useState(false);
   const [suppliers, setSuppliers] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [products,  setProducts]  = useState([]);
 
   useEffect(() => {
     getSuppliers().then((d) => setSuppliers(d.filter((s) => s.status === "Active"))).catch(() => {});
-    getProducts().then((d) => setProducts(d.filter((p) => p.status === "Active"))).catch(() => {});
+    getProducts().then((d)  => setProducts(d.filter((p) => p.status === "Active"))).catch(() => {});
   }, []);
 
   useEffect(() => {
     if (mode === "edit" && selected) {
       const d = {
-        supplier: selected.supplier?._id || selected.supplier,
-        items: selected.items.map((i) => ({
-          product: i.product?._id || i.product,
-          description: i.description,
-          unit: i.product?.unit || "",
-          quantity: i.quantity,
-          weight: i.weight,
-          unitPrice: i.unitPrice,
+        supplier:     selected.supplier?._id || selected.supplier,
+        items:        selected.items.map((i) => ({
+          product:    i.product?._id || i.product || "",
+          description:i.description,
+          unit:       i.unit || "",
+          quantity:   i.quantity,
+          weight:     i.weight,
+          unitPrice:  i.unitPrice,
           totalPrice: i.totalPrice,
         })),
-        totalAmount: selected.totalAmount,
+        totalAmount:  selected.totalAmount,
         expectedDate: selected.expectedDate?.slice(0, 10) || "",
-        note: selected.note || "",
-        status: selected.status,
+        note:         selected.note || "",
+        status:       selected.status,
       };
       setForm(d); setOriginal(d);
     }
@@ -50,39 +51,42 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
 
   const handleProductSelect = (idx, productId) => {
     const product = products.find((p) => p._id === productId);
-    const items = [...form.items];
+    const items   = [...form.items];
+    const weight  = Number(items[idx].weight) || 0;
     items[idx] = {
       ...items[idx],
-      product: productId,
-      description: product?.name || "",
-      unit: product?.unit || "",
-      unitPrice: product?.unitPrice || "",
-      totalPrice: (Number(items[idx].weight) || 0) * (product?.unitPrice || 0),
+      product:     productId,
+      description: product?.name      || "",
+      unit:        product?.unit      || "",
+      unitPrice:   product?.unitPrice || "",
+      totalPrice:  weight * (product?.unitPrice || 0),
     };
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
 
   const updateItem = (idx, field, val) => {
     const items = [...form.items];
-    items[idx] = { ...items[idx], [field]: val };
+    items[idx]  = { ...items[idx], [field]: val };
     if (field === "weight" || field === "unitPrice") {
       items[idx].totalPrice = (Number(items[idx].weight) || 0) * (Number(items[idx].unitPrice) || 0);
     }
     setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) }));
   };
 
-  const addItem = () => setForm((p) => ({ ...p, items: [...p.items, { ...emptyItem }] }));
+  const addItem    = () => setForm((p) => ({ ...p, items: [...p.items, { ...emptyItem }] }));
   const removeItem = (idx) => { const items = form.items.filter((_, i) => i !== idx); setForm((p) => ({ ...p, items, totalAmount: calcTotal(items) })); };
 
   const onSubmit = async (e) => {
-    e.preventDefault(); setLoading(true);
+    e.preventDefault();
+    setLoading(true);
     try {
       const payload = {
-        ...form,
-        items: form.items.map(({ product, description, quantity, weight, unitPrice, totalPrice }) => ({
-          product, description, quantity, weight, unitPrice, totalPrice,
-        })),
-        totalAmount: Number(form.totalAmount),
+        supplier:     form.supplier,
+        items:        form.items,
+        totalAmount:  Number(form.totalAmount),
+        expectedDate: form.expectedDate,
+        note:         form.note,
+        status:       form.status,
       };
       if (mode === "create") {
         const data = await createPurchaseOrder(payload);
@@ -96,8 +100,11 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
         toast.success("Purchase order updated successfully");
         handleClose();
       }
-    } catch (err) { toast.error(err.message); }
-    finally { setLoading(false); }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -110,25 +117,31 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
           </div>
           <button onClick={handleClose} className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-500 dark:text-neutral-400 cursor-pointer transition"><X size={18} /></button>
         </div>
+
         <div className="p-5">
           <form onSubmit={onSubmit} className="space-y-5">
+
+            {/* Supplier & Date */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
-              <Section>Supplier & Date</Section>
+              <Section c="Supplier & Date" />
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Supplier *</Label>
+                <div>
+                  <Label c="Supplier *" />
                   <select required value={form.supplier} onChange={(e) => setForm((p) => ({ ...p, supplier: e.target.value }))} className={inp}>
                     <option value="">— Select supplier —</option>
                     {suppliers.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
                   </select>
+                  {suppliers.length === 0 && <p className="text-xs text-amber-500 mt-1">No active suppliers. Add a supplier first.</p>}
                 </div>
-                <div><Label>Expected Date</Label><input type="date" value={form.expectedDate} onChange={(e) => setForm((p) => ({ ...p, expectedDate: e.target.value }))} className={inp} /></div>
+                <div><Label c="Expected Date" /><input type="date" value={form.expectedDate} onChange={(e) => setForm((p) => ({ ...p, expectedDate: e.target.value }))} className={inp} /></div>
               </div>
             </div>
 
+            {/* Items */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
               <div className="flex justify-between items-center mb-3">
-                <Section>Items</Section>
-                <button type="button" onClick={addItem} className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 cursor-pointer hover:text-amber-700 transition"><Plus size={14} /> Add Item</button>
+                <Section c="Items" />
+                <button type="button" onClick={addItem} className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 cursor-pointer transition"><Plus size={14} /> Add Item</button>
               </div>
               <div className="space-y-3">
                 {form.items.map((item, idx) => (
@@ -137,42 +150,42 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                       <span className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">Item {idx + 1}</span>
                       {form.items.length > 1 && <button type="button" onClick={() => removeItem(idx)} className="p-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 cursor-pointer transition"><Trash2 size={14} /></button>}
                     </div>
+
                     {products.length > 0 && (
-                      <div className="mb-3"><Label>Select Product</Label>
+                      <div className="mb-3">
+                        <Label c="Select Product (auto-fills details below)" />
                         <select value={item.product} onChange={(e) => handleProductSelect(idx, e.target.value)} className={inp}>
                           <option value="">— Pick a product —</option>
                           {products.map((p) => <option key={p._id} value={p._id}>{p.name} · {p.grade} · ৳{p.unitPrice}/{p.unit}</option>)}
                         </select>
                       </div>
                     )}
-                    {item.unit && (
-                      <div className="mb-3 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                        <p className="text-xs text-amber-700 dark:text-amber-300">
-                          Unit: <span className="font-semibold">{item.unit}</span>
-                          {item.unitPrice ? <> · Price: <span className="font-semibold">৳ {item.unitPrice} / {item.unit}</span></> : null}
-                        </p>
-                      </div>
-                    )}
-                    <div className="mb-3"><Label>Description *</Label><input required value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} className={inp} placeholder="e.g. Hessian Cloth" /></div>
+
+                    <div className="mb-3"><Label c="Description *" /><input required value={item.description} onChange={(e) => updateItem(idx, "description", e.target.value)} className={inp} placeholder="e.g. Hessian Cloth" /></div>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div><Label>Quantity *</Label><input required type="number" min="1" value={item.quantity} onChange={(e) => updateItem(idx, "quantity", e.target.value)} className={inp} placeholder="0" /></div>
-                      <div><Label>Weight ({item.unit || "unit"}) *</Label><input required type="number" min="0" value={item.weight} onChange={(e) => updateItem(idx, "weight", e.target.value)} className={inp} placeholder="0" /></div>
+                      <div><Label c="Quantity *" /><input required type="number" min="1" value={item.quantity} onChange={(e) => updateItem(idx, "quantity", e.target.value)} className={inp} placeholder="0" /></div>
                       <div>
-                        <Label>Unit Price (৳/{item.unit || "unit"}) *</Label>
+                        <Label c={`Weight (${item.unit || "kg"}) *`} />
+                        <input required type="number" min="0" value={item.weight} onChange={(e) => updateItem(idx, "weight", e.target.value)} className={inp} placeholder="0" />
+                      </div>
+                      <div>
+                        <Label c={`Unit Price / ${item.unit || "kg"} (৳) *`} />
                         <input required type="number" min="0" value={item.unitPrice} onChange={(e) => updateItem(idx, "unitPrice", e.target.value)} className={inp} placeholder="0" />
                       </div>
-                      <div><Label>Total (৳)</Label><input readOnly value={item.totalPrice || 0} className={`${inp} bg-neutral-100 dark:bg-neutral-600 cursor-not-allowed`} /></div>
+                      <div><Label c="Total (৳)" /><input readOnly value={item.totalPrice || 0} className={roInp} /></div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Summary */}
             <div className="bg-neutral-50 dark:bg-neutral-700/30 rounded-xl p-4">
-              <Section>Summary</Section>
+              <Section c="Summary" />
               <div className="grid grid-cols-2 gap-3">
-                <div><Label>Total Amount (৳)</Label><input readOnly value={form.totalAmount || 0} className={`${inp} bg-neutral-100 dark:bg-neutral-600 cursor-not-allowed`} /></div>
-                <div><Label>Status *</Label>
+                <div><Label c="Total Amount (৳)" /><input readOnly value={form.totalAmount || 0} className={roInp} /></div>
+                <div><Label c="Status *" />
                   <select value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))} className={inp}>
                     <option value="Pending">Pending</option>
                     <option value="Confirmed">Confirmed</option>
@@ -181,7 +194,7 @@ const PurchaseOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                   </select>
                 </div>
               </div>
-              <div className="mt-3"><Label>Note</Label><input value={form.note} onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))} className={inp} placeholder="Optional note" /></div>
+              <div className="mt-3"><Label c="Note" /><input value={form.note} onChange={(e) => setForm((p) => ({ ...p, note: e.target.value }))} className={inp} placeholder="Optional note" /></div>
             </div>
 
             <div className="flex justify-end gap-3 pt-2">

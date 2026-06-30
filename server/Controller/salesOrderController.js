@@ -22,22 +22,33 @@ export const createSalesOrder = async (req, res) => {
     if (!customer || !items || !items.length || !totalAmount) {
       return res.status(400).json({ message: "Customer, items and total amount are required", success: false, error: true });
     }
-    const advance = advanceAmount || 0;
-    const dueAmount = totalAmount - advance;
-    const order = new SalesOrderModel({ customer, items, totalAmount, advanceAmount: advance, dueAmount, note, status, createdBy: userId });
-    await order.save();
+    const dueAmount = Number(totalAmount) - Number(advanceAmount || 0);
 
-    const invoiceStatus = dueAmount <= 0 ? "Paid" : advance > 0 ? "Partial" : "Unpaid";
-    await InvoiceModel.create({
-      salesOrder: order._id,
+    // create sales order
+    const order = new SalesOrderModel({
       customer,
-      totalAmount,
-      advanceAmount: advance,
+      items,
+      totalAmount: Number(totalAmount),
+      advanceAmount: Number(advanceAmount || 0),
       dueAmount,
-      status: invoiceStatus,
-      note: note || "",
+      note,
+      status,
       createdBy: userId,
     });
+    await order.save();
+
+    // auto-create invoice for this sales order
+    const invoiceStatus = dueAmount <= 0 ? "Paid" : (advanceAmount > 0 ? "Partial" : "Unpaid");
+    const invoice = new InvoiceModel({
+      salesOrder:    order._id,
+      customer,
+      totalAmount:   Number(totalAmount),
+      advanceAmount: Number(advanceAmount || 0),
+      dueAmount,
+      status:        invoiceStatus,
+      createdBy:     userId,
+    });
+    await invoice.save();
 
     const result = await populate(SalesOrderModel.findById(order._id));
     return res.status(201).json({ message: "Sales order created successfully", success: true, error: false, data: result });
@@ -49,14 +60,27 @@ export const createSalesOrder = async (req, res) => {
 export const updateSalesOrder = async (req, res) => {
   try {
     const { id } = req.params;
+    const existing = await SalesOrderModel.findById(id);
+    if (!existing) return res.status(404).json({ message: "Sales order not found", success: false, error: true });
+
     if (req.body.totalAmount !== undefined || req.body.advanceAmount !== undefined) {
-      const existing = await SalesOrderModel.findById(id);
-      const total   = req.body.totalAmount   ?? existing.totalAmount;
-      const advance = req.body.advanceAmount ?? existing.advanceAmount;
+      const total   = Number(req.body.totalAmount   ?? existing.totalAmount);
+      const advance = Number(req.body.advanceAmount ?? existing.advanceAmount);
       req.body.dueAmount = total - advance;
     }
+
     const order = await populate(SalesOrderModel.findByIdAndUpdate(id, req.body, { new: true }));
-    if (!order) return res.status(404).json({ message: "Sales order not found", success: false, error: true });
+
+    // sync invoice amounts if exists
+    const invoice = await InvoiceModel.findOne({ salesOrder: id });
+    if (invoice) {
+      invoice.totalAmount   = order.totalAmount;
+      invoice.advanceAmount = order.advanceAmount;
+      invoice.dueAmount     = order.dueAmount;
+      invoice.status        = order.dueAmount <= 0 ? "Paid" : order.advanceAmount > 0 ? "Partial" : "Unpaid";
+      await invoice.save();
+    }
+
     return res.status(200).json({ message: "Sales order updated successfully", success: true, error: false, data: order });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false, error: true });
@@ -66,9 +90,9 @@ export const updateSalesOrder = async (req, res) => {
 export const deleteSalesOrder = async (req, res) => {
   try {
     const { id } = req.params;
+    await InvoiceModel.deleteOne({ salesOrder: id }); // delete linked invoice
     const deleted = await SalesOrderModel.findByIdAndDelete(id);
     if (!deleted) return res.status(404).json({ message: "Sales order not found", success: false, error: true });
-    await InvoiceModel.deleteMany({ salesOrder: id });
     return res.status(200).json({ message: "Sales order deleted successfully", success: true, error: false, data: deleted });
   } catch (error) {
     return res.status(500).json({ message: error.message, success: false, error: true });
