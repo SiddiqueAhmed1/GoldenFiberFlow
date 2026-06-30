@@ -35,3 +35,12 @@ export const deleteProduct = async (id) => {
     throw new Error(error.response?.data?.message || "Something went wrong");
   }
 };
+
+export const bulkImportProducts = async (products) => {
+  try {
+    const res = await api.post("/api/v1/bulk-import", { products });
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Something went wrong");
+  }
+};

@@ -1,10 +1,15 @@
-import { Plus, Pencil, Trash2, BoxIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, BoxIcon, Upload } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import ProductModal from "../Components/ProductModal";
-import { getProducts, deleteProduct } from "../Services/productService";
+import {
+  getProducts,
+  deleteProduct,
+  bulkImportProducts,
+} from "../Services/productService";
 import LoadingSpinner from "../Components/LoadingSpinner";
 import Swal from "sweetalert2";
 import { toast } from "react-hot-toast";
+import * as XLSX from "xlsx";
 
 const statusStyle = (s) =>
   s === "Active"
@@ -28,9 +33,11 @@ const Products = () => {
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [importing, setImporting] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [selected, setSelected] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     getProducts()
@@ -54,6 +61,7 @@ const Products = () => {
     setSelected(p);
     setIsEdit(true);
   };
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -65,16 +73,59 @@ const Products = () => {
       confirmButtonText: "Yes, delete!",
     }).then(async (r) => {
       if (r.isConfirmed) {
-        await deleteProduct(id);
-        setProducts((p) => p.filter((item) => item._id !== id));
-        Swal.fire("Deleted!", "", "success");
+        try {
+          await deleteProduct(id);
+          setProducts((p) => p.filter((item) => item._id !== id));
+          Swal.fire("Deleted!", "", "success");
+        } catch (e) {
+          Swal.fire("Cannot Delete", e.message, "error");
+        }
       }
     });
   };
+
   const handleClose = () => {
     setIsCreate(false);
     setIsEdit(false);
     setSelected(null);
+  };
+
+  const handleImportClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = ""; // reset so same file can be picked again
+
+    try {
+      setImporting(true);
+      const buffer = await file.arrayBuffer();
+      const wb = XLSX.read(buffer, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws);
+
+      // Map Excel columns → our schema fields
+      // Expected headers: name, sku, grade, unitPrice, unit, status
+      const mapped = rows.map((r) => ({
+        name: r["name"] || r["Name"] || "",
+        sku: r["sku"] || r["SKU"] || "",
+        grade: r["grade"] || r["Grade"] || "",
+        unitPrice: r["unitPrice"] || r["Unit Price"] || r["unit_price"] || 0,
+        unit: r["unit"] || r["Unit"] || "kg",
+        status: r["status"] || r["Status"] || "Active",
+      }));
+
+      const result = await bulkImportProducts(mapped);
+      toast.success(result.message);
+
+      // Refresh list
+      const updated = await getProducts();
+      setProducts(updated);
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setImporting(false);
+    }
   };
 
   return (
@@ -90,12 +141,29 @@ const Products = () => {
                 Manage all product records
               </p>
             </div>
-            <button
-              onClick={() => setIsCreate(true)}
-              className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2.5 rounded-xl font-medium cursor-pointer transition shadow-sm"
-            >
-              <Plus size={16} /> Add Product
-            </button>
+            <div className="flex gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".xlsx,.xls"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <button
+                onClick={handleImportClick}
+                disabled={importing}
+                className="flex items-center gap-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 text-sm px-4 py-2.5 rounded-xl font-medium cursor-pointer transition shadow-sm disabled:opacity-50"
+              >
+                <Upload size={16} />
+                {importing ? "Importing..." : "Import Excel"}
+              </button>
+              <button
+                onClick={() => setIsCreate(true)}
+                className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2.5 rounded-xl font-medium cursor-pointer transition shadow-sm"
+              >
+                <Plus size={16} /> Add Product
+              </button>
+            </div>
           </div>
 
           <div className="mb-4">
@@ -120,30 +188,23 @@ const Products = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="bg-neutral-50 dark:bg-neutral-700/40 border-b border-neutral-200 dark:border-neutral-700 text-left">
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        #
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Name
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        SKU
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Grade
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Unit Price
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Unit
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400">
-                        Status
-                      </th>
-                      <th className="px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400 text-center">
-                        Actions
-                      </th>
+                      {[
+                        "#",
+                        "Name",
+                        "SKU",
+                        "Grade",
+                        "Unit",
+                        "Unit Price (৳)",
+                        "Status",
+                        "Actions",
+                      ].map((h) => (
+                        <th
+                          key={h}
+                          className={`px-5 py-3 font-medium text-neutral-500 dark:text-neutral-400 ${h === "Actions" ? "text-center" : ""}`}
+                        >
+                          {h}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
@@ -165,10 +226,10 @@ const Products = () => {
                           {p.grade}
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          ৳ {p.unitPrice?.toLocaleString()}
+                          {p.unit}
                         </td>
                         <td className="px-5 py-3.5 text-neutral-600 dark:text-neutral-300">
-                          {p.unit}
+                          ৳ {p.unitPrice?.toLocaleString()} / {p.unit}
                         </td>
                         <td className="px-5 py-3.5">
                           <span
@@ -182,14 +243,12 @@ const Products = () => {
                             <button
                               onClick={() => handleEdit(p)}
                               className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 cursor-pointer transition"
-                              title="Edit"
                             >
                               <Pencil size={15} />
                             </button>
                             <button
                               onClick={() => handleDelete(p._id)}
                               className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 cursor-pointer transition"
-                              title="Delete"
                             >
                               <Trash2 size={15} />
                             </button>
@@ -227,5 +286,4 @@ const Products = () => {
     </>
   );
 };
-
 export default Products;

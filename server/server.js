@@ -18,15 +18,18 @@ import inventoryRouter from "./Routing/inventoryRouter.js";
 import invoiceRouter from "./Routing/invoiceRouter.js";
 
 dotenv.config();
+mongoDb();
+
 const app = express();
 const port = process.env.PORT || 6060;
 
-app.use(cors({
-  origin: ["https://golden-fiber-flow.vercel.app", "http://localhost:5173"],
-  methods: "GET,POST,PUT,PATCH,DELETE",
-  credentials: true,
-}));
-
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: "GET,POST,PUT,PATCH,DELETE",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -44,12 +47,9 @@ app.use("/api/v1", purchaseOrderRouter);
 app.use("/api/v1", inventoryRouter);
 app.use("/api/v1", invoiceRouter);
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
-});
+// health check for UptimeRobot
+app.get("/health", (req, res) => res.status(200).json({ status: "ok" }));
 
-mongoDb().then(() => {
-  app.listen(port, () => {
-    console.log(`server is running on port ${port}`.bgGreen.black);
-  });
+app.listen(port, () => {
+  console.log(`server is running on port ${port}`.bgGreen.black);
 });

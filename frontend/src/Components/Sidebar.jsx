@@ -12,10 +12,10 @@ const navGroups = [
   {
     label: "Main",
     items: [
-      { name: "Dashboard",      path: "/dashboard",                   icon: LayoutDashboard },
-      { name: "Sales Orders",   path: "/dashboard/sales-orders",      icon: ShoppingCart    },
-      { name: "Purchase Orders",path: "/dashboard/purchase-orders",   icon: ClipboardList   },
-      { name: "Invoices",       path: "/dashboard/invoices",          icon: FileText        },
+      { name: "Dashboard",       path: "/dashboard",               icon: LayoutDashboard },
+      { name: "Sales Orders",    path: "/dashboard/sales-orders",  icon: ShoppingCart    },
+      { name: "Purchase Orders", path: "/dashboard/purchase-orders",icon: ClipboardList  },
+      { name: "Invoices",        path: "/dashboard/invoices",      icon: FileText        },
     ],
   },
   {
@@ -38,9 +38,7 @@ const navGroups = [
   {
     label: "Admin",
     adminOnly: true,
-    items: [
-      { name: "Users", path: "/dashboard/admin", icon: Users },
-    ],
+    items: [{ name: "Users", path: "/dashboard/admin", icon: Users }],
   },
 ];
 
@@ -90,7 +88,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       </div>
 
       {collapsed && (
-        <button onClick={() => setCollapsed(false)} className="hidden md:flex mt-3 mx-auto items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 cursor-pointer transition">
+        <button onClick={() => setCollapsed(false)} className="hidden md:flex mt-3 mx-auto items-center justify-center w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-400 cursor-pointer transition">
           <ChevronRight size={15} />
         </button>
       )}
@@ -115,7 +113,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                           ? "bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-200 dark:shadow-amber-900/40"
                           : "text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700/60 hover:text-neutral-800 dark:hover:text-neutral-100"
                         }`}>
-                      <Icon size={17} className={`flex-shrink-0 transition-transform duration-150 ${active ? "" : "group-hover:scale-110"}`} />
+                      <Icon size={17} className={`flex-shrink-0 ${active ? "" : "group-hover:scale-110 transition-transform"}`} />
                       {!collapsed && <span className="truncate">{item.name}</span>}
                       {!collapsed && active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white/70 flex-shrink-0" />}
                     </Link>
@@ -130,11 +128,10 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       {/* Bottom */}
       <div className="border-t border-neutral-200 dark:border-neutral-700/60 px-2 py-3 space-y-2">
         <button onClick={toggleTheme} title={dark ? "Switch to light mode" : "Switch to dark mode"}
-          className={`flex items-center gap-3 w-full rounded-xl text-sm font-medium transition-all duration-150 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700/60 hover:text-neutral-800 dark:hover:text-neutral-100 ${collapsed ? "justify-center px-0 py-2.5 mx-1" : "px-3 py-2.5"}`}>
+          className={`flex items-center gap-3 w-full rounded-xl text-sm font-medium transition-all text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700/60 hover:text-neutral-800 dark:hover:text-neutral-100 ${collapsed ? "justify-center px-0 py-2.5 mx-1" : "px-3 py-2.5"}`}>
           {dark ? <Sun size={18} className="flex-shrink-0 text-amber-400" /> : <Moon size={18} className="flex-shrink-0" />}
           {!collapsed && <span>{dark ? "Light mode" : "Dark mode"}</span>}
         </button>
-
         {!collapsed ? (
           <div className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-700/50">
             <div className="flex items-center gap-2.5 min-w-0">
