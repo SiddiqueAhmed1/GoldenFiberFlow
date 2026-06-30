@@ -48,7 +48,7 @@ export const createPurchaseOrder = async (req, res) => {
     });
     await order.save();
 
-    // ✅ নতুন: create এর সময়ই যদি status "Received" হয়
+    // if status received in creation time
     if (status === "Received") {
       for (const item of items) {
         await InventoryModel.findOneAndUpdate(
@@ -78,13 +78,11 @@ export const updatePurchaseOrder = async (req, res) => {
     const { id } = req.params;
     const existing = await PurchaseOrderModel.findById(id);
     if (!existing)
-      return res
-        .status(404)
-        .json({
-          message: "Purchase order not found",
-          success: false,
-          error: true,
-        });
+      return res.status(404).json({
+        message: "Purchase order not found",
+        success: false,
+        error: true,
+      });
 
     // ✅ Fix: req.body.items থেকে নাও, না থাকলে existing.items fallback
     const itemsToUse = req.body.items?.length ? req.body.items : existing.items;
@@ -102,14 +100,12 @@ export const updatePurchaseOrder = async (req, res) => {
     const order = await populate(
       PurchaseOrderModel.findByIdAndUpdate(id, req.body, { new: true }),
     );
-    return res
-      .status(200)
-      .json({
-        message: "Purchase order updated successfully",
-        success: true,
-        error: false,
-        data: order,
-      });
+    return res.status(200).json({
+      message: "Purchase order updated successfully",
+      success: true,
+      error: false,
+      data: order,
+    });
   } catch (error) {
     return res
       .status(500)
@@ -127,8 +123,26 @@ export const deletePurchaseOrder = async (req, res) => {
         success: false,
         error: true,
       });
+
+    const updatedInventory = deleted.items.map(async (item) => {
+      const currentInventory = await InventoryModel.findOne({
+        product: item.product,
+      });
+
+      if (currentInventory) {
+        if (currentInventory.currentStock === item.quantity) {
+          await InventoryModel.findByIdAndDelete(currentInventory._id);
+        } else {
+          currentInventory.currentStock -= item.quantity;
+          await currentInventory.save();
+        }
+      }
+    });
+
+    await Promise.all(updatedInventory);
+
     return res.status(200).json({
-      message: "Purchase order deleted successfully",
+      message: "Purchase order deleted successfully with its inventory stock",
       success: true,
       error: false,
       data: deleted,
