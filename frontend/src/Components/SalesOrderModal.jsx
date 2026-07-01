@@ -10,6 +10,7 @@ import { getDrivers } from "../Services/driverService";
 import { getVehicles } from "../Services/vehicleService";
 import { getWarehouses } from "../Services/warehouseService";
 import { toast } from "react-hot-toast";
+import { getInventory } from "../Services/inventoryService";
 
 const inp =
   "w-full rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-800 dark:text-neutral-100 placeholder-neutral-400 dark:placeholder-neutral-500 py-2 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-400 transition";
@@ -56,6 +57,7 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
   const [drivers, setDrivers] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
+  const [inventories, setInventories] = useState([]);
 
   useEffect(() => {
     getCustomers()
@@ -72,6 +74,9 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
       .catch(() => {});
     getWarehouses()
       .then((d) => setWarehouses(d.filter((w) => w.status === "Active")))
+      .catch(() => {});
+    getInventory()
+      .then((d) => setInventories(d.filter((i) => i.currentStock > 0)))
       .catch(() => {});
   }, []);
 
@@ -206,6 +211,18 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
       setLoading(false);
     }
   };
+
+  const inventoryMap = inventories.reduce((acc, inv) => {
+    if (inv.product) {
+      console.log("check product", inv.product._id);
+
+      acc[inv.product._id] = inv.currentStock;
+    }
+    return acc;
+  }, {});
+
+  console.log("check inventory", inventoryMap);
+
   return (
     <section className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white dark:bg-neutral-800 w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl mx-4 shadow-2xl">
@@ -301,11 +318,25 @@ const SalesOrderModal = ({ handleClose, setOrders, mode, selected }) => {
                           className={inp}
                         >
                           <option value="">— Pick a product —</option>
-                          {products.map((p) => (
-                            <option key={p._id} value={p._id}>
-                              {p.name} · {p.grade} · ৳{p.unitPrice}/{p.unit}
-                            </option>
-                          ))}
+                          {products.map((p) => {
+                            const stock = inventoryMap[p._id] || 0;
+                            console.log("check stock", stock);
+
+                            const stockMsg =
+                              stock > 0
+                                ? `${stock} ${p.unit} left`
+                                : "Out of Stock";
+                            return (
+                              <option
+                                key={p._id}
+                                value={p._id}
+                                disabled={stock === 0}
+                              >
+                                {p.name} · {p.grade} · ৳{p.unitPrice}/{p.unit}{" "}
+                                {stockMsg}
+                              </option>
+                            );
+                          })}
                         </select>
                       </div>
                     )}

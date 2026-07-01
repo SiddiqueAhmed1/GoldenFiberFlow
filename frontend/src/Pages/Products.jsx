@@ -141,7 +141,11 @@ const Products = () => {
                 Manage all product records
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <p className="text-red-500 dark:text-yellow-400 text-xs mt-1">
+                * Columns must be Product Name, <br /> SKU, Grade, Unit, Unit
+                Price and Status
+              </p>
               <input
                 ref={fileInputRef}
                 type="file"

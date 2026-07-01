@@ -142,7 +142,11 @@ const Customers = () => {
                 Manage all customer records
               </p>
             </div>
-            <div className="flex gap-2">
+
+            <div className="flex gap-2 items-center">
+              <p className="text-red-600 dark:text-yellow-400 text-xs mt-1">
+                * Columns must be Name, <br /> Address, Mobile and Status
+              </p>
               <input
                 ref={fileInputRef}
                 type="file"
